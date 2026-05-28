@@ -1,0 +1,13 @@
+{
+  "name": "project-management-demo",
+  "version": "1.0.0",
+  "description": "e-Teck Projects - Hệ thống đặt hàng & quản lý dự án",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
