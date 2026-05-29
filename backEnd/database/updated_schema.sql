@@ -550,8 +550,8 @@ INSERT INTO materials (id, sku, name, brand, category, unit, price, status, imag
 -- ------------------------------------------------------------
 
 INSERT INTO orders (id, project_id, supplier_id, order_date, expected_date, receiver_id, address, status, total_value, note) VALUES
-('PO001', 'PRJ01', 'NC006', '2026-04-16', '2026-04-25', 'NV002', 'Khu Công nghiệp VSIP Hải Phòng', 'Hoàn thành', 27500000, 'Đơn hàng mua thiết bị Cisco và phụ kiện cáp.'),
-('PO002', 'PRJ03', 'NC001', '2026-04-02', '2026-04-10', 'NV007', 'Hải Phòng & Quảng Ninh', 'Mới', 12500000, 'Yêu cầu báo giá cáp quang và modem GPON.');
+('PO001', 'PRJ01', 'NC006', '2026-04-16', '2026-04-25', 'NV002', 'Khu Công nghiệp VSIP Hải Phòng', 'Hoàn thành', 35000000, 'Đơn hàng mua thiết bị Cisco và phụ kiện cáp.'),
+('PO002', 'PRJ03', 'NC001', '2026-04-02', '2026-04-10', 'NV007', 'Hải Phòng & Quảng Ninh', 'Mới', 12000000, 'Yêu cầu báo giá cáp quang và modem GPON.');
 
 -- ------------------------------------------------------------
 -- Seed: project_items

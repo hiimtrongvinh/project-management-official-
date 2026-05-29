@@ -78,6 +78,7 @@ const ProjectModel = {
   async findById(id) {
     const sql = `
       SELECT p.*, p.deadline as end_date, c.name as client_name,
+        c.phone as client_phone, c.address as client_address, c.id_number as client_tax_code, c.type as client_type,
         CASE p.current_step
           WHEN 1 THEN 'Khảo sát và lập kế hoạch'
           WHEN 2 THEN 'Mua thiết bị và lập báo giá'

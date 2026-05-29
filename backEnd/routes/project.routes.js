@@ -40,4 +40,10 @@ router.put('/:id/close', authorize('admin'), ProjectController.closeProject);
 // PUT /api/projects/:id/quotation-status - Client can approve/reject
 router.put('/:id/quotation-status', ProjectController.updateQuotationStatus);
 
+// PUT /api/projects/:id/send-quotation - Admin/Staff sends quotation to client
+router.put('/:id/send-quotation', ProjectController.sendQuotation);
+
+// POST /api/projects/:id/contract - Admin/Staff generates contract
+router.post('/:id/contract', ProjectController.createContract);
+
 module.exports = router;

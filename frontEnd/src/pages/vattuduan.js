@@ -118,27 +118,58 @@ export function renderTabVattuDuan(projectId, role) {
             };
             const currentStatus = statusMap[pendingQuo.status] || { text: pendingQuo.status, class: 'bg-gray-50 text-gray-700 border-gray-200' };
 
-            clientQuotationControlHtml = `
-                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                            <i class="fas fa-file-invoice-dollar"></i>
+            const documentsList = project?.documentsList || [];
+            const contractDoc = documentsList.find(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế'));
+            let contractSectionHtml = '';
+            
+            if (contractDoc) {
+                contractSectionHtml = `
+                    <div class="bg-purple-50/50 border border-purple-100 rounded-2xl p-4 flex items-center justify-between shadow-sm mt-3 animate-fadeIn">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-700">
+                                <i class="fas fa-file-contract text-base"></i>
+                            </div>
+                            <div>
+                                <p class="font-extrabold text-gray-800 text-sm">Hợp đồng kinh tế song ngữ</p>
+                                <p class="text-xs text-purple-600 font-medium">Trạng thái: <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold">Đã thiết lập</span></p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-extrabold text-gray-800 text-sm">Báo giá của bạn</p>
-                            <p class="text-xs text-gray-400 font-medium">Trạng thái: <span class="px-2 py-0.5 rounded-full border text-[10px] ${currentStatus.class}">${currentStatus.text}</span></p>
+                        <div class="flex gap-2">
+                            <button onclick="window.handleViewContract('${projectId}', '${contractDoc.file_path}')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all shadow-sm flex items-center gap-1.5">
+                                <i class="fas fa-eye"></i> Xem hợp đồng
+                            </button>
+                            <a href="http://localhost:3000/${contractDoc.file_path}" target="_blank" download class="bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5">
+                                <i class="fas fa-download"></i> Tải về HTML
+                            </a>
                         </div>
                     </div>
-                    ${(pendingQuo.status === 'pending' || pendingQuo.status === 'draft') ? `
-                        <div class="flex gap-2">
-                            <button onclick="window.handleUpdateQuotationStatus('${projectId}', '${pendingQuo.id}', 'approved')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
-                                <i class="fas fa-check mr-1"></i> Duyệt báo giá
-                            </button>
-                            <button onclick="window.handleUpdateQuotationStatus('${projectId}', '${pendingQuo.id}', 'rejected')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
-                                <i class="fas fa-times mr-1"></i> Từ chối
-                            </button>
+                `;
+            }
+
+            clientQuotationControlHtml = `
+                <div class="flex flex-col gap-2">
+                    <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <div>
+                                <p class="font-extrabold text-gray-800 text-sm">Báo giá của bạn</p>
+                                <p class="text-xs text-gray-400 font-medium">Trạng thái: <span class="px-2 py-0.5 rounded-full border text-[10px] ${currentStatus.class}">${currentStatus.text}</span></p>
+                            </div>
                         </div>
-                    ` : ''}
+                        ${(pendingQuo.status === 'pending' || pendingQuo.status === 'draft') ? `
+                            <div class="flex gap-2">
+                                <button onclick="window.handleUpdateQuotationStatus('${projectId}', '${pendingQuo.id}', 'approved')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
+                                    <i class="fas fa-check mr-1"></i> Duyệt báo giá
+                                </button>
+                                <button onclick="window.handleUpdateQuotationStatus('${projectId}', '${pendingQuo.id}', 'rejected')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
+                                    <i class="fas fa-times mr-1"></i> Từ chối
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${contractSectionHtml}
                 </div>`;
         } else {
             clientQuotationControlHtml = `
@@ -147,6 +178,9 @@ export function renderTabVattuDuan(projectId, role) {
                 </div>`;
         }
     }
+
+    const isSendQuoDisabled = project.currentStep !== 2;
+    const isCreateContractDisabled = project.currentStep < 4;
 
     const controlsHtml = isClient
         ? ''
@@ -157,14 +191,15 @@ export function renderTabVattuDuan(projectId, role) {
             <button onclick="openSideDrawerChonVattu('${projectId}')" class="btn-primary text-xs px-4 py-2.5 flex items-center gap-2">
                 <i class="fas fa-plus"></i> Chọn vật tư từ kho
             </button>
-            <button onclick="alert('Đã gửi báo giá cho khách hàng.')" class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
-                <i class="fas fa-paper-plane"></i> Gửi báo giá
+            <button onclick="window.handleSendQuotation('${projectId}')" 
+                    ${isSendQuoDisabled ? 'disabled' : ''} 
+                    class="${isSendQuoDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
+                <i class="fas fa-paper-plane"></i> Gửi báo giá ${project.currentStep > 2 ? '(Đã gửi)' : ''}
             </button>
-            <button onclick="alert('Đang khởi tạo hợp đồng.')" class="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
+            <button onclick="window.handleCreateContract('${projectId}')" 
+                    ${isCreateContractDisabled ? 'disabled' : ''} 
+                    class="${isCreateContractDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-purple-600 hover:bg-purple-700 text-white shadow-md'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
                 <i class="fas fa-file-contract"></i> Lập hợp đồng
-            </button>
-            <button onclick="alert('Đã tạo đơn đặt hàng.')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
-                <i class="fas fa-truck-loading"></i> Xác nhận đơn
             </button>
         </div>`;
 
@@ -485,4 +520,111 @@ window.handleDeleteProjectItem = async function (projectId, projectItemId) {
     } catch (err) {
         alert('❌ Lỗi kết nối: ' + err.message);
     }
+};
+
+window.handleSendQuotation = async function (projectId) {
+    if (!confirm('Xác nhận gửi báo giá này cho Khách hàng? Dự án sẽ tự động chuyển sang Bước 3 (Xác nhận thỏa thuận).')) return;
+    
+    const sendBtn = document.querySelector('button[onclick^="window.handleSendQuotation"]');
+    const originalHtml = sendBtn ? sendBtn.innerHTML : '';
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/send-quotation`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('✅ Đã gửi báo giá thành công tới khách hàng!');
+            const role = localStorage.getItem('authRole');
+            const { openProjectDetail } = await import('./chitietduan.js');
+            await openProjectDetail(projectId, role, 'vattuduan');
+        } else {
+            alert('❌ Gửi báo giá thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+        }
+    } catch (err) {
+        alert('❌ Lỗi kết nối: ' + err.message);
+    } finally {
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = originalHtml;
+        }
+    }
+};
+
+window.handleCreateContract = async function (projectId) {
+    if (!confirm('Bạn có chắc chắn muốn lập Hợp đồng kinh tế song ngữ cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
+
+    const contractBtn = document.querySelector('button[onclick^="window.handleCreateContract"]');
+    const originalHtml = contractBtn ? contractBtn.innerHTML : '';
+    if (contractBtn) {
+        contractBtn.disabled = true;
+        contractBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang khởi tạo...';
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/contract`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('✅ Đã khởi tạo Hợp đồng kinh tế song ngữ thành công! Khách hàng hiện tại có thể xem và tải xuống trong Portal của họ.');
+            const role = localStorage.getItem('authRole');
+            const { openProjectDetail } = await import('./chitietduan.js');
+            await openProjectDetail(projectId, role, 'vattuduan');
+        } else {
+            alert('❌ Lập hợp đồng thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+        }
+    } catch (err) {
+        alert('❌ Lỗi kết nối: ' + err.message);
+    } finally {
+        if (contractBtn) {
+            contractBtn.disabled = false;
+            contractBtn.innerHTML = originalHtml;
+        }
+    }
+};
+
+window.handleViewContract = function (projectId, filePath) {
+    const modal = document.createElement('div');
+    modal.className = "fixed inset-0 bg-black/60 flex items-center justify-center z-[200] p-4 backdrop-blur-sm";
+    modal.id = "contractPreviewModal";
+    modal.innerHTML = `
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-5xl h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-scaleUp">
+        <div class="px-8 py-4 bg-gradient-to-r from-purple-700 to-indigo-700 text-white flex justify-between items-center relative z-10 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-file-contract text-xl"></i>
+                <h3 class="text-base font-extrabold">Hợp đồng mua bán song ngữ - HD-${projectId}</h3>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="window.printContract()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition">
+                    <i class="fas fa-print"></i> In / Xuất PDF
+                </button>
+                <button onclick="document.getElementById('contractPreviewModal').remove()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-2 bg-gray-100 flex justify-center custom-scrollbar">
+            <iframe id="contractIframe" src="http://localhost:3000/${filePath}" style="width: 100%; height: 100%; border: none; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></iframe>
+        </div>
+    </div>`;
+
+    window.printContract = function() {
+        const iframe = document.getElementById('contractIframe');
+        if (iframe) {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+        }
+    };
+
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
 };

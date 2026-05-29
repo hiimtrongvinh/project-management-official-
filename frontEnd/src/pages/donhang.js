@@ -6,7 +6,8 @@ function getStatusColor(status) {
         'Mới': 'bg-blue-100 text-blue-700',
         'Đã xác nhận': 'bg-purple-100 text-purple-700',
         'Đang giao': 'bg-orange-100 text-orange-700',
-        'Hoàn thành': 'bg-green-100 text-green-700'
+        'Hoàn thành': 'bg-green-100 text-green-700',
+        'Hủy': 'bg-red-100 text-red-700'
     };
     return colors[status] || 'bg-gray-100 text-gray-700';
 }
@@ -100,21 +101,23 @@ async function fetchOrders() {
         window.cachedOrders = rawOrders.map(o => {
             const dateObj = new Date(o.expected_date || o.created_at);
             const expectedDate = isNaN(dateObj.getTime()) ? '---' : dateObj.toLocaleDateString('vi-VN');
+            const items = (o.items || []).map(item => ({
+                name: item.material_name || item.name || 'Vật tư',
+                sku: item.material_sku || item.sku || 'SKU-NONE',
+                qty: item.quantity || 0,
+                price: parseFloat(item.material_price || item.price || 0)
+            }));
+            const calculatedTotal = items.reduce((sum, item) => sum + (item.qty * item.price), 0);
             return {
                 id: o.id,
                 dbId: o.id,
                 projectName: o.project_title || 'Dự án chưa rõ',
-                totalAmount: parseFloat(o.total_value || 0),
+                totalAmount: calculatedTotal,
                 expectedDate: expectedDate,
                 status: mapDBStatusToUI(o.status),
                 address: o.address || 'Kho tổng e-Teck, Hải Phòng',
                 receiver: o.receiver_name || 'Phòng Vật tư e-Teck',
-                items: (o.items || []).map(item => ({
-                    name: item.material_name || item.name || 'Vật tư',
-                    sku: item.material_sku || item.sku || 'SKU-NONE',
-                    qty: item.quantity || 0,
-                    price: parseFloat(item.material_price || item.price || 0)
-                }))
+                items: items
             };
         });
 
@@ -172,9 +175,16 @@ window.openOrderDetail = function (id) {
 
     let actionHeaderHtml = '';
     if (o.status === 'Mới') {
-        actionHeaderHtml = `<button onclick="updateOrderStatus('${o.id}', 'Đã xác nhận')" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-2xl font-bold text-base transition shadow-md flex items-center gap-2"><i class="fas fa-check-circle"></i> Xác nhận đơn</button>`;
+        actionHeaderHtml = `
+            <button onclick="updateOrderStatus('${o.id}', 'Đã xác nhận')" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-2xl font-bold text-base transition shadow-md flex items-center gap-2">
+                <i class="fas fa-check-circle"></i> Xác nhận đơn
+            </button>
+            <button onclick="updateOrderStatus('${o.id}', 'Hủy')" class="bg-red-500 text-white hover:bg-red-600 px-6 py-2.5 rounded-2xl font-bold text-base transition shadow-md flex items-center gap-2">
+                <i class="fas fa-times-circle"></i> Từ chối đơn
+            </button>
+        `;
     } else if (o.status === 'Đã xác nhận') {
-        actionHeaderHtml = `<button onclick="updateOrderStatus('${o.id}', 'Đang giao')" class="bg-orange-500 text-white hover:bg-orange-600 px-6 py-2.5 rounded-2xl font-bold text-base transition shadow-md flex items-center gap-2"><i class="fas fa-truck"></i> Giao hàng</button>`;
+        actionHeaderHtml = `<button onclick="updateOrderStatus('${o.id}', 'Đang giao')" class="bg-orange-50 text-white hover:bg-orange-600 px-6 py-2.5 rounded-2xl font-bold text-base transition shadow-md flex items-center gap-2"><i class="fas fa-truck"></i> Giao hàng</button>`;
     } else if (o.status === 'Đang giao') {
         actionHeaderHtml = `<button onclick="updateOrderStatus('${o.id}', 'Hoàn thành')" class="bg-green-600 text-white hover:bg-green-700 px-6 py-2.5 rounded-2xl font-bold text-base transition shadow-md flex items-center gap-2"><i class="fas fa-check-double"></i> Hoàn thành</button>`;
     }

@@ -366,6 +366,46 @@ const ProjectController = {
       }
       next(error);
     }
+  },
+
+  async sendQuotation(req, res, next) {
+    try {
+      const projectId = req.params.id;
+      const project = await ProjectService.sendQuotation(projectId, req.user.id);
+      res.json({
+        success: true,
+        data: project,
+        message: 'Báo giá đã được gửi thành công đến Khách hàng!'
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
+  },
+
+  async createContract(req, res, next) {
+    try {
+      const projectId = req.params.id;
+      const result = await ProjectService.createContract(projectId, req.user.id);
+      res.json({
+        success: true,
+        data: result,
+        message: 'Hợp đồng kinh tế đã được lập thành công!'
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
   }
 };
 

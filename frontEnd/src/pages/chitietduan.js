@@ -111,8 +111,9 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
                 clientId: projData.client_id || null,
                 budget: projData.budget ? `${projData.budget.toLocaleString()}đ` : 'Chưa có',
                 members: projData.members ? projData.members.map(m => ({ id: m.staff_id || m.id, name: m.staff_name || m.name, role: m.role || 'Thành viên', avatar: m.avatar || null })) : [],
-                documents: []
+                documents: projData.documents ? projData.documents.map(d => d.file_name) : []
             },
+            documentsList: projData.documents || [],
             assignments: assignments, materials: projectMaterials,
             taskInfo: `${approvedTasksCount}/${totalTasksCount}`,
             clientQuotations: clientQuotations,

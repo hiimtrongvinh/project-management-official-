@@ -159,7 +159,7 @@ export function renderHoso(projectId, isEditMode = false) {
     </div>`;
 }
 
-function createSmallMember(projectId, staffId, name, role, avatar, isClient, isEditMode) {
+function createSmallMember(projectId, staffId, name = '', role, avatar, isClient, isEditMode) {
     const authRole = localStorage.getItem('authRole');
     const deleteBtn = (authRole === 'admin' && staffId) ? `
         <div onclick="event.stopPropagation(); window.handleDeleteMember('${projectId}', '${staffId}')" 
@@ -168,11 +168,12 @@ function createSmallMember(projectId, staffId, name, role, avatar, isClient, isE
         </div>` : '';
 
     const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-purple-500', 'bg-amber-500', 'bg-pink-500'];
-    const colorClass = colors[name.charCodeAt(0) % colors.length];
+    const displayName = name || 'Thành viên';
+    const colorClass = colors[displayName.charCodeAt(0) % colors.length];
 
     const avatarContent = avatar
-        ? `<img src="http://localhost:3000${avatar}" alt="${name}" class="w-full h-full object-cover">`
-        : `<span class="text-lg font-bold text-white">${name.charAt(0).toUpperCase()}</span>`;
+        ? `<img src="http://localhost:3000${avatar}" alt="${displayName}" class="w-full h-full object-cover">`
+        : `<span class="text-lg font-bold text-white">${displayName.charAt(0).toUpperCase()}</span>`;
     
     const avatarClass = avatar
         ? `w-14 h-14 rounded-2xl overflow-hidden relative shadow-sm`

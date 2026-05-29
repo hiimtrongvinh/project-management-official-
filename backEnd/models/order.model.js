@@ -106,11 +106,21 @@ const OrderModel = {
   async create(data) {
     const { id, project_id, supplier_id, order_date, expected_date, receiver_id, address, status = 'Mới', total_value, note, items = [] } = data;
     
+    // Calculate total value based on actual material prices in database
+    let calculatedTotalValue = 0;
+    for (let item of items) {
+      const materialRows = await query('SELECT price FROM materials WHERE id = ?', [item.material_id]);
+      if (materialRows.length > 0) {
+        calculatedTotalValue += parseFloat(materialRows[0].price || 0) * parseInt(item.quantity || 1);
+      }
+    }
+    const finalTotalValue = calculatedTotalValue > 0 ? calculatedTotalValue : (total_value || 0);
+
     // Insert order
     await query(
       `INSERT INTO orders (id, project_id, supplier_id, order_date, expected_date, receiver_id, address, status, total_value, note) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, project_id, supplier_id, order_date || null, expected_date || null, receiver_id || null, address, status, total_value || null, note || null]
+      [id, project_id, supplier_id, order_date || null, expected_date || null, receiver_id || null, address, status, finalTotalValue, note || null]
     );
 
     // Insert or update project items
