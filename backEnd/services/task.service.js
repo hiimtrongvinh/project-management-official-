@@ -119,9 +119,9 @@ const TaskService = {
       const { query } = require('../config/database');
 
       let project = await ProjectModel.findById(task.project_id);
-      if (project && project.current_step < 6) {
+      if (project && project.current_step < 5) {
         let step = project.current_step;
-        while (step < 6) {
+        while (step < 5) {
           const stepTasks = await query(
             'SELECT id, status FROM tasks WHERE project_id = ? AND step = ?',
             [task.project_id, step]

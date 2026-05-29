@@ -39,8 +39,8 @@ const ReportService = {
     const projectStats = await query(`
       SELECT 
         COUNT(*) as totalProjects,
-        SUM(CASE WHEN p.current_step = 5 THEN 1 ELSE 0 END) as completedProjects,
-        SUM(CASE WHEN p.current_step < 5 THEN 1 ELSE 0 END) as activeProjects
+        SUM(CASE WHEN p.current_step = 6 THEN 1 ELSE 0 END) as completedProjects,
+        SUM(CASE WHEN p.current_step < 6 THEN 1 ELSE 0 END) as activeProjects
       FROM projects p${projectFilter}
     `, params);
 

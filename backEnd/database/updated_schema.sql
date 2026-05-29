@@ -400,12 +400,12 @@ INSERT INTO suppliers (id, account_id, id_number, name, phone, address) VALUES
 -- ------------------------------------------------------------
 
 INSERT INTO projects (id, title, description, category, start_date, deadline, client_id, current_step, budget, created_by) VALUES
-('PRJ01', 'Lắp đặt hạ tầng mạng - Regina Miracle Factory', 'Cung cấp & lắp đặt Palo Alto Firewall, Cisco L3/L2 Switches, phụ kiện cho Nhà máy D. Đảm bảo kết nối ổn định cho dây chuyền sản xuất mới.', 'Hạ tầng mạng', '2026-05-05', '2026-05-20', 'KH001', 4, 45000000, 1),
-('PRJ02', 'Nâng cấp Camera giám sát - Samsung Electronics', 'Nâng cấp toàn bộ hệ thống camera giám sát từ analog sang IP Camera AI cho khu vực sản xuất.', 'An ninh giám sát', '2026-03-01', '2026-04-30', 'KH005', 5, 90000000, 1),
+('PRJ01', 'Lắp đặt hạ tầng mạng - Regina Miracle Factory', 'Cung cấp & lắp đặt Palo Alto Firewall, Cisco L3/L2 Switches, phụ kiện cho Nhà máy D. Đảm bảo kết nối ổn định cho dây chuyền sản xuất mới.', 'Hạ tầng mạng', '2026-05-05', '2026-05-20', 'KH001', 3, 45000000, 1),
+('PRJ02', 'Nâng cấp Camera giám sát - Samsung Electronics', 'Nâng cấp toàn bộ hệ thống camera giám sát từ analog sang IP Camera AI cho khu vực sản xuất.', 'An ninh giám sát', '2026-03-01', '2026-04-30', 'KH005', 4, 90000000, 1),
 ('PRJ03', 'Triển khai Wifi diện rộng - Deep C Industrial Zone', 'Triển khai hệ thống Wifi mesh phủ sóng toàn bộ khu công nghiệp DEEP C giai đoạn 2.', 'Hạ tầng mạng', '2026-04-01', '2026-06-15', 'KH006', 1, 50000000, 1),
 ('PRJ04', 'Hệ thống ELV & Camera - LG Display Hải Phòng', 'Lắp đặt hệ thống ELV (Extra Low Voltage) và camera chống cháy nổ cho khu vực bồn chứa hóa chất.', 'An ninh giám sát', '2026-03-15', '2026-05-10', 'KH004', 2, 18900000, 1),
-('PRJ05', 'Bảo trì định kỳ Server - Haengsung Electronics', 'Bảo trì định kỳ hệ thống Server, NAS Synology và cập nhật Microsoft License cho năm 2026.', 'Bảo trì hệ thống', '2026-02-01', '2026-05-05', 'KH003', 3, 8500000, 1),
-('PRJ06', 'Hệ thống tổng đài IP - Menkar Co., Ltd', 'Triển khai hệ thống tổng đài IP nội bộ cho văn phòng công ty Menkar.', 'Viễn thông', '2026-01-10', '2026-04-15', 'KH002', 6, 25000000, 1);
+('PRJ05', 'Bảo trì định kỳ Server - Haengsung Electronics', 'Bảo trì định kỳ hệ thống Server, NAS Synology và cập nhật Microsoft License cho năm 2026.', 'Bảo trì hệ thống', '2026-02-01', '2026-05-05', 'KH003', 2, 8500000, 1),
+('PRJ06', 'Hệ thống tổng đài IP - Menkar Co., Ltd', 'Triển khai hệ thống tổng đài IP nội bộ cho văn phòng công ty Menkar.', 'Viễn thông', '2026-01-10', '2026-04-15', 'KH002', 5, 25000000, 1);
 
 -- ------------------------------------------------------------
 -- Seed: project_members
@@ -448,10 +448,10 @@ INSERT INTO tasks (id, project_id, step, title, description, deadline, status, p
 (2, 'PRJ01', 1, 'Lập bản dự toán khối lượng (BOQ)', 'Lập bảng dự toán khối lượng vật tư và thiết bị cần thiết cho dự án.', '2026-04-12', 'Đã duyệt', 'Cao', 'NV005'),
 -- PRJ01 tasks (Step 2)
 (3, 'PRJ01', 2, 'Liên hệ nhà cung cấp vật tư, thiết bị', 'Liên hệ các NCC để lấy báo giá thiết bị Cisco, Palo Alto và phụ kiện.', '2026-04-15', 'Đã nộp', 'Trung bình', 'NV005'),
--- PRJ01 tasks (Step 4 - current step)
-(4, 'PRJ01', 4, 'Cấu hình chia VLAN cho Switch L3 và Firewall', 'Cấu hình chia VLAN cho hệ thống Switch L3 và Firewall Palo Alto', '2026-03-26', 'Chưa nộp', 'Cao', 'NV006'),
-(5, 'PRJ01', 4, 'Kéo cáp mạng tầng 2 và tầng 3', 'Kéo cáp Cat6 UTP từ tủ Rack chính đến các điểm mạng tầng 2 và 3.', '2026-04-20', 'Đã duyệt', 'Trung bình', 'NV007'),
-(6, 'PRJ01', 4, 'Lắp đặt tủ Rack và Patch Panel', 'Lắp đặt tủ Rack 42U và Patch Panel 24 port tại phòng Server.', '2026-04-18', 'Đã duyệt', 'Trung bình', 'NV009'),
+-- PRJ01 tasks (Step 3 - current step)
+(4, 'PRJ01', 3, 'Cấu hình chia VLAN cho Switch L3 và Firewall', 'Cấu hình chia VLAN cho hệ thống Switch L3 và Firewall Palo Alto', '2026-03-26', 'Chưa nộp', 'Cao', 'NV006'),
+(5, 'PRJ01', 3, 'Kéo cáp mạng tầng 2 và tầng 3', 'Kéo cáp Cat6 UTP từ tủ Rack chính đến các điểm mạng tầng 2 và 3.', '2026-04-20', 'Đã duyệt', 'Trung bình', 'NV007'),
+(6, 'PRJ01', 3, 'Lắp đặt tủ Rack và Patch Panel', 'Lắp đặt tủ Rack 42U và Patch Panel 24 port tại phòng Server.', '2026-04-18', 'Đã duyệt', 'Trung bình', 'NV009'),
 -- PRJ03 tasks
 (7, 'PRJ03', 1, 'Khảo sát vùng phủ sóng KCN DEEP C', 'Khảo sát và đo đạc vùng phủ sóng hiện tại, xác định điểm chết.', '2026-04-15', 'Đã duyệt', 'Cao', 'NV007'),
 (8, 'PRJ03', 1, 'Báo cáo tiến độ kéo cáp quang trục chính', 'Báo cáo tiến độ kéo cáp quang trục chính và lắp đặt tủ ODF', '2026-03-22', 'Đã nộp', 'Trung bình', 'NV006'),
@@ -461,15 +461,15 @@ INSERT INTO tasks (id, project_id, step, title, description, deadline, status, p
 -- PRJ05 tasks
 (11, 'PRJ05', 1, 'Kiểm tra tình trạng Server hiện tại', 'Kiểm tra tình trạng phần cứng và phần mềm Server hiện tại.', '2026-02-15', 'Đã duyệt', 'Trung bình', 'NV006'),
 (12, 'PRJ05', 2, 'Cập nhật Microsoft License', 'Cập nhật Microsoft License và kiểm tra định kỳ hệ thống NAS Synology', '2026-03-01', 'Đã duyệt', 'Cao', 'NV006'),
-(13, 'PRJ05', 3, 'Lập hợp đồng bảo trì năm 2026', 'Soạn thảo hợp đồng bảo trì định kỳ cho năm 2026 với Haengsung.', '2026-03-15', 'Đã nộp', 'Trung bình', 'NV005'),
+(13, 'PRJ05', 2, 'Lập hợp đồng bảo trì năm 2026', 'Soạn thảo hợp đồng bảo trì định kỳ cho năm 2026 với Haengsung.', '2026-03-15', 'Đã nộp', 'Trung bình', 'NV005'),
 -- PRJ06 tasks (all approved - project completed)
 (14, 'PRJ06', 1, 'Khảo sát hạ tầng viễn thông Menkar', 'Khảo sát hạ tầng viễn thông hiện tại và nhu cầu tổng đài IP.', '2026-01-20', 'Đã duyệt', 'Cao', 'NV007'),
 (15, 'PRJ06', 2, 'Lập báo giá thiết bị tổng đài IP', 'Lập báo giá thiết bị tổng đài IP Grandstream cho Menkar.', '2026-01-30', 'Đã duyệt', 'Trung bình', 'NV005'),
-(16, 'PRJ06', 3, 'Ký hợp đồng triển khai', 'Hoàn tất ký kết hợp đồng triển khai tổng đài IP.', '2026-02-10', 'Đã duyệt', 'Cao', 'NV005'),
-(17, 'PRJ06', 4, 'Lắp đặt tổng đài IP và cấu hình', 'Lắp đặt thiết bị tổng đài IP và cấu hình extension cho các phòng ban.', '2026-03-01', 'Đã duyệt', 'Cao', 'NV007'),
-(18, 'PRJ06', 5, 'Nghiệm thu và bàn giao hệ thống', 'Nghiệm thu hệ thống tổng đài IP và bàn giao cho khách hàng.', '2026-03-15', 'Đã duyệt', 'Cao', 'NV002'),
-(19, 'PRJ06', 6, 'Thanh toán và đóng dự án', 'Hoàn tất thanh toán và đóng dự án.', '2026-04-01', 'Đã duyệt', 'Trung bình', 'NV005'),
-(20, 'PRJ06', 6, 'Lập hồ sơ bảo hành', 'Lập hồ sơ bảo hành và hướng dẫn sử dụng cho khách hàng.', '2026-04-05', 'Đã duyệt', 'Thấp', 'NV007');
+(16, 'PRJ06', 2, 'Ký hợp đồng triển khai', 'Hoàn tất ký kết hợp đồng triển khai tổng đài IP.', '2026-02-10', 'Đã duyệt', 'Cao', 'NV005'),
+(17, 'PRJ06', 3, 'Lắp đặt tổng đài IP và cấu hình', 'Lắp đặt thiết bị tổng đài IP và cấu hình extension cho các phòng ban.', '2026-03-01', 'Đã duyệt', 'Cao', 'NV007'),
+(18, 'PRJ06', 4, 'Nghiệm thu và bàn giao hệ thống', 'Nghiệm thu hệ thống tổng đài IP và bàn giao cho khách hàng.', '2026-03-15', 'Đã duyệt', 'Cao', 'NV002'),
+(19, 'PRJ06', 5, 'Thanh toán và đóng dự án', 'Hoàn tất thanh toán và đóng dự án.', '2026-04-01', 'Đã duyệt', 'Trung bình', 'NV005'),
+(20, 'PRJ06', 5, 'Lập hồ sơ bảo hành', 'Lập hồ sơ bảo hành và hướng dẫn sử dụng cho khách hàng.', '2026-04-05', 'Đã duyệt', 'Thấp', 'NV007');
 
 -- ------------------------------------------------------------
 -- Seed: project_documents

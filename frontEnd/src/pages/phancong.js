@@ -27,8 +27,7 @@ export function renderPhancong(projectId) {
 
     const standardSteps = [
         { name: "Khảo sát và lập kế hoạch", icon: "fa-clipboard-list", color: "indigo" },
-        { name: "Mua thiết bị và lập báo giá", icon: "fa-shopping-cart", color: "amber" },
-        { name: "Xác nhận thỏa thuận", icon: "fa-handshake", color: "cyan" },
+        { name: "Lập báo giá và xác nhận hợp đồng", icon: "fa-file-invoice-dollar", color: "amber" },
         { name: "Triển khai lắp đặt", icon: "fa-tools", color: "blue" },
         { name: "Bàn giao và nghiệm thu", icon: "fa-clipboard-check", color: "purple" },
         { name: "Thanh toán", icon: "fa-money-bill-wave", color: "emerald" }
@@ -62,14 +61,14 @@ export function renderPhancong(projectId) {
         return `
         <div class="relative animate-fadeInUp" style="animation-delay: ${index * 0.08}s; animation-fill-mode: both;">
             <!-- Timeline connector -->
-            ${stepNum < 6 ? `<div class="absolute left-[19px] top-[48px] bottom-0 w-0.5 ${stepNum < currentStep ? 'bg-emerald-200' : 'bg-gray-200'}"></div>` : ''}
+            ${stepNum < 5 ? `<div class="absolute left-[19px] top-[48px] bottom-0 w-0.5 ${stepNum < currentStep ? 'bg-emerald-200' : 'bg-gray-200'}"></div>` : ''}
             
             <!-- Step Header -->
             <div class="flex items-center gap-3 mb-3 ${headerBg} rounded-xl p-3 border border-transparent hover:border-gray-200 transition-all group">
                 <div class="relative z-10 w-10 h-10 rounded-xl ${dotClass} border-2 flex items-center justify-center shadow-sm flex-shrink-0 transition-all">
-                    ${stepStatus === 'completed' 
-                        ? '<i class="fas fa-check text-white text-sm"></i>' 
-                        : `<i class="fas ${step.icon} ${stepStatus === 'active' ? 'text-white' : iconColor} text-sm"></i>`}
+                    ${stepStatus === 'completed'
+                ? '<i class="fas fa-check text-white text-sm"></i>'
+                : `<i class="fas ${step.icon} ${stepStatus === 'active' ? 'text-white' : iconColor} text-sm"></i>`}
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-800 text-sm">Bước ${stepNum}: ${step.name}</h3>
@@ -84,9 +83,9 @@ export function renderPhancong(projectId) {
             <!-- Tasks Container (Drag & Drop) -->
             <div class="ml-[19px] pl-6 border-l-2 ${stepNum < currentStep ? 'border-emerald-100' : stepNum === currentStep ? 'border-blue-100' : 'border-gray-100'} pb-4">
                 <div class="space-y-2 task-sortable-list" data-step="${stepNum}" data-project="${projectId}">
-                    ${hasTasks ? validTasks.map(task => createTaskCard(task.id, task.title, task.assignee, task.deadline, task.file, task.status, projectId)).join('') 
-                    : `<div class="py-3 px-4 text-center text-gray-300 text-xs font-medium border border-dashed border-gray-200 rounded-xl">
-                        <i class="fas fa-inbox mr-1"></i> Kéo thả công việc vào đây hoặc bấm + để thêm
+                    ${hasTasks ? validTasks.map(task => createTaskCard(task.id, task.title, task.assignee, task.deadline, task.file, task.status, projectId)).join('')
+                : `<div class="py-3 px-4 text-center text-gray-300 text-xs font-medium border border-dashed border-gray-200 rounded-xl">
+                        <i class="fas fa-inbox mr-1"></i> Chưa có công việc cho bước này
                     </div>`}
                 </div>
             </div>
@@ -107,7 +106,7 @@ export function renderPhancong(projectId) {
                         <p class="text-xs text-emerald-600 font-medium">Tất cả các giai đoạn đã được kết thúc tốt đẹp.</p>
                     </div>
                 </div>`;
-        } else if (currentStep === 6) {
+        } else if (currentStep === 5) {
             advanceStepControlHtml = `
                 <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-4 shadow-sm animate-fadeIn">
                     <div class="w-12 h-12 gradient-blue rounded-xl flex items-center justify-center text-white shadow-md">
@@ -125,7 +124,7 @@ export function renderPhancong(projectId) {
                         <i class="fas fa-tasks text-lg"></i>
                     </div>
                     <div>
-                        <p class="font-extrabold text-blue-800">Đang ở Bước ${currentStep}: ${standardSteps[currentStep-1]?.name || ''}</p>
+                        <p class="font-extrabold text-blue-800">Đang ở Bước ${currentStep}: ${standardSteps[currentStep - 1]?.name || ''}</p>
                         <p class="text-xs text-blue-600 font-medium">Duyệt hết công việc ở bước hiện tại → hệ thống tự động chuyển sang bước tiếp theo.</p>
                     </div>
                 </div>`;
@@ -133,13 +132,13 @@ export function renderPhancong(projectId) {
     }
 
     // Progress indicator
-    const progressPercent = Math.round(((currentStep - 1) / 6) * 100);
+    const progressPercent = Math.round(((currentStep - 1) / 5) * 100);
     const progressHtml = `
     <div class="flex items-center gap-3 mb-4">
         <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
             <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-700 progress-bar" style="width: ${progressPercent}%"></div>
         </div>
-        <span class="text-xs font-bold text-gray-500">${currentStep}/6</span>
+        <span class="text-xs font-bold text-gray-500">${currentStep}/5</span>
     </div>`;
 
     return `
@@ -242,7 +241,7 @@ setTimeout(() => {
                 handle: '.drag-handle',
                 easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
                 disabled: isDragDisabled,
-                onEnd: function(evt) {
+                onEnd: function (evt) {
                     // Could implement task reordering API call here
                     console.log('Task moved:', evt.item.dataset.taskId, 'to step:', evt.to.dataset.step);
                 }
@@ -487,20 +486,20 @@ window.showReworkTaskModal = function (projectId, taskId) {
         const body = { status: 'Cần sửa', feedback: fd.get('feedback') };
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/tasks/${taskId}/review`, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, 
-                body: JSON.stringify(body) 
+            const res = await fetch(`http://localhost:3000/api/tasks/${taskId}/review`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(body)
             });
             const result = await res.json();
-            if (result.success) { 
-                modal.remove(); 
-                refreshProjectDetail(projectId); 
-            } else { 
-                alert('❌ Lỗi: ' + (result.error?.message || 'Không thể gửi yêu cầu')); 
+            if (result.success) {
+                modal.remove();
+                refreshProjectDetail(projectId);
+            } else {
+                alert('❌ Lỗi: ' + (result.error?.message || 'Không thể gửi yêu cầu'));
             }
-        } catch (err) { 
-            alert('❌ Lỗi kết nối: ' + err.message); 
+        } catch (err) {
+            alert('❌ Lỗi kết nối: ' + err.message);
         }
     };
 };
@@ -681,7 +680,7 @@ window.saveInlineTask = async function (projectId, stepNum, btn) {
     try {
         const token = localStorage.getItem('token');
         const body = { project_id: projectId, step: stepNum, title, description, assignee_id, deadline };
-        
+
         const res = await fetch('http://localhost:3000/api/tasks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

@@ -46,10 +46,13 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
 
             orders.forEach(o => {
                 const supplierName = o.supplier_name || o.supplier_id || 'Nhà cung cấp';
-                const statusLabel = o.status === 'Hoàn thành' ? 'Đã giao hàng' : 
+                const statusLabel = o.status === 'Hoàn thành' ? 'Hoàn thành' : 
+                                    o.status === 'Đang giao' ? 'Đang giao' :
+                                    o.status === 'Đã xác nhận' ? 'Đã xác nhận' :
                                     o.status === 'Đang xử lý' ? 'Chờ chốt đơn' : 
-                                    o.status === 'Chưa đặt hàng' ? 'Chưa đặt hàng' : 
-                                    o.status === 'Mới' ? 'Mới' : 'Yêu cầu báo giá';
+                                    o.status === 'Mới' ? 'Mới' : 
+                                    o.status === 'Hủy' ? 'Đã hủy' : 
+                                    o.status === 'Chưa đặt hàng' ? 'Chưa đặt hàng' : 'Yêu cầu báo giá';
                 if (o.items && o.items.length > 0) {
                     o.items.forEach(item => {
                         const priceBuy = parseFloat(item.material_price || 0);
@@ -72,13 +75,13 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
             console.error('Lỗi tải đơn hàng/vật tư:', e);
         }
 
-        if (projData.current_step === 3) {
+        if (projData.current_step === 2) {
             clientQuotations.push({
                 id: `BG-${projectId}`,
                 status: 'pending',
                 project_title: projData.title
             });
-        } else if (projData.current_step >= 4) {
+        } else if (projData.current_step >= 3) {
             clientQuotations.push({
                 id: `BG-${projectId}`,
                 status: 'approved',
@@ -86,7 +89,7 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
             });
         }
 
-        const assignments = [1, 2, 3, 4, 5, 6].map(stepNum => {
+        const assignments = [1, 2, 3, 4, 5].map(stepNum => {
             const stepTasks = tasks.filter(t => t.step === stepNum).map(t => ({
                 id: t.id, title: t.title || t.description || 'Không có tiêu đề',
                 assignee: t.assignee_name || 'Chưa phân công',
@@ -135,8 +138,7 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
 
     const standardSteps = [
         "Khảo sát và lập kế hoạch",
-        "Mua thiết bị và lập báo giá",
-        "Xác nhận thỏa thuận",
+        "Lập báo giá và xác nhận hợp đồng",
         "Triển khai lắp đặt",
         "Bàn giao và nghiệm thu",
         "Thanh toán"

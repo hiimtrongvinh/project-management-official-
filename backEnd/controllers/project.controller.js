@@ -329,15 +329,15 @@ const ProjectController = {
       const project = await ProjectService.getProjectById(projectId, req.user.id, req.user.role);
       
       if (status === 'approved') {
-        // Advance step to 4 (Triển khai lắp đặt)
-        await ProjectService.updateProject(projectId, { current_step: 4 });
+        // Advance step to 3 (Triển khai lắp đặt)
+        await ProjectService.updateProject(projectId, { current_step: 3 });
         
         // Notify admins
         const adminIds = await getAdminAccountIds();
         await notify(adminIds, {
           type: 'quotation_approved',
           title: 'Báo giá đã được khách hàng phê duyệt',
-          message: `Khách hàng đã phê duyệt báo giá cho dự án "${project.title}". Dự án tự động chuyển sang Bước 4 (Triển khai lắp đặt).`,
+          message: `Khách hàng đã phê duyệt báo giá cho dự án "${project.title}". Dự án tự động chuyển sang Bước 3 (Triển khai lắp đặt).`,
           related_type: 'project',
           related_id: projectId
         });

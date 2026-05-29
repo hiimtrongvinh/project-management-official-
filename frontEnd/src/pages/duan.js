@@ -1,8 +1,7 @@
 const allStatuses = [
     "Chờ phê duyệt",
     "Khảo sát và lập kế hoạch",
-    "Mua thiết bị và lập báo giá",
-    "Xác nhận thỏa thuận",
+    "Lập báo giá và xác nhận hợp đồng",
     "Triển khai lắp đặt",
     "Bàn giao và nghiệm thu",
     "Thanh toán",
@@ -12,8 +11,7 @@ const allStatuses = [
 const statusColors = {
     "Chờ phê duyệt": { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-200", dot: "bg-rose-500" },
     "Khảo sát và lập kế hoạch": { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200", dot: "bg-indigo-500" },
-    "Mua thiết bị và lập báo giá": { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", dot: "bg-amber-500" },
-    "Xác nhận thỏa thuận": { bg: "bg-cyan-50", text: "text-cyan-700", border: "border-cyan-200", dot: "bg-cyan-500" },
+    "Lập báo giá và xác nhận hợp đồng": { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", dot: "bg-amber-500" },
     "Triển khai lắp đặt": { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", dot: "bg-blue-500" },
     "Bàn giao và nghiệm thu": { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200", dot: "bg-purple-500" },
     "Thanh toán": { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", dot: "bg-orange-500" },
@@ -379,19 +377,19 @@ window.submitNewProject = async function (e) {
         });
         const result = await res.json();
         if (result.success) {
-            alert('✅ Dự án đã được tạo thành công!');
+            window.showToast('✅ Dự án đã được tạo thành công!');
             document.getElementById('addProjectModal').remove();
             fetchProjectsFromServer();
         } else {
-            alert('❌ Tạo dự án thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+            window.showToast('❌ Tạo dự án thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
         }
     } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message, 'error');
     }
 };
 
 window.requestProjectApproval = function () {
-    alert("⏳ Tính năng gửi yêu cầu phê duyệt dự án!");
+    window.showToast("⏳ Tính năng gửi yêu cầu phê duyệt dự án!", "info");
 };
 
 window.exportExcel = async function () {
@@ -402,9 +400,9 @@ window.exportExcel = async function () {
         });
         if (!res.ok) {
             if (res.status === 403) {
-                alert('❌ Bạn không có quyền xuất Excel báo cáo!');
+                window.showToast('❌ Bạn không có quyền xuất Excel báo cáo!', 'error');
             } else {
-                alert('❌ Lỗi xuất báo cáo tiến độ: ' + res.statusText);
+                window.showToast('❌ Lỗi xuất báo cáo tiến độ: ' + res.statusText, 'error');
             }
             return;
         }
@@ -418,6 +416,6 @@ window.exportExcel = async function () {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
     } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message, 'error');
     }
 };

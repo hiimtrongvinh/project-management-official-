@@ -105,7 +105,7 @@ async function checkDeadlines() {
     const upcomingProjects = await query(
       `SELECT id, title, deadline AS end_date FROM projects
        WHERE deadline IS NOT NULL
-         AND current_step != 7
+         AND current_step != 6
          AND deadline > NOW()
          AND deadline <= DATE_ADD(NOW(), INTERVAL 48 HOUR)`
     );

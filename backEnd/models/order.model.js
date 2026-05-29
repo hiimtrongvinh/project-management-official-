@@ -10,7 +10,14 @@ const OrderModel = {
    * @returns {Promise<Object|null>} Order with items or null
    */
   async findById(id) {
-    const rows = await query('SELECT * FROM orders WHERE id = ?', [id]);
+    const rows = await query(
+      `SELECT o.*, s.name as supplier_name, st.name as receiver_name
+       FROM orders o
+       LEFT JOIN suppliers s ON o.supplier_id = s.id
+       LEFT JOIN staffs st ON o.receiver_id = st.id
+       WHERE o.id = ?`,
+      [id]
+    );
     if (rows.length === 0) return null;
     
     const items = await query(
@@ -60,10 +67,11 @@ const OrderModel = {
    */
   async findByAccountId(accountId, role) {
     let sql = `
-      SELECT o.*, p.title as project_title, s.name as supplier_name
+      SELECT o.*, p.title as project_title, s.name as supplier_name, st.name as receiver_name
       FROM orders o
       LEFT JOIN projects p ON o.project_id = p.id
       LEFT JOIN suppliers s ON o.supplier_id = s.id
+      LEFT JOIN staffs st ON o.receiver_id = st.id
     `;
     const params = [];
 

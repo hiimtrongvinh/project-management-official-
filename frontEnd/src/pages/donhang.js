@@ -50,7 +50,7 @@ export function renderDonhang() {
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-800">Danh sách đơn hàng</h2>
                 <div class="flex gap-3">
-                    <button onclick="alert('In danh sách đơn hàng')" class="bg-white border border-gray-200 text-gray-600 px-6 py-3 rounded-2xl font-bold hover:bg-gray-50 transition flex items-center gap-2 shadow-sm">
+                    <button onclick="window.showToast('In danh sách đơn hàng')" class="bg-white border border-gray-200 text-gray-600 px-6 py-3 rounded-2xl font-bold hover:bg-gray-50 transition flex items-center gap-2 shadow-sm">
                         <i class="fas fa-print"></i> Xuất báo cáo
                     </button>
                 </div>
@@ -309,10 +309,10 @@ window.updateOrderStatus = async function (id, newStatus) {
                 openOrderDetail(id);
             }, 50);
         } else {
-            alert("❌ Cập nhật thất bại: " + (result.error?.message || 'Lỗi không xác định'));
+            window.showToast("❌ Cập nhật thất bại: " + (result.error?.message || 'Lỗi không xác định'), 'error');
         }
     } catch (err) {
-        alert("❌ Lỗi kết nối: " + err.message);
+        window.showToast("❌ Lỗi kết nối: " + err.message, 'error');
     }
 };
 

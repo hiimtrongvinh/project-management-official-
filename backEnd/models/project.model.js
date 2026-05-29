@@ -41,16 +41,15 @@ const ProjectModel = {
       SELECT p.*, p.deadline as end_date, c.name as client_name,
         CASE p.current_step
           WHEN 1 THEN 'Khảo sát và lập kế hoạch'
-          WHEN 2 THEN 'Mua thiết bị và lập báo giá'
-          WHEN 3 THEN 'Xác nhận thỏa thuận'
-          WHEN 4 THEN 'Triển khai lắp đặt'
-          WHEN 5 THEN 'Bàn giao và nghiệm thu'
-          WHEN 6 THEN 'Thanh toán'
-          WHEN 7 THEN 'Hoàn thành'
+          WHEN 2 THEN 'Lập báo giá và xác nhận hợp đồng'
+          WHEN 3 THEN 'Triển khai lắp đặt'
+          WHEN 4 THEN 'Bàn giao và nghiệm thu'
+          WHEN 5 THEN 'Thanh toán'
+          WHEN 6 THEN 'Hoàn thành'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
-        CASE WHEN p.current_step = 7 THEN p.updated_at ELSE NULL END as closed_at,
+        CASE WHEN p.current_step = 6 THEN p.updated_at ELSE NULL END as closed_at,
         (SELECT COUNT(*) FROM project_members pm WHERE pm.project_id = p.id) as member_count,
         (SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id) as total_tasks,
         (SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') as approved_tasks,
@@ -81,16 +80,15 @@ const ProjectModel = {
         c.phone as client_phone, c.address as client_address, c.id_number as client_tax_code, c.type as client_type,
         CASE p.current_step
           WHEN 1 THEN 'Khảo sát và lập kế hoạch'
-          WHEN 2 THEN 'Mua thiết bị và lập báo giá'
-          WHEN 3 THEN 'Xác nhận thỏa thuận'
-          WHEN 4 THEN 'Triển khai lắp đặt'
-          WHEN 5 THEN 'Bàn giao và nghiệm thu'
-          WHEN 6 THEN 'Thanh toán'
-          WHEN 7 THEN 'Hoàn thành'
+          WHEN 2 THEN 'Lập báo giá và xác nhận hợp đồng'
+          WHEN 3 THEN 'Triển khai lắp đặt'
+          WHEN 4 THEN 'Bàn giao và nghiệm thu'
+          WHEN 5 THEN 'Thanh toán'
+          WHEN 6 THEN 'Hoàn thành'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
-        CASE WHEN p.current_step = 7 THEN p.updated_at ELSE NULL END as closed_at,
+        CASE WHEN p.current_step = 6 THEN p.updated_at ELSE NULL END as closed_at,
         (SELECT COUNT(*) FROM project_members pm WHERE pm.project_id = p.id) as member_count,
         (SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id) as total_tasks,
         (SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') as approved_tasks
@@ -119,16 +117,15 @@ const ProjectModel = {
       SELECT p.*, p.deadline as end_date, c.name as client_name,
         CASE p.current_step
           WHEN 1 THEN 'Khảo sát và lập kế hoạch'
-          WHEN 2 THEN 'Mua thiết bị và lập báo giá'
-          WHEN 3 THEN 'Xác nhận thỏa thuận'
-          WHEN 4 THEN 'Triển khai lắp đặt'
-          WHEN 5 THEN 'Bàn giao và nghiệm thu'
-          WHEN 6 THEN 'Thanh toán'
-          WHEN 7 THEN 'Hoàn thành'
+          WHEN 2 THEN 'Lập báo giá và xác nhận hợp đồng'
+          WHEN 3 THEN 'Triển khai lắp đặt'
+          WHEN 4 THEN 'Bàn giao và nghiệm thu'
+          WHEN 5 THEN 'Thanh toán'
+          WHEN 6 THEN 'Hoàn thành'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
-        CASE WHEN p.current_step = 7 THEN p.updated_at ELSE NULL END as closed_at,
+        CASE WHEN p.current_step = 6 THEN p.updated_at ELSE NULL END as closed_at,
         (SELECT COUNT(*) FROM project_members pm WHERE pm.project_id = p.id) as member_count,
         (SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id) as total_tasks,
         (SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') as approved_tasks,
@@ -169,16 +166,15 @@ const ProjectModel = {
       SELECT p.*, p.deadline as end_date, c.name as client_name,
         CASE p.current_step
           WHEN 1 THEN 'Khảo sát và lập kế hoạch'
-          WHEN 2 THEN 'Mua thiết bị và lập báo giá'
-          WHEN 3 THEN 'Xác nhận thỏa thuận'
-          WHEN 4 THEN 'Triển khai lắp đặt'
-          WHEN 5 THEN 'Bàn giao và nghiệm thu'
-          WHEN 6 THEN 'Thanh toán'
-          WHEN 7 THEN 'Hoàn thành'
+          WHEN 2 THEN 'Lập báo giá và xác nhận hợp đồng'
+          WHEN 3 THEN 'Triển khai lắp đặt'
+          WHEN 4 THEN 'Bàn giao và nghiệm thu'
+          WHEN 5 THEN 'Thanh toán'
+          WHEN 6 THEN 'Hoàn thành'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
-        CASE WHEN p.current_step = 7 THEN p.updated_at ELSE NULL END as closed_at,
+        CASE WHEN p.current_step = 6 THEN p.updated_at ELSE NULL END as closed_at,
         (SELECT COUNT(*) FROM project_members pm2 WHERE pm2.project_id = p.id) as member_count,
         (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('staff_id', s.id, 'name', s.name, 'avatar', s.avatar)), ']')
          FROM project_members pm3 

@@ -1,3 +1,65 @@
+// Premium CSS Toast Notification Utility
+window.showToast = function (message, type = 'success') {
+    const msgStr = String(message);
+    
+    // Auto detect toast type based on text content & emojis
+    if (msgStr.includes('❌') || msgStr.toLowerCase().includes('lỗi') || msgStr.toLowerCase().includes('thất bại') || msgStr.toLowerCase().includes('không thể')) {
+        type = 'error';
+    } else if (msgStr.includes('⚠️') || msgStr.toLowerCase().includes('cảnh báo')) {
+        type = 'warning';
+    } else if (msgStr.includes('✅') || msgStr.toLowerCase().includes('thành công') || msgStr.toLowerCase().includes('đã thêm') || msgStr.toLowerCase().includes('đã lưu') || msgStr.toLowerCase().includes('đã đặt hàng')) {
+        type = 'success';
+    }
+
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'flex items-center gap-3 px-5 py-4 bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-xl max-w-sm pointer-events-auto transform translate-x-12 opacity-0 transition-all duration-300 ease-out';
+    
+    let iconClass = 'fas fa-check-circle text-emerald-500 text-lg';
+    if (type === 'error') {
+        iconClass = 'fas fa-times-circle text-red-500 text-lg';
+    } else if (type === 'warning') {
+        iconClass = 'fas fa-exclamation-triangle text-amber-500 text-lg';
+    } else if (type === 'info') {
+        iconClass = 'fas fa-info-circle text-blue-500 text-lg';
+    }
+
+    toast.innerHTML = `
+        <div class="flex-shrink-0">
+            <i class="${iconClass}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-gray-800 leading-tight">${msgStr}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-gray-300 hover:text-gray-500 transition-colors flex-shrink-0 pl-2">
+            <i class="fas fa-times text-xs"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.remove('translate-x-12', 'opacity-0');
+    }, 10);
+
+    setTimeout(() => {
+        toast.classList.add('translate-x-12', 'opacity-0');
+        setTimeout(() => {
+            toast.remove();
+            if (container.children.length === 0) {
+                container.remove();
+            }
+        }, 300);
+    }, 3500);
+};;
+
 const projectDetails = window.projectDetails || {};
 
 export function renderTabVattuDuan(projectId, role) {
@@ -13,9 +75,12 @@ export function renderTabVattuDuan(projectId, role) {
 
     const statusBadge = (status) => {
         if (status === 'Đã giao hàng' || status === 'Hoàn thành') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        if (status === 'Đang giao') return 'bg-orange-50 text-orange-700 border-orange-200';
+        if (status === 'Đã xác nhận') return 'bg-purple-50 text-purple-700 border-purple-200';
         if (status === 'Chờ chốt đơn' || status === 'Đang xử lý') return 'bg-amber-50 text-amber-700 border-amber-200';
         if (status === 'Chưa đặt hàng') return 'bg-gray-100 text-gray-700 border-gray-200';
         if (status === 'Mới') return 'bg-blue-50 text-blue-700 border-blue-200';
+        if (status === 'Đã hủy') return 'bg-red-50 text-red-700 border-red-200';
         return 'bg-gray-50 text-gray-600 border-gray-200';
     };
 
@@ -180,7 +245,7 @@ export function renderTabVattuDuan(projectId, role) {
     }
 
     const isSendQuoDisabled = project.currentStep !== 2;
-    const isCreateContractDisabled = project.currentStep < 4;
+    const isCreateContractDisabled = project.currentStep < 2;
 
     const controlsHtml = isClient
         ? ''
@@ -247,17 +312,17 @@ window.handleUpdateQuotationStatus = async function (projectId, quotationId, sta
         });
         const result = await res.json();
         if (result.success) {
-            alert(`✅ Đã ${actionText} báo giá thành công!`);
+            window.showToast(`✅ Đã ${actionText} báo giá thành công!`, 'success');
             const role = localStorage.getItem('authRole');
             const { openProjectDetail } = await import('./chitietduan.js');
             await openProjectDetail(projectId, role);
             const tabBtn = document.getElementById('tab-vattuduan');
             if (tabBtn) tabBtn.click();
         } else {
-            alert('❌ Thất bại: ' + (result.error?.message || 'Có lỗi xảy ra.'));
+            window.showToast('❌ Thất bại: ' + (result.error?.message || 'Có lỗi xảy ra.'), 'error');
         }
     } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message);
     }
 };
 
@@ -346,18 +411,18 @@ window.addMaterialToProject = async function (projectId, materialStr) {
         });
         const result = await res.json();
         if (result.success) {
-            alert(`✅ Đã thêm "${material.name}" vào dự án (Chưa đặt hàng)!`);
+            window.showToast(`✅ Đã thêm "${material.name}" vào dự án (Chưa đặt hàng)!`);
             const role = localStorage.getItem('authRole');
             const { openProjectDetail } = await import('./chitietduan.js');
             await openProjectDetail(projectId, role);
             const tabBtn = document.getElementById('tab-vattuduan');
             if (tabBtn) tabBtn.click();
         } else {
-            alert('❌ Thêm thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+            window.showToast('❌ Thêm thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
         }
     } catch (err) {
         console.error('Lỗi khi thêm vật tư:', err);
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message);
     }
 };
 
@@ -424,9 +489,9 @@ window.saveVattuChanges = async function(projectId) {
         await Promise.all(promises);
 
         if (hasError) {
-            alert('⚠️ Một số vật tư cập nhật bị lỗi. Vui lòng kiểm tra lại!');
+            window.showToast('⚠️ Một số vật tư cập nhật bị lỗi. Vui lòng kiểm tra lại!', 'warning');
         } else {
-            alert('✅ Đã lưu tất cả thay đổi thành công!');
+            window.showToast('✅ Đã lưu tất cả thay đổi thành công!', 'success');
         }
 
         // Tải lại chi tiết dự án để cập nhật dữ liệu mới nhất
@@ -435,7 +500,7 @@ window.saveVattuChanges = async function(projectId) {
             await window.openProjectDetail(projectId, role, 'vattuduan');
         }
     } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message);
     } finally {
         if (saveBtn) {
             saveBtn.disabled = false;
@@ -451,7 +516,7 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
     // Filter unordered items for this supplier
     const unordered = projectMaterials.filter(item => item.supplier === supplierName && item.status === 'Chưa đặt hàng');
     if (unordered.length === 0) {
-        alert('Không có vật tư chưa đặt hàng nào cho nhà cung cấp này!');
+        window.showToast('Không có vật tư chưa đặt hàng nào cho nhà cung cấp này!', 'warning');
         return;
     }
 
@@ -464,39 +529,133 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
 
     const totalValue = unordered.reduce((sum, item) => sum + (item.priceBuy * item.quantity), 0);
 
-    if (!confirm(`Xác nhận đặt hàng nhóm vật tư này từ nhà cung cấp ${supplierName}?\nTổng giá trị: ${totalValue.toLocaleString()}đ`)) return;
+    // Render custom modal dialog for receiver & address details
+    const modal = document.createElement('div');
+    modal.className = "fixed inset-0 bg-black/60 flex items-center justify-center z-[150] p-4 backdrop-blur-sm";
+    modal.id = "placeOrderModal";
+    
+    // Get project members as options
+    const members = project?.profile?.members || [];
+    const memberOptionsHtml = members.map(m => `
+        <option value="${m.id}">${m.name} (${m.role || 'Thành viên'})</option>
+    `).join('') || `
+        <option value="">-- Chọn thành viên nhận hàng --</option>
+    `;
+    
+    // Default address is the client's project address
+    const defaultAddress = project?.client_address || 'Văn phòng dự án e-Teck';
 
-    try {
-        const token = localStorage.getItem('token');
-        const bodyData = {
-            project_id: projectId,
-            supplier_id: supplierId,
-            address: 'Văn phòng dự án e-Teck',
-            status: 'Mới',
-            total_value: totalValue,
-            items: itemsList
-        };
+    modal.innerHTML = `
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl flex flex-col animate-scaleIn border border-gray-100">
+        <div class="px-8 py-6 bg-gradient-to-r from-blue-700 to-indigo-700 text-white flex justify-between items-center relative z-10 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-shopping-cart text-lg"></i>
+                <h3 class="text-lg font-black">Đặt hàng vật tư</h3>
+            </div>
+            <button onclick="document.getElementById('placeOrderModal').remove()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="p-8 space-y-6 overflow-y-auto max-h-[70vh]">
+            <div class="bg-blue-50/50 border border-blue-100/50 rounded-2xl p-4">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Nhà cung cấp</p>
+                <p class="text-base font-black text-blue-700">${supplierName}</p>
+                <div class="mt-4 pt-3 border-t border-blue-100/50 flex justify-between items-center">
+                    <span class="text-sm font-semibold text-gray-600">Tổng giá trị đơn hàng:</span>
+                    <span class="text-lg font-black text-gray-800">${totalValue.toLocaleString('vi-VN')} <small class="text-xs font-normal">đ</small></span>
+                </div>
+            </div>
 
-        const res = await fetch('http://localhost:3000/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(bodyData)
-        });
-        const result = await res.json();
-        if (result.success) {
-            alert('✅ Đã đặt hàng thành công! Đơn đặt hàng mới đã được gửi đến nhà cung cấp.');
-            const role = localStorage.getItem('authRole');
-            const { openProjectDetail } = await import('./chitietduan.js');
-            await openProjectDetail(projectId, role);
-            const tabBtn = document.getElementById('tab-vattuduan');
-            if (tabBtn) tabBtn.click();
-        } else {
-            alert('❌ Đặt hàng thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Người nhận đại diện (e-Teck Staff)</label>
+                    <div class="relative">
+                        <select id="orderReceiverId" class="w-full appearance-none px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 text-sm font-bold text-gray-700 cursor-pointer">
+                            ${memberOptionsHtml}
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Địa chỉ giao hàng (Delivery Address)</label>
+                    <input type="text" id="orderDeliveryAddress" value="${defaultAddress}" 
+                           placeholder="Nhập địa chỉ giao nhận vật tư..." 
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 text-sm font-semibold text-gray-700 transition-all">
+                </div>
+            </div>
+        </div>
+
+        <div class="px-8 py-5 bg-gray-50 border-t border-gray-100 flex gap-3 justify-end flex-shrink-0">
+            <button onclick="document.getElementById('placeOrderModal').remove()" class="px-5 py-2.5 bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 rounded-xl font-bold text-xs transition">
+                Hủy
+            </button>
+            <button id="btnConfirmPlaceOrder" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition">
+                Xác nhận đặt hàng
+            </button>
+        </div>
+    </div>`;
+
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
+
+    // Setup submit logic
+    document.getElementById('btnConfirmPlaceOrder').onclick = async () => {
+        const receiverId = document.getElementById('orderReceiverId').value;
+        const address = document.getElementById('orderDeliveryAddress').value.trim();
+
+        if (!receiverId) {
+            window.showToast('Vui lòng chọn người nhận đại diện!', 'warning');
+            return;
         }
-    } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
-    }
+        if (!address) {
+            window.showToast('Vui lòng nhập địa chỉ giao hàng!', 'warning');
+            return;
+        }
+
+        const confirmBtn = document.getElementById('btnConfirmPlaceOrder');
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Đang gửi đơn...';
+
+        try {
+            const token = localStorage.getItem('token');
+            const bodyData = {
+                project_id: projectId,
+                supplier_id: supplierId,
+                receiver_id: receiverId,
+                address: address,
+                status: 'Mới',
+                total_value: totalValue,
+                items: itemsList
+            };
+
+            const res = await fetch('http://localhost:3000/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(bodyData)
+            });
+            const result = await res.json();
+            
+            modal.remove();
+
+            if (result.success) {
+                window.showToast('✅ Đã đặt hàng thành công! Đơn đặt hàng mới đã được gửi đến nhà cung cấp.', 'success');
+                const role = localStorage.getItem('authRole');
+                const { openProjectDetail } = await import('./chitietduan.js');
+                await openProjectDetail(projectId, role);
+                const tabBtn = document.getElementById('tab-vattuduan');
+                if (tabBtn) tabBtn.click();
+            } else {
+                window.showToast('❌ Đặt hàng thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
+            }
+        } catch (err) {
+            modal.remove();
+            window.showToast('❌ Lỗi kết nối: ' + err.message, 'error');
+        }
+    };
 };
+
 
 window.handleDeleteProjectItem = async function (projectId, projectItemId) {
     if (!confirm('Bạn có chắc chắn muốn xóa vật tư này khỏi dự án?')) return;
@@ -508,17 +667,17 @@ window.handleDeleteProjectItem = async function (projectId, projectItemId) {
         });
         const result = await res.json();
         if (result.success) {
-            alert('✅ Đã xóa vật tư thành công!');
+            window.showToast('✅ Đã xóa vật tư thành công!', 'success');
             const role = localStorage.getItem('authRole');
             const { openProjectDetail } = await import('./chitietduan.js');
             await openProjectDetail(projectId, role);
             const tabBtn = document.getElementById('tab-vattuduan');
             if (tabBtn) tabBtn.click();
         } else {
-            alert('❌ Xóa thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+            window.showToast('❌ Xóa thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
         }
     } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message);
     }
 };
 
@@ -540,15 +699,15 @@ window.handleSendQuotation = async function (projectId) {
         });
         const result = await res.json();
         if (result.success) {
-            alert('✅ Đã gửi báo giá thành công tới khách hàng!');
+            window.showToast('✅ Đã gửi báo giá thành công tới khách hàng!', 'success');
             const role = localStorage.getItem('authRole');
             const { openProjectDetail } = await import('./chitietduan.js');
             await openProjectDetail(projectId, role, 'vattuduan');
         } else {
-            alert('❌ Gửi báo giá thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+            window.showToast('❌ Gửi báo giá thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
         }
     } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message);
     } finally {
         if (sendBtn) {
             sendBtn.disabled = false;
@@ -575,15 +734,15 @@ window.handleCreateContract = async function (projectId) {
         });
         const result = await res.json();
         if (result.success) {
-            alert('✅ Đã khởi tạo Hợp đồng kinh tế song ngữ thành công! Khách hàng hiện tại có thể xem và tải xuống trong Portal của họ.');
+            window.showToast('✅ Đã khởi tạo Hợp đồng kinh tế song ngữ thành công!', 'success');
             const role = localStorage.getItem('authRole');
             const { openProjectDetail } = await import('./chitietduan.js');
             await openProjectDetail(projectId, role, 'vattuduan');
         } else {
-            alert('❌ Lập hợp đồng thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+            window.showToast('❌ Lập hợp đồng thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
         }
     } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
+        window.showToast('❌ Lỗi kết nối: ' + err.message);
     } finally {
         if (contractBtn) {
             contractBtn.disabled = false;

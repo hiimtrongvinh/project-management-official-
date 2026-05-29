@@ -8,11 +8,10 @@ const { getAccountIdByClientId, getProjectMemberAccountIds, getProjectClientAcco
  */
 const STEP_LABELS = {
   1: 'Khảo sát và lập kế hoạch',
-  2: 'Mua thiết bị và lập báo giá',
-  3: 'Xác nhận thỏa thuận',
-  4: 'Triển khai lắp đặt',
-  5: 'Bàn giao và nghiệm thu',
-  6: 'Thanh toán'
+  2: 'Lập báo giá và xác nhận hợp đồng',
+  3: 'Triển khai lắp đặt',
+  4: 'Bàn giao và nghiệm thu',
+  5: 'Thanh toán'
 };
 
 /**
@@ -330,8 +329,8 @@ const ProjectService = {
     }
 
     // Validate step range
-    if (newStep < 1 || newStep > 6) {
-      const error = new Error('Step must be between 1 and 6');
+    if (newStep < 1 || newStep > 5) {
+      const error = new Error('Step must be between 1 and 5');
       error.statusCode = 400;
       throw error;
     }
@@ -415,9 +414,9 @@ const ProjectService = {
       throw error;
     }
 
-    // Validate step is 6
-    if (project.current_step !== 6) {
-      const error = new Error('Project must be at step 6 to close');
+    // Validate step is 5
+    if (project.current_step !== 5) {
+      const error = new Error('Project must be at step 5 to close');
       error.statusCode = 400;
       throw error;
     }
@@ -439,7 +438,7 @@ const ProjectService = {
 
     // Close project
     await ProjectModel.update(projectId, {
-      current_step: 7
+      current_step: 6
     });
 
     // Thông báo hoàn thành cho staff thành viên + khách hàng
@@ -464,8 +463,7 @@ const ProjectService = {
       throw error;
     }
     
-    // Update step to 3
-    await ProjectModel.update(projectId, { current_step: 3 });
+    // No automatic step advancement - stays in Step 2 until client approves
     
     // Log activity
     await query(
