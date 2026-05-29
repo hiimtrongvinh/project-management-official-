@@ -266,7 +266,7 @@ window.showAddMemberModal = async function (projectId) {
 };
 
 window.handleDeleteMember = async function (projectId, staffId) {
-    if (!confirm('Bạn có chắc muốn xóa nhân sự này khỏi dự án?')) return;
+    if (!await window.showConfirm('Bạn có chắc muốn xóa nhân sự này khỏi dự án?')) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/projects/${projectId}/members/${staffId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });

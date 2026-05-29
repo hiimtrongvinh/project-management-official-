@@ -1,65 +1,3 @@
-// Premium CSS Toast Notification Utility
-window.showToast = function (message, type = 'success') {
-    const msgStr = String(message);
-    
-    // Auto detect toast type based on text content & emojis
-    if (msgStr.includes('❌') || msgStr.toLowerCase().includes('lỗi') || msgStr.toLowerCase().includes('thất bại') || msgStr.toLowerCase().includes('không thể')) {
-        type = 'error';
-    } else if (msgStr.includes('⚠️') || msgStr.toLowerCase().includes('cảnh báo')) {
-        type = 'warning';
-    } else if (msgStr.includes('✅') || msgStr.toLowerCase().includes('thành công') || msgStr.toLowerCase().includes('đã thêm') || msgStr.toLowerCase().includes('đã lưu') || msgStr.toLowerCase().includes('đã đặt hàng')) {
-        type = 'success';
-    }
-
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        container.className = 'fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = 'flex items-center gap-3 px-5 py-4 bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-xl max-w-sm pointer-events-auto transform translate-x-12 opacity-0 transition-all duration-300 ease-out';
-    
-    let iconClass = 'fas fa-check-circle text-emerald-500 text-lg';
-    if (type === 'error') {
-        iconClass = 'fas fa-times-circle text-red-500 text-lg';
-    } else if (type === 'warning') {
-        iconClass = 'fas fa-exclamation-triangle text-amber-500 text-lg';
-    } else if (type === 'info') {
-        iconClass = 'fas fa-info-circle text-blue-500 text-lg';
-    }
-
-    toast.innerHTML = `
-        <div class="flex-shrink-0">
-            <i class="${iconClass}"></i>
-        </div>
-        <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-gray-800 leading-tight">${msgStr}</p>
-        </div>
-        <button onclick="this.parentElement.remove()" class="text-gray-300 hover:text-gray-500 transition-colors flex-shrink-0 pl-2">
-            <i class="fas fa-times text-xs"></i>
-        </button>
-    `;
-
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.classList.remove('translate-x-12', 'opacity-0');
-    }, 10);
-
-    setTimeout(() => {
-        toast.classList.add('translate-x-12', 'opacity-0');
-        setTimeout(() => {
-            toast.remove();
-            if (container.children.length === 0) {
-                container.remove();
-            }
-        }, 300);
-    }, 3500);
-};;
-
 const projectDetails = window.projectDetails || {};
 
 export function renderTabVattuDuan(projectId, role) {
@@ -302,7 +240,7 @@ export function renderTabVattuDuan(projectId, role) {
 
 window.handleUpdateQuotationStatus = async function (projectId, quotationId, status) {
     const actionText = status === 'approved' ? 'phê duyệt' : 'từ chối';
-    if (!confirm(`Bạn có chắc muốn ${actionText} báo giá này?`)) return;
+    if (!await window.showConfirm(`Bạn có chắc muốn ${actionText} báo giá này?`)) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/projects/${projectId}/quotation-status`, {
@@ -531,7 +469,7 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
 
     // Render custom modal dialog for receiver & address details
     const modal = document.createElement('div');
-    modal.className = "fixed inset-0 bg-black/60 flex items-center justify-center z-[150] p-4 backdrop-blur-sm";
+    modal.className = "fixed inset-0 bg-black/10 flex items-center justify-center z-[150] p-4 backdrop-blur-md";
     modal.id = "placeOrderModal";
     
     // Get project members as options
@@ -546,7 +484,7 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
     const defaultAddress = project?.client_address || 'Văn phòng dự án e-Teck';
 
     modal.innerHTML = `
-    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl flex flex-col animate-scaleIn border border-gray-100">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-lg overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleIn">
         <div class="px-8 py-6 bg-gradient-to-r from-blue-700 to-indigo-700 text-white flex justify-between items-center relative z-10 flex-shrink-0">
             <div class="flex items-center gap-3">
                 <i class="fas fa-shopping-cart text-lg"></i>
@@ -658,7 +596,7 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
 
 
 window.handleDeleteProjectItem = async function (projectId, projectItemId) {
-    if (!confirm('Bạn có chắc chắn muốn xóa vật tư này khỏi dự án?')) return;
+    if (!await window.showConfirm('Bạn có chắc chắn muốn xóa vật tư này khỏi dự án?')) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/orders/project-item/${projectItemId}`, {
@@ -682,7 +620,7 @@ window.handleDeleteProjectItem = async function (projectId, projectItemId) {
 };
 
 window.handleSendQuotation = async function (projectId) {
-    if (!confirm('Xác nhận gửi báo giá này cho Khách hàng? Dự án sẽ tự động chuyển sang Bước 3 (Xác nhận thỏa thuận).')) return;
+    if (!await window.showConfirm('Xác nhận gửi báo giá này cho Khách hàng? Dự án sẽ tự động chuyển sang Bước 3 (Xác nhận thỏa thuận).')) return;
     
     const sendBtn = document.querySelector('button[onclick^="window.handleSendQuotation"]');
     const originalHtml = sendBtn ? sendBtn.innerHTML : '';
@@ -717,7 +655,7 @@ window.handleSendQuotation = async function (projectId) {
 };
 
 window.handleCreateContract = async function (projectId) {
-    if (!confirm('Bạn có chắc chắn muốn lập Hợp đồng kinh tế song ngữ cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
+    if (!await window.showConfirm('Bạn có chắc chắn muốn lập Hợp đồng kinh tế song ngữ cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
 
     const contractBtn = document.querySelector('button[onclick^="window.handleCreateContract"]');
     const originalHtml = contractBtn ? contractBtn.innerHTML : '';
@@ -753,10 +691,10 @@ window.handleCreateContract = async function (projectId) {
 
 window.handleViewContract = function (projectId, filePath) {
     const modal = document.createElement('div');
-    modal.className = "fixed inset-0 bg-black/60 flex items-center justify-center z-[200] p-4 backdrop-blur-sm";
+    modal.className = "fixed inset-0 bg-black/10 flex items-center justify-center z-[200] p-4 backdrop-blur-md";
     modal.id = "contractPreviewModal";
     modal.innerHTML = `
-    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-5xl h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-scaleUp">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-5xl h-[90vh] overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleUp">
         <div class="px-8 py-4 bg-gradient-to-r from-purple-700 to-indigo-700 text-white flex justify-between items-center relative z-10 flex-shrink-0">
             <div class="flex items-center gap-3">
                 <i class="fas fa-file-contract text-xl"></i>

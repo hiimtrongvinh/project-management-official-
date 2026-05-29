@@ -98,7 +98,7 @@ window.editItem = async (id, oldValue) => {
 };
 
 window.deleteItem = async (id) => {
-    if (!confirm('Bạn có chắc muốn xóa mục này?')) return;
+    if (!await window.showConfirm('Bạn có chắc muốn xóa mục này?')) return;
 
     try {
         const token = localStorage.getItem('token');

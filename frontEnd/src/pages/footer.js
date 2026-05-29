@@ -3,8 +3,13 @@ export function renderFooter() {
     <footer class="w-full bg-blue-50 border-t border-blue-100 py-8 text-[15px] text-gray-600">
         <div class="max-w-5xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
             <div class="flex flex-col">
-                <div class="flex items-center gap-3 text-blue-700 font-bold text-2xl mb-2">
-                    <span>📈</span> e-Teck Projects
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm shadow-sm">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold text-blue-600">e-Teck Projects</span>
+                    </div>
                 </div>
                 <p class="font-bold text-gray-800 uppercase text-base mb-0.5">Hệ thống đặt hàng & quản lý dự án</p>
                 <p class="text-base mb-1">Công ty TNHH Đào tạo & Tích hợp Công nghệ e-Teck</p>

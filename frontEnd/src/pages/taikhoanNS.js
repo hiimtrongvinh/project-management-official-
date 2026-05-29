@@ -36,11 +36,11 @@ async function loadTaikhoanNSData() {
         const avatar = profile.avatar || '';
         const role = profile.role;
 
-        const avatarHtml = avatar 
+        const avatarHtml = avatar
             ? `<img src="http://localhost:3000${avatar}" alt="${name}" class="w-full h-full object-cover">`
             : `<span class="text-3xl font-bold text-blue-600">${name.charAt(0).toUpperCase()}</span>`;
 
-        const roleBadge = role === 'admin' 
+        const roleBadge = role === 'admin'
             ? '<span class="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full border border-purple-200">Admin</span>'
             : '<span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full border border-blue-200">Nhân viên</span>';
 
@@ -64,7 +64,7 @@ async function loadTaikhoanNSData() {
                 <!-- Info -->
                 <div class="min-w-0">
                     <div class="flex flex-wrap items-center gap-2 mb-1">
-                        <h1 class="text-xl font-extrabold text-gray-800 tracking-tight leading-none">${name}</h1>
+                        <h1 class="text-xl font-bold text-gray-800 leading-none">${name}</h1>
                         ${roleBadge}
                     </div>
                     <p class="text-gray-500 font-semibold text-xs">${department} • ${position}</p>
@@ -211,11 +211,11 @@ async function loadTaikhoanNSData() {
 }
 
 // Toggle edit mode
-window.toggleProfileEdit = function() {
+window.toggleProfileEdit = function () {
     const infoContent = document.getElementById('profileInfoContent');
     const editForm = document.getElementById('profileEditForm');
     const btnEdit = document.getElementById('btnEditProfile');
-    
+
     if (infoContent && editForm) {
         const isEditing = !editForm.classList.contains('hidden');
         if (isEditing) {
@@ -231,7 +231,7 @@ window.toggleProfileEdit = function() {
 };
 
 // Save profile changes
-window.saveProfileChanges = async function(staffId) {
+window.saveProfileChanges = async function (staffId) {
     const form = document.getElementById('formEditProfile');
     if (!form) return;
 
@@ -270,7 +270,7 @@ window.saveProfileChanges = async function(staffId) {
 };
 
 // Upload avatar
-window.handleProfileAvatarUpload = async function(input, staffId) {
+window.handleProfileAvatarUpload = async function (input, staffId) {
     if (!input.files || !input.files[0]) return;
 
     // Preview immediately
@@ -304,7 +304,7 @@ window.handleProfileAvatarUpload = async function(input, staffId) {
 };
 
 // Change password modal
-window.showChangePasswordModal = function() {
+window.showChangePasswordModal = function () {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 modal-overlay z-[100] flex items-center justify-center p-4';
     modal.innerHTML = `

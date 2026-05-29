@@ -24,6 +24,123 @@ import { renderLogin, attachLoginEvents } from './pages/login.js';
 import { isLoggedIn, getAuthRole, handleLogout } from './pages/auth.js';
 import { renderNotificationBell, startNotificationPolling, stopNotificationPolling, renderNotificationPage, initNotificationPage } from './pages/notification.js';
 
+// --- PREMIUM TOAST & CONFIRM UTILITIES ---
+window.showToast = function (message, type = 'success') {
+    const msgStr = String(message);
+    
+    // Auto detect toast type based on text content & emojis
+    if (msgStr.includes('❌') || msgStr.toLowerCase().includes('lỗi') || msgStr.toLowerCase().includes('thất bại') || msgStr.toLowerCase().includes('không thể') || msgStr.toLowerCase().includes('không được')) {
+        type = 'error';
+    } else if (msgStr.includes('⚠️') || msgStr.toLowerCase().includes('cảnh báo') || msgStr.toLowerCase().includes('chưa') || msgStr.toLowerCase().includes('vui lòng')) {
+        type = 'warning';
+    } else if (msgStr.includes('✅') || msgStr.toLowerCase().includes('thành công') || msgStr.toLowerCase().includes('đã thêm') || msgStr.toLowerCase().includes('đã lưu') || msgStr.toLowerCase().includes('đã đặt hàng')) {
+        type = 'success';
+    }
+
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed top-6 right-6 z-[99999] flex flex-col gap-3 pointer-events-none';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'flex items-center gap-3 px-5 py-4 bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-xl max-w-sm pointer-events-auto transform translate-x-12 opacity-0 transition-all duration-300 ease-out';
+    
+    let iconClass = 'fas fa-check-circle text-emerald-500 text-lg animate-bounce-sm';
+    if (type === 'error') {
+        iconClass = 'fas fa-times-circle text-red-500 text-lg animate-bounce-sm';
+    } else if (type === 'warning') {
+        iconClass = 'fas fa-exclamation-triangle text-amber-500 text-lg animate-bounce-sm';
+    } else if (type === 'info') {
+        iconClass = 'fas fa-info-circle text-blue-500 text-lg animate-bounce-sm';
+    }
+
+    // Clean emoji prefixes from message text for a cleaner premium look
+    let cleanMsg = msgStr.replace(/^[✅❌⚠️⏳💡ℹ️]\s*/, '');
+
+    toast.innerHTML = `
+        <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-xl ${
+            type === 'success' ? 'bg-emerald-50' : 
+            type === 'error' ? 'bg-red-50' : 
+            type === 'warning' ? 'bg-amber-50' : 'bg-blue-50'
+        }">
+            <i class="${iconClass}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-gray-800 leading-tight">${cleanMsg}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-gray-300 hover:text-gray-500 transition-colors flex-shrink-0 pl-2">
+            <i class="fas fa-times text-xs"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.remove('translate-x-12', 'opacity-0');
+    }, 10);
+
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.classList.add('translate-x-12', 'opacity-0');
+            setTimeout(() => {
+                toast.remove();
+                if (container.children.length === 0) {
+                    container.remove();
+                }
+            }, 300);
+        }
+    }, 3500);
+};
+
+// Override native window.alert to automatically show the unified toast
+window.alert = function (message) {
+    window.showToast(message);
+};
+
+// Promise-based custom premium confirmation dialog modal
+window.showConfirm = function (message) {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.className = "fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 animate-fadeIn";
+        modal.id = "customConfirmModal";
+        
+        modal.innerHTML = `
+        <div class="bg-white rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl flex flex-col border border-gray-100 animate-scaleIn">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 flex-shrink-0 animate-pulse-slow">
+                        <i class="fas fa-exclamation-triangle text-base"></i>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-gray-800 uppercase tracking-wider">Xác nhận thao tác</h3>
+                </div>
+                <p class="text-xs font-semibold text-gray-500 leading-relaxed">${message}</p>
+            </div>
+            <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex gap-2.5 justify-end">
+                <button id="confirmCancelBtn" class="px-4 py-2.5 bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 rounded-xl font-bold text-xs transition-all cursor-pointer">
+                    Hủy bỏ
+                </button>
+                <button id="confirmOkBtn" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-md hover:shadow-lg transition-all cursor-pointer">
+                    Đồng ý
+                </button>
+            </div>
+        </div>`;
+        
+        document.body.appendChild(modal);
+        
+        const close = (result) => {
+            modal.remove();
+            resolve(result);
+        };
+        
+        modal.querySelector('#confirmCancelBtn').onclick = () => close(false);
+        modal.querySelector('#confirmOkBtn').onclick = () => close(true);
+        modal.onclick = (e) => { if (e.target === modal) close(false); };
+    });
+};
+
 // Đăng ký các hàm render lên window để sử dụng trong navigateTo
 window.renderDanhmuc = renderDanhmuc;
 window.renderDuan = renderDuan;
@@ -61,12 +178,12 @@ function renderMainAppLayout() {
     <div id="mainApp" class="h-screen flex overflow-hidden">
         <div class="sidebar sticky top-0 w-64 flex-shrink-0 p-5 flex flex-col h-screen overflow-y-auto custom-scrollbar">
             <div class="flex items-center gap-3 px-3 mb-10">
-                <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                    <i class="fas fa-chart-line text-blue-400 text-lg"></i>
+                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white text-lg shadow-sm">
+                    <i class="fas fa-chart-line"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-white tracking-tight">e-Teck</h1>
-                    <p class="text-blue-400 text-xs font-semibold -mt-0.5 tracking-wide">Projects</p>
+                    <h1 class="text-2xl font-bold text-blue-600 leading-none">e-Teck</h1>
+                    <p class="text-blue-600 text-xs font-bold mt-0.5">Projects</p>
                 </div>
             </div>
             <nav class="flex-1 space-y-1">
@@ -101,7 +218,7 @@ function renderMainAppLayout() {
                 </a>
             </nav>
             <div class="mt-auto space-y-2">
-                <div onclick="logout()" class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all">
+                <div onclick="logout()" class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer text-sm font-medium text-red-500 hover:text-red-700 hover:bg-red-50 transition-all">
                     <i class="fas fa-sign-out-alt w-5 text-center"></i><span>Đăng xuất</span>
                 </div>
             </div>

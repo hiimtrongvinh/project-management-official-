@@ -31,7 +31,7 @@ export function renderCTTkhachhang() {
     setTimeout(fetchClientProjectsFromServer, 50);
 
     return `
-    <div class="flex flex-col mt-0 -mx-8 min-h-screen bg-gray-50/50 animate-fadeIn"> 
+    <div class="flex flex-col mt-0 min-h-screen bg-gray-50/50 animate-fadeIn"> 
         ${renderPortalHeader({
         activeLabel: 'Dự án',
         tabs: [

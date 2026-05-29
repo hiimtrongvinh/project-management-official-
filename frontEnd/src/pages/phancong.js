@@ -170,11 +170,11 @@ function createTaskCard(id, title, user, date, file, status, projectId) {
     if (!isClient) {
         actionButtons += `
             <button onclick="event.stopPropagation(); window.showEditTaskModal('${projectId}', '${id}')" title="Sửa" 
-                    class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all opacity-0 group-hover:opacity-100">
+                    class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all">
                 <i class="fas fa-pen text-[10px]"></i>
             </button>
             <button onclick="event.stopPropagation(); window.handleDeleteTask('${projectId}', '${id}')" title="Xóa" 
-                    class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white hover:border-red-500 transition-all opacity-0 group-hover:opacity-100">
+                    class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white hover:border-red-500 transition-all">
                 <i class="fas fa-trash text-[10px]"></i>
             </button>`;
     }
@@ -418,7 +418,7 @@ window.showEditTaskModal = async function (projectId, taskId) {
 };
 
 window.handleDeleteTask = async function (projectId, taskId) {
-    if (!confirm('Bạn có chắc muốn xóa công việc này?')) return;
+    if (!await window.showConfirm('Bạn có chắc muốn xóa công việc này?')) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/tasks/${taskId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
@@ -429,7 +429,7 @@ window.handleDeleteTask = async function (projectId, taskId) {
 };
 
 window.handleApproveTaskDirect = async function (projectId, taskId) {
-    if (!confirm('Xác nhận phê duyệt nhanh công việc này?')) return;
+    if (!await window.showConfirm('Xác nhận phê duyệt nhanh công việc này?')) return;
     try {
         const token = localStorage.getItem('token');
         const body = { status: 'Đã duyệt', feedback: 'Phê duyệt hoàn thành công việc.' };
@@ -551,7 +551,7 @@ window.showSubmitTaskModal = function (projectId, taskId) {
 };
 
 window.handleAdvanceStep = async function (projectId, nextStep) {
-    if (!confirm(`Bạn có chắc muốn chuyển dự án sang Bước ${nextStep}?`)) return;
+    if (!await window.showConfirm(`Bạn có chắc muốn chuyển dự án sang Bước ${nextStep}?`)) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/projects/${projectId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ step: nextStep }) });
@@ -562,7 +562,7 @@ window.handleAdvanceStep = async function (projectId, nextStep) {
 };
 
 window.handleCloseProject = async function (projectId) {
-    if (!confirm('Bạn có chắc chắn muốn hoàn thành dự án này?')) return;
+    if (!await window.showConfirm('Bạn có chắc chắn muốn hoàn thành dự án này?')) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/projects/${projectId}/close`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });

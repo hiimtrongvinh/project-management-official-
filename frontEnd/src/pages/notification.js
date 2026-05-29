@@ -77,9 +77,37 @@ export function renderNotificationPage() {
     }
   }, 50);
 
+  const clientSupplierContent = `
+    <!-- Spacious Elegant Notification Card for Portals -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden max-w-5xl mx-auto animate-scaleIn">
+      <div class="px-6 md:px-8 py-5 border-b border-gray-100 bg-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <!-- Filter Tabs -->
+        <div class="flex gap-6">
+          <button onclick="window.changeNotiFilter('all')" id="filter-all" class="text-sm font-bold text-blue-600 border-b-2 border-blue-500 pb-2 transition-all cursor-pointer bg-transparent border-none">Tất cả</button>
+          <button onclick="window.changeNotiFilter('unread')" id="filter-unread" class="text-sm font-medium text-gray-400 hover:text-gray-600 pb-2 transition-all cursor-pointer bg-transparent border-none">Chưa đọc</button>
+          <button onclick="window.changeNotiFilter('read')" id="filter-read" class="text-sm font-medium text-gray-400 hover:text-gray-600 pb-2 transition-all cursor-pointer bg-transparent border-none">Đã đọc</button>
+        </div>
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button onclick="window.markAllNotiReadPage()" class="flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm cursor-pointer bg-transparent border-none">
+            <i class="fas fa-check-double"></i> Đọc tất cả
+          </button>
+          <button onclick="window.deleteAllNotiPage()" class="flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all shadow-sm cursor-pointer bg-transparent border-none">
+            <i class="fas fa-trash-alt"></i> Xóa tất cả
+          </button>
+        </div>
+      </div>
+
+      <!-- Spacious, Expandable List -->
+      <div id="pageNotiList" class="divide-y divide-slate-100 min-h-[350px] flex flex-col">
+        <div class="py-20 text-center text-slate-300 font-medium text-sm flex items-center justify-center flex-grow">Đang tải thông báo...</div>
+      </div>
+    </div>
+  `;
+
   if (role === 'client') {
     return `
-    <div class="flex flex-col mt-0 -mx-8 min-h-screen bg-gray-50/50 animate-fadeIn"> 
+    <div class="flex flex-col mt-0 min-h-screen bg-gray-50/50 animate-fadeIn"> 
       ${renderPortalHeader({
         activeLabel: 'Thông báo',
         tabs: [
@@ -89,7 +117,13 @@ export function renderNotificationPage() {
         ],
       })}
       <main class="max-w-7xl mx-auto w-full px-8 pt-8 pb-12 flex-1">
-        ${renderPageContentHTML()}
+        <div class="mb-8 animate-fadeInDown">
+            <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+              Thông báo của tôi
+              <span id="pageNotiCount" class="hidden text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-bold">0</span>
+            </h2>
+        </div>
+        ${clientSupplierContent}
       </main>
       ${renderFooter()}
     </div>`;
@@ -97,7 +131,7 @@ export function renderNotificationPage() {
 
   if (role === 'supplier') {
     return `
-    <div class="flex flex-col mt-0 -mx-8 min-h-screen bg-gray-50/50 animate-fadeIn">
+    <div class="flex flex-col mt-0 min-h-screen bg-gray-50/50 animate-fadeIn">
       ${renderPortalHeader({
         activeLabel: 'Thông báo',
         tabs: [
@@ -107,54 +141,57 @@ export function renderNotificationPage() {
         ],
       })}
       <main class="max-w-7xl mx-auto w-full px-8 pt-8 pb-12 flex-1">
-        ${renderPageContentHTML()}
+        <div class="mb-8 animate-fadeInDown">
+            <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+              Thông báo của tôi
+              <span id="pageNotiCount" class="hidden text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-bold">0</span>
+            </h2>
+        </div>
+        ${clientSupplierContent}
       </main>
       ${renderFooter()}
     </div>`;
   }
 
-  // Admin hoặc Staff (Không cần header/footer portal vì đã có Sidebar của main.js bọc ngoài)
+  // Admin hoặc Staff (Có Standalone Premium Header tương tự các trang khác)
   return `
     <div class="max-w-5xl mx-auto py-2">
-      ${renderPageContentHTML()}
-    </div>`;
-}
-
-function renderPageContentHTML() {
-  return `
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden animate-scaleIn">
-      <div class="px-6 md:px-8 py-5 md:py-6 border-b border-gray-100 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <!-- Unified Premium Header Card -->
+      <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fadeInDown">
         <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center flex-shrink-0 shadow-sm animate-bounce-sm">
             <i class="fas fa-bell text-blue-500 text-lg"></i>
           </div>
           <div>
-            <h2 class="text-xl font-extrabold text-gray-800 tracking-tight flex items-center gap-2">
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2.5">
               Thông báo của bạn
-              <span id="pageNotiCount" class="hidden text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-bold">0</span>
-            </h2>
+              <span id="pageNotiCount" class="hidden text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-bold">0</span>
+            </h1>
           </div>
         </div>
-        <div class="flex items-center gap-2 flex-shrink-0 w-full md:w-auto justify-end">
-          <button onclick="window.markAllNotiReadPage()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all">
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button onclick="window.markAllNotiReadPage()" class="flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm cursor-pointer bg-transparent border-none">
             <i class="fas fa-check-double"></i> Đọc tất cả
           </button>
-          <button onclick="window.deleteAllNotiPage()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+          <button onclick="window.deleteAllNotiPage()" class="flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all shadow-sm cursor-pointer bg-transparent border-none">
             <i class="fas fa-trash-alt"></i> Xóa tất cả
           </button>
         </div>
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="px-6 md:px-8 py-3.5 border-b border-gray-50 bg-white flex gap-6">
-        <button onclick="window.changeNotiFilter('all')" id="filter-all" class="text-sm font-bold text-blue-600 border-b-2 border-blue-500 pb-1.5 transition-all">Tất cả</button>
-        <button onclick="window.changeNotiFilter('unread')" id="filter-unread" class="text-sm font-medium text-gray-400 hover:text-gray-600 pb-1.5 transition-all">Chưa đọc</button>
-        <button onclick="window.changeNotiFilter('read')" id="filter-read" class="text-sm font-medium text-gray-400 hover:text-gray-600 pb-1.5 transition-all">Đã đọc</button>
-      </div>
+      <!-- Main Notifications Card -->
+      <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden animate-scaleIn">
+        <!-- Filter Tabs -->
+        <div class="px-6 md:px-8 py-4 border-b border-gray-50 bg-white flex gap-6">
+          <button onclick="window.changeNotiFilter('all')" id="filter-all" class="text-sm font-bold text-blue-600 border-b-2 border-blue-500 pb-2 transition-all cursor-pointer bg-transparent border-none">Tất cả</button>
+          <button onclick="window.changeNotiFilter('unread')" id="filter-unread" class="text-sm font-medium text-gray-400 hover:text-gray-600 pb-2 transition-all cursor-pointer bg-transparent border-none">Chưa đọc</button>
+          <button onclick="window.changeNotiFilter('read')" id="filter-read" class="text-sm font-medium text-gray-400 hover:text-gray-600 pb-2 transition-all cursor-pointer bg-transparent border-none">Đã đọc</button>
+        </div>
 
-      <!-- Notifications List -->
-      <div id="pageNotiList" class="divide-y divide-slate-100 min-h-[500px] flex flex-col">
-        <div class="py-20 text-center text-slate-300 font-medium text-sm flex items-center justify-center flex-grow">Đang tải thông báo...</div>
+        <!-- Notifications List -->
+        <div id="pageNotiList" class="divide-y divide-slate-100 min-h-[400px] flex flex-col">
+          <div class="py-20 text-center text-slate-300 font-medium text-sm flex items-center justify-center flex-grow">Đang tải thông báo...</div>
+        </div>
       </div>
     </div>`;
 }
@@ -210,12 +247,13 @@ function renderPageNotifications() {
     if (currentPageFilter === 'unread') msg = 'Bạn không có thông báo chưa đọc.';
     if (currentPageFilter === 'read') msg = 'Bạn không có thông báo đã đọc.';
     
+    const isPortal = ['client', 'supplier'].includes(localStorage.getItem('authRole'));
     container.innerHTML = `
-      <div class="py-32 text-center flex flex-col items-center justify-center flex-grow animate-fadeIn">
-        <div class="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-4 shadow-sm border border-slate-100">
-          <i class="fas fa-bell-slash text-3xl text-slate-300"></i>
+      <div class="${isPortal ? 'py-12' : 'py-32'} text-center flex flex-col items-center justify-center flex-grow animate-fadeIn">
+        <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-3 shadow-sm border border-slate-100">
+          <i class="fas fa-bell-slash text-2xl text-slate-300"></i>
         </div>
-        <p class="text-slate-400 text-sm font-semibold">${msg}</p>
+        <p class="text-slate-400 text-xs font-bold">${msg}</p>
       </div>`;
     return;
   }
@@ -232,7 +270,7 @@ function renderPageNotifications() {
           <i class="fas ${cfg.icon} ${cfg.color} text-sm"></i>
         </div>
         <div class="flex-1 min-w-0 pr-4">
-          <h4 class="${n.is_read ? 'text-gray-700 font-bold' : 'text-gray-900 font-extrabold'} text-sm md:text-base leading-snug break-words">${n.title}</h4>
+          <h4 class="${n.is_read ? 'text-gray-700 font-bold' : 'text-gray-900 font-bold'} text-sm md:text-base leading-snug break-words">${n.title}</h4>
           <p class="text-xs md:text-sm text-gray-500 mt-1 break-words leading-relaxed">${n.message || ''}</p>
           <div class="flex items-center gap-3 mt-2">
             <span class="text-[10px] text-gray-400 font-semibold flex items-center gap-1">
@@ -243,7 +281,7 @@ function renderPageNotifications() {
         <div class="flex items-center gap-2 self-center flex-shrink-0">
           ${unreadIndicator}
           <button onclick="window.deletePageNoti(event, ${n.id})"
-                  class="opacity-0 group-hover/noti:opacity-100 text-gray-300 hover:text-red-500 transition-all p-1.5 rounded-xl hover:bg-gray-100"
+                  class="opacity-0 group-hover/noti:opacity-100 text-gray-300 hover:text-red-500 transition-all p-1.5 rounded-xl hover:bg-gray-100 bg-transparent border-none cursor-pointer"
                   title="Xóa thông báo">
             <i class="fas fa-trash-alt text-xs"></i>
           </button>
@@ -262,9 +300,9 @@ window.changeNotiFilter = function (filter) {
     const btn = document.getElementById('filter-' + t);
     if (btn) {
       if (t === filter) {
-        btn.className = "text-sm font-bold text-blue-600 border-b-2 border-blue-500 pb-1.5 transition-all";
+        btn.className = "text-sm font-bold text-blue-600 border-b-2 border-blue-500 pb-2 transition-all bg-transparent border-none cursor-pointer";
       } else {
-        btn.className = "text-sm font-medium text-slate-400 hover:text-slate-600 pb-1.5 transition-all";
+        btn.className = "text-sm font-medium text-gray-400 hover:text-gray-600 pb-2 transition-all bg-transparent border-none cursor-pointer";
       }
     }
   });
@@ -325,7 +363,7 @@ window.markAllNotiReadPage = async function () {
 };
 
 window.deleteAllNotiPage = async function () {
-  if (!confirm('Bạn có chắc chắn muốn xóa tất cả thông báo không?')) return;
+  if (!await window.showConfirm('Bạn có chắc chắn muốn xóa tất cả thông báo không?')) return;
   try {
     const token = localStorage.getItem('token');
     const promises = cachedNotifications.map(n => 

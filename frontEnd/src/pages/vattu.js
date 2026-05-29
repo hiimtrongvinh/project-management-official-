@@ -5,9 +5,9 @@ const MATERIALS_PER_PAGE = 12;
 let allLoadedMaterials = [];
 
 export function renderVattu() {
-    setTimeout(async () => { 
+    setTimeout(async () => {
         await window.loadSupplierFilterOptions();
-        window.fetchMaterials('staff'); 
+        window.fetchMaterials('staff');
     }, 0);
 
     return `
@@ -19,7 +19,7 @@ export function renderVattu() {
                     <i class="fas fa-boxes text-violet-500 text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Danh sách vật tư</h1>
+                    <h1 class="text-2xl font-bold text-gray-800 ">Danh sách vật tư</h1>
                 </div>
             </div>
             <!-- Stats Badges -->
@@ -168,7 +168,7 @@ function renderMaterialPagination(total, totalPages, page, role) {
         </div>`;
 }
 
-window.goToMaterialPage = function(page, role) {
+window.goToMaterialPage = function (page, role) {
     renderPaginatedMaterials(allLoadedMaterials, role, page);
     document.getElementById('materialCards')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };

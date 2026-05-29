@@ -6,7 +6,7 @@ export function renderTaikhoanKH() {
     setTimeout(() => window.toggleEditKH(false), 0);
 
     return `
-    <div class="flex flex-col -mt-8 -mx-8 min-h-screen bg-gray-50/50">
+    <div class="flex flex-col min-h-screen bg-gray-50/50">
         ${renderPortalHeader({
         activeLabel: 'Tài khoản',
         tabs: [

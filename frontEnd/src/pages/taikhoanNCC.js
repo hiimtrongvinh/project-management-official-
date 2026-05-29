@@ -6,7 +6,7 @@ export function renderTaikhoanNCC() {
     setTimeout(() => window.toggleEditNCC(false), 0);
 
     return `
-    <div class="flex flex-col min-h-screen -mt-8 -mx-8 bg-gray-50/50">
+    <div class="flex flex-col min-h-screen bg-gray-50/50">
       ${renderPortalHeader({
         activeLabel: 'Tài khoản',
         tabs: [

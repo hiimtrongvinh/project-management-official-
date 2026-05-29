@@ -51,7 +51,7 @@ export function renderDuan() {
                     <i class="fas fa-rocket text-blue-500 text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Quản lý dự án</h1>
+                    <h1 class="text-2xl font-bold text-gray-800 ">Quản lý dự án</h1>
                 </div>
             </div>
 
@@ -139,8 +139,9 @@ export function renderProjectCards(projects = null) {
         const approvedTasks = p.approved_tasks || 0;
         const progress = p.progress || 0;
 
-        // Check if overdue
-        const isOverdue = p.end_date && new Date(p.end_date) < new Date() && p.status !== 'Hoàn thành';
+        // Check if overdue (projects with 'Hoàn thành' status or 100% progress are NOT overdue)
+        const isCompleted = p.status?.trim() === 'Hoàn thành' || (p.progress !== undefined && p.progress >= 100);
+        const isOverdue = p.end_date && new Date(p.end_date) < new Date() && !isCompleted;
         const progressColor = isOverdue ? 'bg-red-500' : progress >= 75 ? 'bg-emerald-500' : progress >= 40 ? 'bg-blue-500' : 'bg-amber-500';
 
         let avatarsHtml = '';
@@ -220,9 +221,12 @@ function renderProjectStats(projects) {
     if (!statsContainer) return;
 
     const total = projects.length;
-    const inProgress = projects.filter(p => p.status !== 'Hoàn thành').length;
-    const completed = projects.filter(p => p.status === 'Hoàn thành').length;
-    const overdue = projects.filter(p => p.end_date && new Date(p.end_date) < new Date() && p.status !== 'Hoàn thành').length;
+    const completed = projects.filter(p => p.status?.trim() === 'Hoàn thành' || (p.progress !== undefined && p.progress >= 100)).length;
+    const inProgress = total - completed;
+    const overdue = projects.filter(p => {
+        const isComp = p.status?.trim() === 'Hoàn thành' || (p.progress !== undefined && p.progress >= 100);
+        return p.end_date && new Date(p.end_date) < new Date() && !isComp;
+    }).length;
 
     statsContainer.innerHTML = `
         <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-100 text-xs font-semibold text-gray-600 transition-all hover:bg-gray-100/80 cursor-default">
@@ -262,7 +266,10 @@ window.handleProjectFilter = function () {
             } else {
                 const projectDate = new Date(p.end_date);
                 projectDate.setHours(0, 0, 0, 0);
-                if (deadlineFilter === "quahan") matchDeadline = projectDate < now && p.status.trim() !== "Hoàn thành";
+                if (deadlineFilter === "quahan") {
+                    const isComp = p.status.trim() === "Hoàn thành" || (p.progress !== undefined && p.progress >= 100);
+                    matchDeadline = projectDate < now && !isComp;
+                }
                 else if (deadlineFilter === "homnay") matchDeadline = projectDate.getTime() === now.getTime();
                 else if (deadlineFilter === "tuannay") {
                     const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
@@ -301,7 +308,7 @@ window.addProject = async function () {
     <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-xl shadow-2xl flex flex-col p-8 animate-scaleUp">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h3 class="text-2xl font-extrabold text-gray-800">Tạo dự án mới</h3>
+                <h3 class="text-2xl font-bold text-gray-800">Tạo dự án mới</h3>
                 <p class="text-sm text-gray-400 mt-0.5">Điền thông tin để khởi tạo dự án</p>
             </div>
             <button onclick="document.getElementById('addProjectModal').remove()" class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">

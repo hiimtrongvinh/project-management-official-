@@ -24,7 +24,7 @@ export function renderDonhang() {
     setTimeout(fetchOrders, 0);
 
     return `
-    <div class="flex flex-col mt-0 -mx-8 min-h-screen">
+    <div class="flex flex-col mt-0 min-h-screen">
         ${renderPortalHeader({
             activeLabel: 'Đơn hàng',
             tabs: [
@@ -190,10 +190,10 @@ window.openOrderDetail = function (id) {
     }
 
     const modal = document.createElement('div');
-    modal.className = "fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm";
+    modal.className = "fixed inset-0 bg-black/10 flex items-center justify-center z-[100] p-4 backdrop-blur-md";
     modal.id = "orderDetailModal";
     modal.innerHTML = `
-    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-6xl max-h-[92vh] overflow-hidden shadow-2xl flex flex-col animate-scaleIn">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-6xl max-h-[92vh] overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleIn">
         
         <div class="px-10 py-6 flex justify-between items-center bg-white sticky top-0 z-10">
             <div>

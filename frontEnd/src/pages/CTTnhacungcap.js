@@ -39,7 +39,7 @@ export function renderCTTnhacungcap() {
     setTimeout(fetchSupplierMaterialsFromServer, 50);
 
     return `
-    <div class="flex flex-col mt-0 -mx-8 min-h-screen bg-gray-50/50 animate-fadeIn">
+    <div class="flex flex-col mt-0 min-h-screen bg-gray-50/50 animate-fadeIn">
         ${renderPortalHeader({
         activeLabel: 'Vật tư',
         tabs: [
@@ -194,12 +194,12 @@ window.openMaterialDetail = function (id, role, isEditing = false) {
     }
 
     const modal = document.createElement('div');
-    modal.className = "fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm";
+    modal.className = "fixed inset-0 bg-black/10 flex items-center justify-center z-[100] p-4 backdrop-blur-md";
     modal.id = "materialDetailModal";
 
     if (isEditing) {
         modal.innerHTML = `
-        <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-5xl max-h-[92vh] overflow-hidden shadow-2xl flex flex-col animate-scaleUp">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-5xl max-h-[92vh] overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleUp">
             <div class="px-10 py-5 flex justify-between items-center bg-white sticky top-0 z-10">
                 <div class="flex-1 mr-10">
                     <input type="text" name="name" form="formEditMaterial" required
@@ -215,7 +215,7 @@ window.openMaterialDetail = function (id, role, isEditing = false) {
                 <form id="formEditMaterial" data-material-id="${m.id}" class="grid grid-cols-1 md:grid-cols-5 gap-10 items-stretch">
                     
                     <div class="md:col-span-2 flex flex-col gap-6">
-                        <div class="flex-1 bg-white rounded-[32px] border-2 border-dashed border-gray-200 p-8 flex flex-col items-center justify-center min-h-[220px] hover:border-blue-300 transition-all cursor-pointer relative group"
+                        <div class="w-full aspect-square bg-white rounded-[32px] border-2 border-dashed border-gray-200 p-8 flex flex-col items-center justify-center hover:border-blue-300 transition-all cursor-pointer relative group overflow-hidden"
                              onclick="document.getElementById('editMaterialImgInput').click()">
                             <input type="file" name="image" id="editMaterialImgInput" class="hidden" accept="image/*" onchange="previewMaterialImage(this, 'editMaterialImgPreview', 'editImgPreviewText')">
                             <img id="editMaterialImgPreview" src="${getImageUrl(m.image_url || m.image)}" alt="${m.name}" class="absolute inset-0 w-full h-full object-contain p-4 opacity-40 group-hover:opacity-20 transition-opacity rounded-[32px]">
@@ -291,19 +291,21 @@ window.openMaterialDetail = function (id, role, isEditing = false) {
         </div>`;
     } else {
         modal.innerHTML = `
-        <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-scaleUp">
-            <!-- Header with gradient -->
-            <div class="bg-gradient-to-r from-violet-600 to-purple-600 px-8 py-5 flex justify-between items-center relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4"></div>
-                <div class="relative z-10 flex items-center gap-4 flex-1 min-w-0">
-                    <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-cube text-white"></i>
+        <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleUp">
+            <!-- Header (White) -->
+            <div class="bg-white px-8 py-5 flex justify-between items-center border-b border-gray-100 relative z-10">
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                    <div class="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm border border-violet-100">
+                        <i class="fas fa-cube text-violet-500"></i>
                     </div>
-                    <h2 class="text-lg font-extrabold text-white truncate">${m.name}</h2>
+                    <h2 class="text-lg font-bold text-gray-800 truncate">${m.name}</h2>
+                    <span class="status-chip ${m.status === 'Sẵn sàng' ? 'status-chip-green' : m.status === 'Hết hàng' ? 'status-chip-orange' : 'status-chip-red'} text-xs ml-2 flex-shrink-0">
+                        ${m.status}
+                    </span>
                 </div>
-                <div class="flex items-center gap-2 relative z-10">
+                <div class="flex items-center gap-3">
                     ${actionButtonsHtml}
-                    <button onclick="this.closest('.fixed').remove()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition ml-1">
+                    <button onclick="this.closest('.fixed').remove()" class="w-9 h-9 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600 flex items-center justify-center transition border border-gray-200/50">
                         <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
@@ -314,20 +316,13 @@ window.openMaterialDetail = function (id, role, isEditing = false) {
                     
                     <!-- Left: Image + Price -->
                     <div class="md:col-span-2 flex flex-col gap-5">
-                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center justify-center min-h-[200px]">
-                            <img src="${getImageUrl(m.image_url || m.image)}" alt="${m.name}" class="max-w-full max-h-[180px] object-contain">
+                        <div class="w-full aspect-square bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden">
+                            <img src="${getImageUrl(m.image_url || m.image)}" alt="${m.name}" class="w-full h-full object-contain p-2">
                         </div>
                         
                         <div class="bg-gradient-to-r from-purple-50 to-violet-50 px-5 py-4 rounded-2xl border border-purple-100 flex items-center justify-between">
                             <span class="text-purple-600 text-sm font-bold">Đơn giá</span>
                             <span class="text-2xl font-extrabold text-purple-700">${m.price.toLocaleString('vi-VN')} <span class="text-base">đ</span></span>
-                        </div>
-
-                        <!-- Status badge -->
-                        <div class="flex items-center gap-2">
-                            <span class="status-chip ${m.status === 'Sẵn sàng' ? 'status-chip-green' : m.status === 'Hết hàng' ? 'status-chip-orange' : 'status-chip-red'} text-xs">
-                                ${m.status}
-                            </span>
                         </div>
                     </div>
 
@@ -388,9 +383,9 @@ window.addMaterial = function () {
     const isSupplier = role === 'supplier';
 
     const modal = document.createElement('div');
-    modal.className = "fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm";
+    modal.className = "fixed inset-0 bg-black/10 flex items-center justify-center z-[100] p-4 backdrop-blur-md";
     modal.innerHTML = `
-    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col animate-scaleIn">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-[40px] w-full max-w-5xl overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleIn">
         
         <div class="px-10 py-5 flex justify-between items-center bg-white sticky top-0 z-10">
             <div class="flex-1 mr-10">
@@ -620,7 +615,7 @@ window.handleUpdateMaterial = async function (btn) {
 };
 
 window.handleDeleteMaterial = async function (materialId) {
-    if (!confirm('Bạn có chắc chắn muốn xóa vật tư này?')) return;
+    if (!await window.showConfirm('Bạn có chắc chắn muốn xóa vật tư này?')) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/materials/${materialId}`, {

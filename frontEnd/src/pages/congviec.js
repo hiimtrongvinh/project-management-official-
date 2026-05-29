@@ -17,7 +17,7 @@ export function renderCongviec() {
                     <i class="fas fa-clipboard-check text-emerald-500 text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Quản lý công việc</h1>
+                    <h1 class="text-2xl font-bold text-gray-800 ">Quản lý công việc</h1>
                 </div>
             </div>
             <!-- Stats Badges -->
@@ -210,7 +210,7 @@ export function renderTaskCards(tasks = [], page = currentTaskPage) {
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
+                <div class="flex items-center gap-2 flex-shrink-0">
                     ${config.actions}
                 </div>
             </div>
@@ -412,7 +412,7 @@ window.openSubmitTaskModal = function (taskId) {
     modal.className = "fixed inset-0 modal-overlay flex items-center justify-center z-[100] p-4";
     modal.id = "submitTaskModal";
     modal.innerHTML = `
-    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-scaleUp overflow-hidden">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-lg overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleUp">
         <!-- Modal Header -->
         <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-5">
             <div class="flex items-center gap-3">
@@ -490,11 +490,11 @@ window.xemLaiCongViec = (taskId) => {
     if (!task) return;
 
     const formattedDeadline = task.deadline ? new Date(task.deadline).toLocaleDateString('vi-VN') : 'Không có';
-    
+
     const modal = document.createElement('div');
     modal.className = "fixed inset-0 modal-overlay flex items-center justify-center z-[100] p-4";
     modal.id = "viewReportModal";
-    
+
     let fileHtml = '';
     if (task.file_path) {
         const fileName = task.file_path.split('/').pop();
@@ -511,7 +511,7 @@ window.xemLaiCongViec = (taskId) => {
     } else {
         fileHtml = `<p class="text-xs text-gray-400 italic">Không có file đính kèm</p>`;
     }
-    
+
     let feedbackHtml = '';
     if (task.feedback) {
         feedbackHtml = `
@@ -522,7 +522,7 @@ window.xemLaiCongViec = (taskId) => {
     }
 
     modal.innerHTML = `
-    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-scaleUp overflow-hidden">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-lg overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleUp">
         <!-- Modal Header -->
         <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-5">
             <div class="flex items-center gap-3">

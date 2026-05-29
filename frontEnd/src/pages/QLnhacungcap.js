@@ -34,7 +34,7 @@ export function renderQLNhacungcap() {
                     <i class="fas fa-truck-loading text-purple-500 text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Quản lý nhà cung cấp</h1>
+                    <h1 class="text-2xl font-bold text-gray-800 ">Quản lý nhà cung cấp</h1>
                 </div>
             </div>
             ${window.getAuthRole && window.getAuthRole() === 'admin' ? `
@@ -214,7 +214,7 @@ window.lockSupplier = async function (supplierID, currentStatus) {
     const actionText = isLocking ? 'khóa' : 'mở khóa';
     const newStatus = isLocking ? 'locked' : 'active';
 
-    if (confirm(`Bạn có chắc chắn muốn ${actionText} tài khoản nhà cung cấp ${supplierID} không?`)) {
+    if (await window.showConfirm(`Bạn có chắc chắn muốn ${actionText} tài khoản nhà cung cấp ${supplierID} không?`)) {
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:3000/api/users/${supplierID}`, {

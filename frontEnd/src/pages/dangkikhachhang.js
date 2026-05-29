@@ -1,88 +1,88 @@
-// src/pages/dangkikhachhang.js
-
 export function renderDangKyKhachHang() {
     return `
-    <div class="h-full flex items-center justify-center -mt-4">
-        <div class="bg-white rounded-3xl shadow-xl w-full max-w-5xl flex overflow-hidden border border-gray-100">
+    <div class="h-full flex items-center justify-center -mt-4 bg-gray-50/10">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-5xl flex overflow-hidden border border-gray-100 animate-scaleIn">
             
-            <div class="hidden md:flex w-2/5 bg-blue-600 p-8 flex-col justify-between text-white relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500 rounded-full opacity-50 blur-2xl"></div>
-                <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-blue-700 rounded-full opacity-50 blur-2xl"></div>
+            <div class="hidden md:flex w-2/5 bg-gradient-to-br from-blue-600 via-blue-800 to-indigo-900 p-8 flex-col justify-between text-white border-r border-blue-700/20 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-48 h-48 bg-blue-400/10 rounded-full blur-3xl"></div>
 
                 <div class="relative z-10">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-3xl shadow-md">📈</div>
+                        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-sm">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
                         <div>
-                            <h1 class="text-3xl font-bold ">e-Teck</h1>
-                            <p class="text-orange-400 text-sm font-bold  -mt-1">Projects</p>
+                            <h1 class="text-3xl font-bold text-white leading-none">e-Teck</h1>
+                            <p class="text-white text-xs font-bold mt-1 ">Projects</p>
                         </div>
                     </div>
-                    <h2 class="text-3xl font-bold uppercase leading-snug mb-3">Cổng thông tin<br>Khách hàng</h2>
-                    <p class="text-blue-100 text-base leading-relaxed">
+                    <h2 class="text-3xl font-bold uppercase leading-snug mb-3 text-white">Cổng thông tin<br>Khách hàng</h2>
+                    <p class="text-white text-base font-semibold leading-relaxed">
                         Quản lý dự án, theo dõi tiến độ <br> và nhận báo giá chuyên nghiệp từ e-Teck.
                     </p>
                 </div>
                 
-                <div onclick="window.goToLogin()" class="relative z-10 cursor-pointer flex items-center gap-2 text-blue-100 hover:text-white transition w-fit px-4 py-2.5 rounded-xl hover:bg-blue-700 bg-blue-600/50 backdrop-blur-sm">
+                <div onclick="window.goToLogin()" class="relative z-10 cursor-pointer flex items-center gap-2 text-white hover:text-blue-200 font-bold transition w-fit px-4 py-2.5 rounded-xl hover:bg-white/10 bg-white/5 border border-white/10 shadow-sm backdrop-blur-sm">
                     <i class="fas fa-arrow-left"></i> <span>Quay lại đăng nhập</span>
                 </div>
             </div>
             
-            <div class="w-full md:w-3/5 p-8 flex flex-col justify-center bg-gray-50/50">
+            <div class="w-full md:w-3/5 p-8 flex flex-col justify-center bg-gray-50/20">
                 <div class="mb-5">
-                    <h3 class="text-2xl font-bold text-gray-800 ">Đăng ký tài khoản</h3>
-                    <p class="text-gray-500 text-sm mt-1">Vui lòng khai báo chính xác và đầy đủ các thông tin sau:</p>
+                    <h3 class="text-2xl font-bold text-gray-800">Đăng ký tài khoản</h3>
+                    <p class="text-gray-400 text-xs mt-1 font-semibold">Vui lòng khai báo chính xác và đầy đủ các thông tin sau:</p>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-x-5 gap-y-4">
                     
                     <div class="col-span-1">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Loại khách hàng</label>
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Loại khách hàng</label>
                         <div class="relative">
-                            <select id="reg-type" class="appearance-none w-full px-4 pr-10 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-sm text-gray-700 cursor-pointer">
+                            <select id="reg-type" class="appearance-none w-full px-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition text-sm font-semibold text-gray-700 cursor-pointer">
                                 <option value="Cá nhân">👤 Cá nhân</option>
                                 <option value="Doanh nghiệp">🏢 Doanh nghiệp</option>
                                 <option value="Tổ chức sự nghiệp">🏛️ Tổ chức sự nghiệp</option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                                <i class="fas fa-chevron-down text-sm"></i>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
+                                <i class="fas fa-chevron-down text-xs"></i>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-span-1">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Mã định danh/mã số thuế</label>
-                        <input type="text" id="reg-id" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-sm">
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Mã định danh/mã số thuế</label>
+                        <input type="text" id="reg-id" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-sm font-semibold text-gray-800 transition">
                     </div>
 
                     <div class="col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tên khách hàng *</label>
-                        <input type="text" id="reg-name" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-sm">
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Tên khách hàng *</label>
+                        <input type="text" id="reg-name" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-sm font-semibold text-gray-800 transition">
                     </div>
 
                     <div class="col-span-1">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Email liên hệ *</label>
-                        <input type="email" id="reg-email" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-sm">
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Email liên hệ *</label>
+                        <input type="email" id="reg-email" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-sm font-semibold text-gray-800 transition">
                     </div>
 
                     <div class="col-span-1">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Số điện thoại *</label>
-                        <input type="tel" id="reg-phone" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-sm">
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Số điện thoại *</label>
+                        <input type="tel" id="reg-phone" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-sm font-semibold text-gray-800 transition">
                     </div>
 
                     <div class="col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Địa chỉ</label>
-                        <input type="text" id="reg-address" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-sm" >
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Địa chỉ</label>
+                        <input type="text" id="reg-address" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-sm font-semibold text-gray-800 transition">
                     </div>
 
                     <div class="col-span-1">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Mật khẩu *</label>
-                        <input type="password" id="reg-password" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-sm" >
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase">Mật khẩu *</label>
+                        <input type="password" id="reg-password" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-sm font-semibold text-gray-800 transition">
                     </div>
                     
                     <div class="col-span-1 flex items-end">
-                        <button onclick="window.handleDangKyKhachHang()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-600/30 h-[46px] flex justify-center items-center gap-2">
-                            <span>Đăng ký</span> <i class="fas fa-arrow-right text-sm"></i>
+                        <button onclick="window.handleDangKyKhachHang()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-600/15 h-[46px] flex justify-center items-center gap-2 cursor-pointer border-none">
+                            <span>Đăng ký</span> <i class="fas fa-arrow-right text-xs"></i>
                         </button>
                     </div>
 

@@ -348,7 +348,7 @@ window.switchTab = switchTab;
 window.openProjectDetail = openProjectDetail;
 
 window.deleteProject = async function (projectId) {
-    if (!confirm('Bạn có chắc chắn muốn xóa dự án này? Thao tác này không thể hoàn tác.')) return;
+    if (!await window.showConfirm('Bạn có chắc chắn muốn xóa dự án này? Thao tác này không thể hoàn tác.')) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
@@ -367,7 +367,7 @@ window.deleteProject = async function (projectId) {
 };
 
 window.approveProject = async function (projectId) {
-    if (!confirm('Bạn có chắc chắn muốn phê duyệt dự án này và chuyển sang giai đoạn Khảo sát và lập kế hoạch (bước 1)?')) return;
+    if (!await window.showConfirm('Bạn có chắc chắn muốn phê duyệt dự án này và chuyển sang giai đoạn Khảo sát và lập kế hoạch (bước 1)?')) return;
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`http://localhost:3000/api/projects/${projectId}/status`, {

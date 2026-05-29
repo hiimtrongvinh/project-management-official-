@@ -3,7 +3,7 @@ import { renderPortalHeader } from './portalHeader.js';
 
 export function renderTaoyeucau() {
     return `
-    <div class="flex flex-col mt-0 -mx-8"> 
+    <div class="flex flex-col mt-0 min-h-screen">
         ${renderPortalHeader({
         activeLabel: 'Tạo yêu cầu',
         tabs: [

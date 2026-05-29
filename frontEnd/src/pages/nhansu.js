@@ -18,7 +18,7 @@ export function renderNhansu() {
                     <i class="fas fa-users text-blue-500 text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Quản lý nhân sự</h1>
+                    <h1 class="text-2xl font-bold text-gray-800">Quản lý nhân sự</h1>
                 </div>
             </div>
             ${window.getAuthRole && window.getAuthRole() === 'admin' ? `
@@ -251,7 +251,7 @@ window.lockStaff = async function (staffID, currentStatus) {
     const actionText = isLocking ? 'khóa' : 'mở khóa';
     const newStatus = isLocking ? 'locked' : 'active';
 
-    if (confirm(`Bạn có chắc chắn muốn ${actionText} tài khoản nhân viên ${staffID} không?`)) {
+    if (await window.showConfirm(`Bạn có chắc chắn muốn ${actionText} tài khoản nhân viên ${staffID} không?`)) {
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:3000/api/users/${staffID}`, {
