@@ -88,7 +88,7 @@ window.fetchMaterials = async function (role = 'staff') {
 
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:3000/api/materials?${params.toString()}`, {
+        const response = await fetch(`/api/materials?${params.toString()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
@@ -179,7 +179,7 @@ window.loadSupplierFilterOptions = async function () {
 
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/users/suppliers?limit=100', {
+        const response = await fetch('/api/users/suppliers?limit=100', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();

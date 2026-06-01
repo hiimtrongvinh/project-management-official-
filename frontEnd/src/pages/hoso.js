@@ -172,9 +172,9 @@ function createSmallMember(projectId, staffId, name = '', role, avatar, isClient
     const colorClass = colors[displayName.charCodeAt(0) % colors.length];
 
     const avatarContent = avatar
-        ? `<img src="http://localhost:3000${avatar}" alt="${displayName}" class="w-full h-full object-cover">`
+        ? `<img src="${avatar}" alt="${displayName}" class="w-full h-full object-cover">`
         : `<span class="text-lg font-bold text-white">${displayName.charAt(0).toUpperCase()}</span>`;
-    
+
     const avatarClass = avatar
         ? `w-14 h-14 rounded-2xl overflow-hidden relative shadow-sm`
         : `w-14 h-14 ${colorClass} rounded-2xl flex items-center justify-center relative shadow-sm`;
@@ -199,7 +199,7 @@ function createSmallDoc(file) {
 async function fetchStaffList() {
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/users/staff?limit=100', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch('/api/users/staff?limit=100', { headers: { 'Authorization': `Bearer ${token}` } });
         const result = await res.json();
         return result.success ? result.data : [];
     } catch (err) { console.error(err); return []; }
@@ -257,7 +257,7 @@ window.showAddMemberModal = async function (projectId) {
         const body = { staffId: fd.get('staffId'), role: fd.get('role') };
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/projects/${projectId}/members`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
+            const res = await fetch(`/api/projects/${projectId}/members`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
             const result = await res.json();
             if (result.success) { modal.remove(); await refreshProjectDetail(projectId); }
             else { alert('❌ Lỗi: ' + (result.error?.message || 'Không thể thêm nhân sự')); }
@@ -269,7 +269,7 @@ window.handleDeleteMember = async function (projectId, staffId) {
     if (!await window.showConfirm('Bạn có chắc muốn xóa nhân sự này khỏi dự án?')) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/members/${staffId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(`/api/projects/${projectId}/members/${staffId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
         const result = await res.json();
         if (result.success) { await refreshProjectDetail(projectId); }
         else { alert('❌ Lỗi: ' + (result.error?.message || 'Không thể xóa nhân sự')); }

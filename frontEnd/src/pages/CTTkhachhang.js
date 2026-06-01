@@ -7,7 +7,7 @@ let loadedClientProjects = [];
 export async function fetchClientProjectsFromServer() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/projects?limit=100', {
+        const response = await fetch('/api/projects?limit=100', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -82,7 +82,7 @@ function renderOriginalProjectCards(projects) {
             if (m.avatar) {
                 avatarsHtml += `
                 <div class="w-8 h-8 rounded-full border-2 border-white -ml-2 first:ml-0 overflow-hidden shadow-sm" title="${m.name}">
-                    <img src="http://localhost:3000${m.avatar}" alt="${m.name}" class="w-full h-full object-cover">
+                    <img src="${m.avatar}" alt="${m.name}" class="w-full h-full object-cover">
                 </div>`;
             } else {
                 const initial = m.name ? m.name.charAt(0).toUpperCase() : '?';

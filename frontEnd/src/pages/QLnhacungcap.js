@@ -5,7 +5,7 @@ const SUPPLIERS_PER_PAGE = 12;
 export async function fetchSuppliersFromServer() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/users/suppliers?limit=100', {
+        const response = await fetch('/api/users/suppliers?limit=100', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -217,7 +217,7 @@ window.lockSupplier = async function (supplierID, currentStatus) {
     if (await window.showConfirm(`Bạn có chắc chắn muốn ${actionText} tài khoản nhà cung cấp ${supplierID} không?`)) {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/users/${supplierID}`, {
+            const response = await fetch(`/api/users/${supplierID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -330,7 +330,7 @@ window.handleSaveSupplier = async function (btn, supplierID) {
         let response;
         if (supplierID) {
             // Update
-            response = await fetch(`http://localhost:3000/api/users/${supplierID}`, {
+            response = await fetch(`/api/users/${supplierID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -340,7 +340,7 @@ window.handleSaveSupplier = async function (btn, supplierID) {
             });
         } else {
             // Create
-            response = await fetch(`http://localhost:3000/api/users/supplier`, {
+            response = await fetch(`/api/users/supplier`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

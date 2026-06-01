@@ -124,7 +124,7 @@ export function renderTabVattuDuan(projectId, role) {
             const documentsList = project?.documentsList || [];
             const contractDoc = documentsList.find(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế'));
             let contractSectionHtml = '';
-            
+
             if (contractDoc) {
                 contractSectionHtml = `
                     <div class="bg-purple-50/50 border border-purple-100 rounded-2xl p-4 flex items-center justify-between shadow-sm mt-3 animate-fadeIn">
@@ -141,7 +141,7 @@ export function renderTabVattuDuan(projectId, role) {
                             <button onclick="window.handleViewContract('${projectId}', '${contractDoc.file_path}')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all shadow-sm flex items-center gap-1.5">
                                 <i class="fas fa-eye"></i> Xem hợp đồng
                             </button>
-                            <a href="http://localhost:3000/${contractDoc.file_path}" target="_blank" download class="bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5">
+                            <a href="/${contractDoc.file_path}" target="_blank" download class="bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5">
                                 <i class="fas fa-download"></i> Tải về HTML
                             </a>
                         </div>
@@ -243,7 +243,7 @@ window.handleUpdateQuotationStatus = async function (projectId, quotationId, sta
     if (!await window.showConfirm(`Bạn có chắc muốn ${actionText} báo giá này?`)) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/quotation-status`, {
+        const res = await fetch(`/api/projects/${projectId}/quotation-status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ status })
@@ -267,7 +267,7 @@ window.handleUpdateQuotationStatus = async function (projectId, quotationId, sta
 const getImageUrl = (url) => {
     if (!url) return 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=200';
     if (url.startsWith('/uploads')) {
-        return `http://localhost:3000${url}`;
+        return `${url}`;
     }
     return url;
 };
@@ -276,7 +276,7 @@ window.openSideDrawerChonVattu = async function (projectId) {
     let warehouseMaterials = [];
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/materials', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch('/api/materials', { headers: { 'Authorization': `Bearer ${token}` } });
         const result = await res.json();
         if (result.success) warehouseMaterials = result.data;
     } catch (err) { console.error('Lỗi tải vật tư:', err); }
@@ -342,7 +342,7 @@ window.addMaterialToProject = async function (projectId, materialStr) {
             markup: 10
         };
 
-        const res = await fetch('http://localhost:3000/api/orders/project-item', {
+        const res = await fetch('/api/orders/project-item', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(bodyData)
@@ -364,7 +364,7 @@ window.addMaterialToProject = async function (projectId, materialStr) {
     }
 };
 
-window.recalculateRow = function(input) {
+window.recalculateRow = function (input) {
     const tr = input.closest('tr');
     if (!tr) return;
 
@@ -385,7 +385,7 @@ window.recalculateRow = function(input) {
     if (totalSellTd) totalSellTd.textContent = totalSell.toLocaleString() + 'đ';
 };
 
-window.saveVattuChanges = async function(projectId) {
+window.saveVattuChanges = async function (projectId) {
     const trs = document.querySelectorAll('tr[data-id]');
     if (trs.length === 0) return;
 
@@ -409,7 +409,7 @@ window.saveVattuChanges = async function(projectId) {
             const quantity = parseInt(qtyInput?.value || 1);
             const markup = parseInt(markupInput?.value || 0);
 
-            const res = await fetch(`http://localhost:3000/api/orders/project-item/${id}`, {
+            const res = await fetch(`/api/orders/project-item/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -471,7 +471,7 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
     const modal = document.createElement('div');
     modal.className = "fixed inset-0 bg-black/10 flex items-center justify-center z-[150] p-4 backdrop-blur-md";
     modal.id = "placeOrderModal";
-    
+
     // Get project members as options
     const members = project?.profile?.members || [];
     const memberOptionsHtml = members.map(m => `
@@ -479,7 +479,7 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
     `).join('') || `
         <option value="">-- Chọn thành viên nhận hàng --</option>
     `;
-    
+
     // Default address is the client's project address
     const defaultAddress = project?.client_address || 'Văn phòng dự án e-Teck';
 
@@ -568,13 +568,13 @@ window.placeOrderForSupplier = async function (projectId, supplierName) {
                 items: itemsList
             };
 
-            const res = await fetch('http://localhost:3000/api/orders', {
+            const res = await fetch('/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(bodyData)
             });
             const result = await res.json();
-            
+
             modal.remove();
 
             if (result.success) {
@@ -599,7 +599,7 @@ window.handleDeleteProjectItem = async function (projectId, projectItemId) {
     if (!await window.showConfirm('Bạn có chắc chắn muốn xóa vật tư này khỏi dự án?')) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/orders/project-item/${projectItemId}`, {
+        const res = await fetch(`/api/orders/project-item/${projectItemId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -621,7 +621,7 @@ window.handleDeleteProjectItem = async function (projectId, projectItemId) {
 
 window.handleSendQuotation = async function (projectId) {
     if (!await window.showConfirm('Xác nhận gửi báo giá này cho Khách hàng? Dự án sẽ tự động chuyển sang Bước 3 (Xác nhận thỏa thuận).')) return;
-    
+
     const sendBtn = document.querySelector('button[onclick^="window.handleSendQuotation"]');
     const originalHtml = sendBtn ? sendBtn.innerHTML : '';
     if (sendBtn) {
@@ -631,7 +631,7 @@ window.handleSendQuotation = async function (projectId) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/send-quotation`, {
+        const res = await fetch(`/api/projects/${projectId}/send-quotation`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -666,7 +666,7 @@ window.handleCreateContract = async function (projectId) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/contract`, {
+        const res = await fetch(`/api/projects/${projectId}/contract`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -710,11 +710,11 @@ window.handleViewContract = function (projectId, filePath) {
             </div>
         </div>
         <div class="flex-1 overflow-y-auto p-2 bg-gray-100 flex justify-center custom-scrollbar">
-            <iframe id="contractIframe" src="http://localhost:3000/${filePath}" style="width: 100%; height: 100%; border: none; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></iframe>
+            <iframe id="contractIframe" src="/${filePath}" style="width: 100%; height: 100%; border: none; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></iframe>
         </div>
     </div>`;
 
-    window.printContract = function() {
+    window.printContract = function () {
         const iframe = document.getElementById('contractIframe');
         if (iframe) {
             iframe.contentWindow.focus();

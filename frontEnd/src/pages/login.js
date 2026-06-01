@@ -130,7 +130,7 @@ export async function handleLogin() {
     btn.disabled = true;
 
     try {
-        const response = await fetch('http://localhost:3000/api/auth/login', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -146,7 +146,7 @@ export async function handleLogin() {
             localStorage.setItem('authLoggedInAt', new Date().toISOString());
 
             try {
-                const profileRes = await fetch('http://localhost:3000/api/auth/profile', {
+                const profileRes = await fetch('/api/auth/profile', {
                     headers: { 'Authorization': `Bearer ${result.data.token}` }
                 });
                 const profileResult = await profileRes.json();

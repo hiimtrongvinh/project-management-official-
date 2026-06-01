@@ -77,7 +77,7 @@ export function renderNhansu() {
 async function fetchStaffsList() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/users/staff?limit=100', {
+        const response = await fetch('/api/users/staff?limit=100', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -125,7 +125,7 @@ export function renderStaffTable(staffs = null, page = staffCurrentPage) {
     } else {
         pageStaffs.forEach(staff => {
             const avatarHtml = staff.avatar
-                ? `<img src="http://localhost:3000${staff.avatar}" alt="${staff.name}" class="w-10 h-10 rounded-full object-cover border-2 border-gray-100">`
+                ? `<img src="${staff.avatar}" alt="${staff.name}" class="w-10 h-10 rounded-full object-cover border-2 border-gray-100">`
                 : `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-sm border-2 border-white shadow-sm">${staff.name.charAt(0).toUpperCase()}</div>`;
 
             const isActive = staff.status === 'active';
@@ -254,7 +254,7 @@ window.lockStaff = async function (staffID, currentStatus) {
     if (await window.showConfirm(`Bạn có chắc chắn muốn ${actionText} tài khoản nhân viên ${staffID} không?`)) {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/users/${staffID}`, {
+            const response = await fetch(`/api/users/${staffID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -317,7 +317,7 @@ function openStaffModal(staff = null) {
                     <div class="relative group">
                         <div id="staffAvatarPreview" class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold border-4 border-white shadow-lg overflow-hidden cursor-pointer"
                              onclick="document.getElementById('staffAvatarInput').click()">
-                            ${sName ? (sAvatar ? `<img src="http://localhost:3000${sAvatar}" class="w-full h-full object-cover">` : sName.charAt(0).toUpperCase()) : '<i class="fas fa-user text-xl"></i>'}
+                            ${sName ? (sAvatar ? `<img src="${sAvatar}" class="w-full h-full object-cover">` : sName.charAt(0).toUpperCase()) : '<i class="fas fa-user text-xl"></i>'}
                         </div>
                         <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs border-2 border-white shadow cursor-pointer"
                              onclick="document.getElementById('staffAvatarInput').click()">
@@ -401,7 +401,7 @@ window.handleSaveStaff = async function (btn, originalID) {
 
     const isEdit = !!originalID;
     const token = localStorage.getItem('token');
-    const url = isEdit ? `http://localhost:3000/api/users/${originalID}` : `http://localhost:3000/api/users/staff`;
+    const url = isEdit ? `/api/users/${originalID}` : `/api/users/staff`;
     const method = isEdit ? 'PUT' : 'POST';
 
     // Map fields to match API expectations
@@ -439,7 +439,7 @@ window.handleSaveStaff = async function (btn, originalID) {
             if (avatarInput && avatarInput.files[0] && staffId) {
                 const avatarFormData = new FormData();
                 avatarFormData.append('avatar', avatarInput.files[0]);
-                await fetch(`http://localhost:3000/api/users/${staffId}/avatar`, {
+                await fetch(`/api/users/${staffId}/avatar`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` },
                     body: avatarFormData

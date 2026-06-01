@@ -203,7 +203,7 @@ export function renderTaskCards(tasks = [], page = currentTaskPage) {
                         </span>
                         <span class="status-chip ${config.chipClass} text-[10px]">${task.status}</span>
                         ${task.file_path ? `
-                        <a href="http://localhost:3000${task.file_path}" target="_blank" onclick="event.stopPropagation()" class="flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md hover:bg-blue-100 transition-all">
+                        <a href="${task.file_path}" target="_blank" onclick="event.stopPropagation()" class="flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md hover:bg-blue-100 transition-all">
                             <i class="fas fa-file-alt text-[10px]"></i> Xem báo cáo
                         </a>` : ''}
                     </div>
@@ -282,7 +282,7 @@ function renderTaskStats(tasks) {
 window.fetchTasksFromServer = async function () {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/tasks/my-tasks', {
+        const response = await fetch('/api/tasks/my-tasks', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
@@ -298,7 +298,7 @@ window.fetchTasksFromServer = async function () {
 window.fetchFilterProjects = async function () {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/projects?limit=100', {
+        const response = await fetch('/api/projects?limit=100', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
@@ -466,7 +466,7 @@ window.handleTaskSubmit = async function (e, taskId) {
 
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:3000/api/tasks/${taskId}/submit`, {
+        const response = await fetch(`/api/tasks/${taskId}/submit`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
@@ -504,7 +504,7 @@ window.xemLaiCongViec = (taskId) => {
                 <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
                 <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
             </div>
-            <a href="http://localhost:3000${task.file_path}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+            <a href="${task.file_path}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
                 <i class="fas fa-download mr-1"></i> Tải về
             </a>
         </div>`;

@@ -208,7 +208,7 @@ function createTaskCard(id, title, user, date, file, status, projectId) {
                 <div class="flex items-center gap-3 mt-1 text-[11px] text-gray-500 font-medium">
                     <span class="flex items-center gap-1"><i class="fas fa-user-circle text-blue-400"></i>${user}</span>
                     <span class="flex items-center gap-1"><i class="far fa-calendar text-gray-300"></i>${date}</span>
-                    ${file ? `<a href="http://localhost:3000${file}" target="_blank" onclick="event.stopPropagation()" class="text-blue-500 hover:underline flex items-center gap-1"><i class="fas fa-paperclip"></i>Tài liệu</a>` : ''}
+                    ${file ? `<a href="${file}" target="_blank" onclick="event.stopPropagation()" class="text-blue-500 hover:underline flex items-center gap-1"><i class="fas fa-paperclip"></i>Tài liệu</a>` : ''}
                 </div>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -254,7 +254,7 @@ setTimeout(() => {
 async function fetchStaffList() {
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/users/staff?limit=100', {
+        const res = await fetch('/api/users/staff?limit=100', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();
@@ -340,7 +340,7 @@ window.showAddTaskModal = async function (projectId, stepNum) {
         const body = { project_id: projectId, step: stepNum, title: fd.get('title'), description: fd.get('description'), assignee_id: fd.get('assignee_id') || null, deadline: fd.get('deadline') || null };
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
+            const res = await fetch('/api/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
             const result = await res.json();
             if (result.success) { modal.remove(); refreshProjectDetail(projectId); }
             else { alert('❌ Lỗi: ' + (result.error?.message || 'Không thể thêm công việc')); }
@@ -351,7 +351,7 @@ window.showAddTaskModal = async function (projectId, stepNum) {
 window.showEditTaskModal = async function (projectId, taskId) {
     try {
         const token = localStorage.getItem('token');
-        const resTasks = await fetch(`http://localhost:3000/api/tasks/project/${projectId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const resTasks = await fetch(`/api/tasks/project/${projectId}`, { headers: { 'Authorization': `Bearer ${token}` } });
         const rTasks = await resTasks.json();
         const task = rTasks.success ? rTasks.data.find(t => t.id === taskId) : null;
         if (!task) { alert('Không tìm thấy thông tin công việc!'); return; }
@@ -409,7 +409,7 @@ window.showEditTaskModal = async function (projectId, taskId) {
             e.preventDefault();
             const fd = new FormData(e.target);
             const body = { title: fd.get('title'), description: fd.get('description'), assignee_id: fd.get('assignee_id') || null, deadline: fd.get('deadline') || null };
-            const res = await fetch(`http://localhost:3000/api/tasks/${taskId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
+            const res = await fetch(`/api/tasks/${taskId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
             const result = await res.json();
             if (result.success) { modal.remove(); refreshProjectDetail(projectId); }
             else { alert('❌ Lỗi: ' + (result.error?.message || 'Không thể cập nhật')); }
@@ -421,7 +421,7 @@ window.handleDeleteTask = async function (projectId, taskId) {
     if (!await window.showConfirm('Bạn có chắc muốn xóa công việc này?')) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/tasks/${taskId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
         const result = await res.json();
         if (result.success) refreshProjectDetail(projectId);
         else alert('❌ Lỗi: ' + (result.error?.message || 'Không thể xóa'));
@@ -433,7 +433,7 @@ window.handleApproveTaskDirect = async function (projectId, taskId) {
     try {
         const token = localStorage.getItem('token');
         const body = { status: 'Đã duyệt', feedback: 'Phê duyệt hoàn thành công việc.' };
-        const res = await fetch(`http://localhost:3000/api/tasks/${taskId}/review`, {
+        const res = await fetch(`/api/tasks/${taskId}/review`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(body)
@@ -486,7 +486,7 @@ window.showReworkTaskModal = function (projectId, taskId) {
         const body = { status: 'Cần sửa', feedback: fd.get('feedback') };
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/tasks/${taskId}/review`, {
+            const res = await fetch(`/api/tasks/${taskId}/review`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(body)
@@ -542,7 +542,7 @@ window.showSubmitTaskModal = function (projectId, taskId) {
         const fd = new FormData(e.target);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/tasks/${taskId}/submit`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd });
+            const res = await fetch(`/api/tasks/${taskId}/submit`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd });
             const result = await res.json();
             if (result.success) { modal.remove(); refreshProjectDetail(projectId); }
             else { alert('❌ Lỗi: ' + (result.error?.message || 'Không thể nộp')); }
@@ -554,7 +554,7 @@ window.handleAdvanceStep = async function (projectId, nextStep) {
     if (!await window.showConfirm(`Bạn có chắc muốn chuyển dự án sang Bước ${nextStep}?`)) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ step: nextStep }) });
+        const res = await fetch(`/api/projects/${projectId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ step: nextStep }) });
         const result = await res.json();
         if (result.success) { alert(`✅ Đã chuyển sang Bước ${nextStep}!`); refreshProjectDetail(projectId); }
         else { alert('❌ Chuyển bước thất bại: ' + (result.error?.message || 'Có công việc chưa được phê duyệt.')); }
@@ -565,7 +565,7 @@ window.handleCloseProject = async function (projectId) {
     if (!await window.showConfirm('Bạn có chắc chắn muốn hoàn thành dự án này?')) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/close`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(`/api/projects/${projectId}/close`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
         const result = await res.json();
         if (result.success) { alert('✅ Dự án đã hoàn thành!'); refreshProjectDetail(projectId); }
         else { alert('❌ Hoàn thành thất bại: ' + (result.error?.message || 'Có lỗi xảy ra.')); }
@@ -681,7 +681,7 @@ window.saveInlineTask = async function (projectId, stepNum, btn) {
         const token = localStorage.getItem('token');
         const body = { project_id: projectId, step: stepNum, title, description, assignee_id, deadline };
 
-        const res = await fetch('http://localhost:3000/api/tasks', {
+        const res = await fetch('/api/tasks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(body)

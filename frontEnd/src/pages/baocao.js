@@ -188,21 +188,21 @@ function renderBarChart(projects) {
     }).join('');
 }
 
-window.fetchDashboardReport = async function() {
+window.fetchDashboardReport = async function () {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/reports/dashboard', {
+        const response = await fetch('/api/reports/dashboard', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
         if (result.success) {
             const data = result.data;
-            
+
             document.getElementById('statTotalProjects').innerText = data.projects.total;
             document.getElementById('statActiveProjects').innerText = data.projects.active;
             document.getElementById('statCompletedProjects').innerText = data.projects.completed;
             document.getElementById('statApprovedBudget').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.budget.approved);
-            
+
             document.getElementById('budgetPendingText').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.budget.pending);
             document.getElementById('budgetApprovedText').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.budget.approved);
 
@@ -216,7 +216,7 @@ window.fetchDashboardReport = async function() {
             renderTaskBars(data.tasks);
 
             // Fetch projects for bar chart
-            const projRes = await fetch('http://localhost:3000/api/projects?limit=10', { headers: { 'Authorization': `Bearer ${token}` } });
+            const projRes = await fetch('/api/projects?limit=10', { headers: { 'Authorization': `Bearer ${token}` } });
             const projResult = await projRes.json();
             if (projResult.success) renderBarChart(projResult.data);
         }

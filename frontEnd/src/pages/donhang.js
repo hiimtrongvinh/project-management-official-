@@ -26,25 +26,25 @@ export function renderDonhang() {
     return `
     <div class="flex flex-col mt-0 min-h-screen">
         ${renderPortalHeader({
-            activeLabel: 'Đơn hàng',
-            tabs: [
-                {
-                    label: 'Vật tư',
-                    iconClass: 'fas fa-truck text-lg',
-                    onClick: "navigateTo('CTTnhacungcap')",
-                },
-                {
-                    label: 'Đơn hàng',
-                    iconClass: 'fas fa-clipboard-list',
-                    onClick: "navigateTo('donhang')",
-                },
-                {
-                    label: 'Tài khoản',
-                    iconClass: 'fas fa-user-circle text-lg',
-                    onClick: "navigateTo('taikhoanNCC')",
-                },
-            ],
-        })}
+        activeLabel: 'Đơn hàng',
+        tabs: [
+            {
+                label: 'Vật tư',
+                iconClass: 'fas fa-truck text-lg',
+                onClick: "navigateTo('CTTnhacungcap')",
+            },
+            {
+                label: 'Đơn hàng',
+                iconClass: 'fas fa-clipboard-list',
+                onClick: "navigateTo('donhang')",
+            },
+            {
+                label: 'Tài khoản',
+                iconClass: 'fas fa-user-circle text-lg',
+                onClick: "navigateTo('taikhoanNCC')",
+            },
+        ],
+    })}
 
         <main class="max-w-7xl mx-auto w-full px-8 pt-8 pb-12 flex-1">
             <div class="flex justify-between items-center mb-8">
@@ -91,7 +91,7 @@ async function fetchOrders() {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/orders/my-orders', {
+        const res = await fetch('/api/orders/my-orders', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();
@@ -291,7 +291,7 @@ window.updateOrderStatus = async function (id, newStatus) {
     const dbStatus = mapUIStatusToDB(newStatus);
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/orders/${o.dbId}/status`, {
+        const res = await fetch(`/api/orders/${o.dbId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

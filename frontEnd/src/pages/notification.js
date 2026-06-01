@@ -8,20 +8,20 @@ let pollingTimer = null;
 let currentPageFilter = 'all'; // 'all' | 'unread' | 'read'
 
 const NOTI_TYPE_CONFIG = {
-  task_assigned:           { icon: 'fa-user-plus',       color: 'text-blue-500',    bg: 'bg-blue-50' },
-  task_submitted:          { icon: 'fa-paper-plane',     color: 'text-purple-500',  bg: 'bg-purple-50' },
-  task_approved:           { icon: 'fa-check-circle',    color: 'text-emerald-500', bg: 'bg-emerald-50' },
-  task_rejected:           { icon: 'fa-exclamation-circle', color: 'text-orange-500', bg: 'bg-orange-50' },
-  task_deadline_warning:   { icon: 'fa-clock',           color: 'text-amber-500',   bg: 'bg-amber-50' },
-  task_overdue:            { icon: 'fa-exclamation-triangle', color: 'text-red-500', bg: 'bg-red-50' },
-  quotation_sent_to_client:   { icon: 'fa-file-invoice-dollar', color: 'text-indigo-500', bg: 'bg-indigo-50' },
-  quotation_sent_to_supplier: { icon: 'fa-truck',        color: 'text-cyan-500',    bg: 'bg-cyan-50' },
-  order_status_updated:    { icon: 'fa-sync-alt',        color: 'text-teal-500',    bg: 'bg-teal-50' },
-  project_created:         { icon: 'fa-folder-plus',     color: 'text-blue-500',    bg: 'bg-blue-50' },
-  project_step_advanced:   { icon: 'fa-arrow-right',     color: 'text-indigo-500',  bg: 'bg-indigo-50' },
-  project_completed:       { icon: 'fa-trophy',          color: 'text-emerald-500', bg: 'bg-emerald-50' },
-  project_deadline_warning:{ icon: 'fa-calendar-times',  color: 'text-amber-500',   bg: 'bg-amber-50' },
-  client_request_new:      { icon: 'fa-inbox',           color: 'text-violet-500',  bg: 'bg-violet-50' }
+  task_assigned: { icon: 'fa-user-plus', color: 'text-blue-500', bg: 'bg-blue-50' },
+  task_submitted: { icon: 'fa-paper-plane', color: 'text-purple-500', bg: 'bg-purple-50' },
+  task_approved: { icon: 'fa-check-circle', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  task_rejected: { icon: 'fa-exclamation-circle', color: 'text-orange-500', bg: 'bg-orange-50' },
+  task_deadline_warning: { icon: 'fa-clock', color: 'text-amber-500', bg: 'bg-amber-50' },
+  task_overdue: { icon: 'fa-exclamation-triangle', color: 'text-red-500', bg: 'bg-red-50' },
+  quotation_sent_to_client: { icon: 'fa-file-invoice-dollar', color: 'text-indigo-500', bg: 'bg-indigo-50' },
+  quotation_sent_to_supplier: { icon: 'fa-truck', color: 'text-cyan-500', bg: 'bg-cyan-50' },
+  order_status_updated: { icon: 'fa-sync-alt', color: 'text-teal-500', bg: 'bg-teal-50' },
+  project_created: { icon: 'fa-folder-plus', color: 'text-blue-500', bg: 'bg-blue-50' },
+  project_step_advanced: { icon: 'fa-arrow-right', color: 'text-indigo-500', bg: 'bg-indigo-50' },
+  project_completed: { icon: 'fa-trophy', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  project_deadline_warning: { icon: 'fa-calendar-times', color: 'text-amber-500', bg: 'bg-amber-50' },
+  client_request_new: { icon: 'fa-inbox', color: 'text-violet-500', bg: 'bg-violet-50' }
 };
 
 function getConfig(type) {
@@ -69,7 +69,7 @@ export function renderPortalNotificationBell() {
 // ==========================================
 export function renderNotificationPage() {
   const role = localStorage.getItem('authRole') || 'staff';
-  
+
   // Khởi động tải dữ liệu bất đồng bộ ngay sau khi render DOM
   setTimeout(() => {
     if (typeof window.initNotificationPage === 'function') {
@@ -109,13 +109,13 @@ export function renderNotificationPage() {
     return `
     <div class="flex flex-col mt-0 min-h-screen bg-gray-50/50 animate-fadeIn"> 
       ${renderPortalHeader({
-        activeLabel: 'Thông báo',
-        tabs: [
-          { label: 'Dự án', iconClass: 'fas fa-briefcase text-lg', onClick: "navigateTo('CTTkhachhang')" },
-          { label: 'Tạo yêu cầu', iconClass: 'fas fa-plus', onClick: "navigateTo('taoyeucau')" },
-          { label: 'Tài khoản', iconClass: 'fas fa-user-circle text-lg', onClick: "navigateTo('taikhoanKH')" },
-        ],
-      })}
+      activeLabel: 'Thông báo',
+      tabs: [
+        { label: 'Dự án', iconClass: 'fas fa-briefcase text-lg', onClick: "navigateTo('CTTkhachhang')" },
+        { label: 'Tạo yêu cầu', iconClass: 'fas fa-plus', onClick: "navigateTo('taoyeucau')" },
+        { label: 'Tài khoản', iconClass: 'fas fa-user-circle text-lg', onClick: "navigateTo('taikhoanKH')" },
+      ],
+    })}
       <main class="max-w-7xl mx-auto w-full px-8 pt-8 pb-12 flex-1">
         <div class="mb-8 animate-fadeInDown">
             <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
@@ -133,13 +133,13 @@ export function renderNotificationPage() {
     return `
     <div class="flex flex-col mt-0 min-h-screen bg-gray-50/50 animate-fadeIn">
       ${renderPortalHeader({
-        activeLabel: 'Thông báo',
-        tabs: [
-          { label: 'Vật tư', iconClass: 'fas fa-truck text-lg', onClick: "navigateTo('CTTnhacungcap')" },
-          { label: 'Đơn hàng', iconClass: 'fas fa-clipboard-list', onClick: "navigateTo('donhang')" },
-          { label: 'Tài khoản', iconClass: 'fas fa-user-circle text-lg', onClick: "navigateTo('taikhoanNCC')" },
-        ],
-      })}
+      activeLabel: 'Thông báo',
+      tabs: [
+        { label: 'Vật tư', iconClass: 'fas fa-truck text-lg', onClick: "navigateTo('CTTnhacungcap')" },
+        { label: 'Đơn hàng', iconClass: 'fas fa-clipboard-list', onClick: "navigateTo('donhang')" },
+        { label: 'Tài khoản', iconClass: 'fas fa-user-circle text-lg', onClick: "navigateTo('taikhoanNCC')" },
+      ],
+    })}
       <main class="max-w-7xl mx-auto w-full px-8 pt-8 pb-12 flex-1">
         <div class="mb-8 animate-fadeInDown">
             <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
@@ -207,7 +207,7 @@ async function fetchPageNotifications() {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    const res = await fetch('http://localhost:3000/api/notifications', {
+    const res = await fetch('/api/notifications', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const result = await res.json();
@@ -246,7 +246,7 @@ function renderPageNotifications() {
     let msg = 'Không có thông báo nào.';
     if (currentPageFilter === 'unread') msg = 'Bạn không có thông báo chưa đọc.';
     if (currentPageFilter === 'read') msg = 'Bạn không có thông báo đã đọc.';
-    
+
     const isPortal = ['client', 'supplier'].includes(localStorage.getItem('authRole'));
     container.innerHTML = `
       <div class="${isPortal ? 'py-12' : 'py-32'} text-center flex flex-col items-center justify-center flex-grow animate-fadeIn">
@@ -293,7 +293,7 @@ function renderPageNotifications() {
 // Các handler đăng ký lên window cho Page
 window.changeNotiFilter = function (filter) {
   currentPageFilter = filter;
-  
+
   // Cập nhật trạng thái active tab
   const tabs = ['all', 'unread', 'read'];
   tabs.forEach(t => {
@@ -313,7 +313,7 @@ window.changeNotiFilter = function (filter) {
 window.handlePageNotiClick = async function (notiId, relatedType, relatedId) {
   try {
     const token = localStorage.getItem('token');
-    await fetch(`http://localhost:3000/api/notifications/${notiId}/read`, {
+    await fetch(`/api/notifications/${notiId}/read`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -334,7 +334,7 @@ window.deletePageNoti = async function (event, notiId) {
   event.stopPropagation();
   try {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:3000/api/notifications/${notiId}`, {
+    const res = await fetch(`/api/notifications/${notiId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -352,7 +352,7 @@ window.deletePageNoti = async function (event, notiId) {
 window.markAllNotiReadPage = async function () {
   try {
     const token = localStorage.getItem('token');
-    await fetch('http://localhost:3000/api/notifications/read-all', {
+    await fetch('/api/notifications/read-all', {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -366,8 +366,8 @@ window.deleteAllNotiPage = async function () {
   if (!await window.showConfirm('Bạn có chắc chắn muốn xóa tất cả thông báo không?')) return;
   try {
     const token = localStorage.getItem('token');
-    const promises = cachedNotifications.map(n => 
-      fetch(`http://localhost:3000/api/notifications/${n.id}`, {
+    const promises = cachedNotifications.map(n =>
+      fetch(`/api/notifications/${n.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       })
@@ -389,7 +389,7 @@ async function fetchUnreadCount() {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    const res = await fetch('http://localhost:3000/api/notifications/unread-count', {
+    const res = await fetch('/api/notifications/unread-count', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const result = await res.json();

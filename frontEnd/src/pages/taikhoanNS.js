@@ -20,7 +20,7 @@ async function loadTaikhoanNSData() {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/auth/profile', {
+        const res = await fetch('/api/auth/profile', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();
@@ -37,7 +37,7 @@ async function loadTaikhoanNSData() {
         const role = profile.role;
 
         const avatarHtml = avatar
-            ? `<img src="http://localhost:3000${avatar}" alt="${name}" class="w-full h-full object-cover">`
+            ? `<img src="${avatar}" alt="${name}" class="w-full h-full object-cover">`
             : `<span class="text-3xl font-bold text-blue-600">${name.charAt(0).toUpperCase()}</span>`;
 
         const roleBadge = role === 'admin'
@@ -252,7 +252,7 @@ window.saveProfileChanges = async function (staffId) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/users/${staffId}`, {
+        const res = await fetch(`/api/users/${staffId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(body)
@@ -287,7 +287,7 @@ window.handleProfileAvatarUpload = async function (input, staffId) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/users/${staffId}/avatar`, {
+        const res = await fetch(`/api/users/${staffId}/avatar`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
@@ -357,7 +357,7 @@ window.showChangePasswordModal = function () {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/auth/change-password', {
+            const res = await fetch('/api/auth/change-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ currentPassword: fd.get('currentPassword'), newPassword: newPwd })

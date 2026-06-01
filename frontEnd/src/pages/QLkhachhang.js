@@ -71,7 +71,7 @@ export function renderQLKhachhang() {
 async function fetchClientsList() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/users/clients?limit=100', {
+        const response = await fetch('/api/users/clients?limit=100', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -243,7 +243,7 @@ window.lockClient = async function (clientID, currentStatus) {
     if (await window.showConfirm(`Bạn có chắc chắn muốn ${actionText} tài khoản khách hàng ${clientID} không?`)) {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/users/${clientID}`, {
+            const response = await fetch(`/api/users/${clientID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -373,7 +373,7 @@ window.handleSaveClient = async function (btn, originalID) {
 
     const isEdit = !!originalID;
     const token = localStorage.getItem('token');
-    const url = isEdit ? `http://localhost:3000/api/users/${originalID}` : `http://localhost:3000/api/users/client`;
+    const url = isEdit ? `/api/users/${originalID}` : `/api/users/client`;
     const method = isEdit ? 'PUT' : 'POST';
 
     const bodyData = {

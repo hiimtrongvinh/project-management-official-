@@ -29,7 +29,7 @@ window.toggleEditNCC = async function (isEditing) {
         wrapper.innerHTML = `<div class="flex items-center justify-center h-64"><p class="text-gray-500 font-medium">Đang tải...</p></div>`;
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/auth/profile', {
+            const res = await fetch('/api/auth/profile', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const result = await res.json();
@@ -165,7 +165,7 @@ window.saveNCCProfile = async function () {
     };
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/auth/profile', {
+        const res = await fetch('/api/auth/profile', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

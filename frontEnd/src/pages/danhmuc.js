@@ -13,7 +13,7 @@ let cachedCategories = {};
 async function fetchCategories() {
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/categories', {
+        const res = await fetch('/api/categories', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();
@@ -81,7 +81,7 @@ window.editItem = async (id, oldValue) => {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/categories/${id}`, {
+        const res = await fetch(`/api/categories/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ value: newVal.trim() })
@@ -102,7 +102,7 @@ window.deleteItem = async (id) => {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/categories/${id}`, {
+        const res = await fetch(`/api/categories/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -123,7 +123,7 @@ window.addItem = async (groupName) => {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/categories', {
+        const res = await fetch('/api/categories', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ group_name: groupName, value: val.trim() })

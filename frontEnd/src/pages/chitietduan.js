@@ -12,22 +12,22 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
 
     try {
         const token = localStorage.getItem('token');
-        
-        const projectRes = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+
+        const projectRes = await fetch(`/api/projects/${projectId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const projectResult = await projectRes.json();
         if (!projectResult.success) { alert('Không thể tải chi tiết dự án!'); return; }
         const projData = projectResult.data;
 
-        const tasksRes = await fetch(`http://localhost:3000/api/tasks/project/${projectId}`, {
+        const tasksRes = await fetch(`/api/tasks/project/${projectId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const tasksResult = await tasksRes.json();
         const tasks = tasksResult.success ? tasksResult.data : [];
 
         try {
-            const clientsRes = await fetch('http://localhost:3000/api/users/clients?limit=100', {
+            const clientsRes = await fetch('/api/users/clients?limit=100', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const clientsResult = await clientsRes.json();
@@ -38,7 +38,7 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
         let clientQuotations = [];
         let supplierQuotations = [];
         try {
-            const ordersRes = await fetch(`http://localhost:3000/api/orders/project/${projectId}`, {
+            const ordersRes = await fetch(`/api/orders/project/${projectId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const ordersResult = await ordersRes.json();
@@ -46,13 +46,13 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
 
             orders.forEach(o => {
                 const supplierName = o.supplier_name || o.supplier_id || 'Nhà cung cấp';
-                const statusLabel = o.status === 'Hoàn thành' ? 'Hoàn thành' : 
-                                    o.status === 'Đang giao' ? 'Đang giao' :
-                                    o.status === 'Đã xác nhận' ? 'Đã xác nhận' :
-                                    o.status === 'Đang xử lý' ? 'Chờ chốt đơn' : 
-                                    o.status === 'Mới' ? 'Mới' : 
-                                    o.status === 'Hủy' ? 'Đã hủy' : 
-                                    o.status === 'Chưa đặt hàng' ? 'Chưa đặt hàng' : 'Yêu cầu báo giá';
+                const statusLabel = o.status === 'Hoàn thành' ? 'Hoàn thành' :
+                    o.status === 'Đang giao' ? 'Đang giao' :
+                        o.status === 'Đã xác nhận' ? 'Đã xác nhận' :
+                            o.status === 'Đang xử lý' ? 'Chờ chốt đơn' :
+                                o.status === 'Mới' ? 'Mới' :
+                                    o.status === 'Hủy' ? 'Đã hủy' :
+                                        o.status === 'Chưa đặt hàng' ? 'Chưa đặt hàng' : 'Yêu cầu báo giá';
                 if (o.items && o.items.length > 0) {
                     o.items.forEach(item => {
                         const priceBuy = parseFloat(item.material_price || 0);
@@ -217,7 +217,7 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
 
     document.body.appendChild(modal);
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    
+
     const defaultTabBtn = document.getElementById(`tab-${activeTab}`) || document.getElementById('tab-hoso');
     window.switchTab(defaultTabBtn, activeTab, projectId);
 }
@@ -275,7 +275,7 @@ window.saveProject = async function (projectId) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+        const res = await fetch(`/api/projects/${projectId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ title, description, clientId: clientId || null, category, budget, endDate })
@@ -351,7 +351,7 @@ window.deleteProject = async function (projectId) {
     if (!await window.showConfirm('Bạn có chắc chắn muốn xóa dự án này? Thao tác này không thể hoàn tác.')) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+        const res = await fetch(`/api/projects/${projectId}`, {
             method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();
@@ -370,7 +370,7 @@ window.approveProject = async function (projectId) {
     if (!await window.showConfirm('Bạn có chắc chắn muốn phê duyệt dự án này và chuyển sang giai đoạn Khảo sát và lập kế hoạch (bước 1)?')) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/projects/${projectId}/status`, {
+        const res = await fetch(`/api/projects/${projectId}/status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ step: 1 })

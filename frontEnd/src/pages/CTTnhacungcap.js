@@ -7,7 +7,7 @@ let loadedSupplierMaterials = [];
 const getImageUrl = (url) => {
     if (!url) return 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=200';
     if (url.startsWith('/uploads')) {
-        return `http://localhost:3000${url}`;
+        return `${url}`;
     }
     return url;
 };
@@ -16,7 +16,7 @@ export async function fetchSupplierMaterialsFromServer() {
     try {
         const token = localStorage.getItem('token');
         const supplierId = localStorage.getItem('supplierId');
-        let url = 'http://localhost:3000/api/materials?limit=100';
+        let url = '/api/materials?limit=100';
         if (supplierId) {
             url += `&supplierId=${supplierId}`;
         }
@@ -522,7 +522,7 @@ window.handleCreateMaterial = async function (btn) {
     if (!form.checkValidity()) { form.reportValidity(); return; }
 
     const formData = new FormData(form);
-    
+
     // Lấy name thủ công từ input nằm ngoài form bằng cách tìm trong modal cha
     const modalEl = btn.closest('.fixed');
     const nameInput = modalEl ? modalEl.querySelector('input[name="name"]') : null;
@@ -552,7 +552,7 @@ window.handleCreateMaterial = async function (btn) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/materials', {
+        const res = await fetch('/api/materials', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
@@ -596,7 +596,7 @@ window.handleUpdateMaterial = async function (btn) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/materials/${materialId}`, {
+        const res = await fetch(`/api/materials/${materialId}`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
@@ -618,7 +618,7 @@ window.handleDeleteMaterial = async function (materialId) {
     if (!await window.showConfirm('Bạn có chắc chắn muốn xóa vật tư này?')) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/materials/${materialId}`, {
+        const res = await fetch(`/api/materials/${materialId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });

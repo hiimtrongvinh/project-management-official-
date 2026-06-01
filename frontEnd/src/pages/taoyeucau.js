@@ -167,7 +167,7 @@ window.handleSubmitRequest = async function (event) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/projects/request', {
+        const res = await fetch('/api/projects/request', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(body)

@@ -23,7 +23,7 @@ let loadedProjects = [];
 export async function fetchProjectsFromServer() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/projects?limit=100', {
+        const response = await fetch('/api/projects?limit=100', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
@@ -150,7 +150,7 @@ export function renderProjectCards(projects = null) {
         members.slice(0, 4).forEach((m, i) => {
             if (m.avatar) {
                 avatarsHtml += `<div class="w-8 h-8 rounded-full border-2 border-white -ml-2 first:ml-0 overflow-hidden shadow-sm shadow-gray-200/50" title="${m.name}">
-                    <img src="http://localhost:3000${m.avatar}" alt="${m.name}" class="w-full h-full object-cover">
+                    <img src="${m.avatar}" alt="${m.name}" class="w-full h-full object-cover">
                 </div>`;
             } else {
                 const initial = m.name ? m.name.charAt(0).toUpperCase() : '?';
@@ -290,7 +290,7 @@ window.addProject = async function () {
     let clients = [];
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/users/clients?limit=100', {
+        const res = await fetch('/api/users/clients?limit=100', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();
@@ -377,7 +377,7 @@ window.submitNewProject = async function (e) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/projects', {
+        const res = await fetch('/api/projects', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ title, clientId: clientId || null, category, description, startDate, endDate })
@@ -402,7 +402,7 @@ window.requestProjectApproval = function () {
 window.exportExcel = async function () {
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/reports/export-progress', {
+        const res = await fetch('/api/reports/export-progress', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) {
