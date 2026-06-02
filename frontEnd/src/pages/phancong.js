@@ -365,7 +365,7 @@ window.showEditTaskModal = async function (projectId, taskId) {
         const token = localStorage.getItem('token');
         const resTasks = await fetch(`/api/tasks/project/${projectId}`, { headers: { 'Authorization': `Bearer ${token}` } });
         const rTasks = await resTasks.json();
-        const task = rTasks.success ? rTasks.data.find(t => t.id === taskId) : null;
+        const task = rTasks.success ? rTasks.data.find(t => String(t.id) === String(taskId)) : null;
         if (!task) { alert('Không tìm thấy thông tin công việc!'); return; }
 
         const project = window.projectDetails?.[projectId];
@@ -583,7 +583,7 @@ window.xemLaiBaoCaoAdmin = function (projectId, taskId) {
     let task = null;
     if (project.assignments) {
         for (const assign of project.assignments) {
-            const found = assign.tasks.find(t => t.id === taskId);
+            const found = assign.tasks.find(t => String(t.id) === String(taskId));
             if (found) {
                 task = found;
                 break;

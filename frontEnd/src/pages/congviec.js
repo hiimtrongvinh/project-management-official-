@@ -501,7 +501,7 @@ window.handleTaskSubmit = async function (e, taskId) {
 };
 
 window.xemLaiCongViec = (taskId) => {
-    const task = loadedTasks.find(t => t.id === taskId);
+    const task = loadedTasks.find(t => String(t.id) === String(taskId));
     if (!task) return;
 
     const formattedDeadline = task.deadline ? new Date(task.deadline).toLocaleDateString('vi-VN') : 'Không có';
