@@ -196,31 +196,31 @@ export function renderTaskCards(tasks = [], page = currentTaskPage) {
                         <p class="text-xs text-gray-600 leading-relaxed"><span class="font-bold text-gray-800">${task.reviewer_name || 'Người duyệt'}:</span> ${task.feedback}</p>
                     </div>` : ''}
 
-                    <!-- Files list displayed sequentially under task title -->
-                    ${task.files && task.files.length > 0 ? `
-                    <div class="flex flex-wrap gap-2 mt-2.5 mb-1.5">
-                        ${task.files.map((doc, idx) => {
-                            const fileName = doc.file_name || doc.file_path.split('/').pop();
-                            return `
-                            <a href="${doc.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 bg-blue-50 border border-blue-100 hover:bg-blue-100 hover:text-blue-800 transition-colors px-2.5 py-1 rounded-xl shadow-sm">
-                                <i class="fas fa-paperclip text-[10px] text-blue-500"></i>
-                                <span class="truncate max-w-[150px]" title="${fileName}">${fileName}</span>
-                            </a>`;
-                        }).join('')}
-                    </div>` : task.file_path ? `
-                    <div class="flex flex-wrap gap-2 mt-2.5 mb-1.5">
-                        <a href="${task.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 bg-blue-50 border border-blue-100 hover:bg-blue-100 hover:text-blue-800 transition-colors px-2.5 py-1 rounded-xl shadow-sm">
-                            <i class="fas fa-paperclip text-[10px] text-blue-500"></i>
-                            <span class="truncate max-w-[150px]" title="${task.file_path.split('/').pop()}">${task.file_path.split('/').pop()}</span>
-                        </a>
-                    </div>` : ''}
-
                     <!-- Meta info row -->
-                    <div class="flex items-center gap-3 flex-wrap">
-                        <span class="flex items-center gap-1.5 text-xs font-medium ${isOverdue ? 'text-red-500' : 'text-gray-400'}">
-                            <i class="far fa-calendar-alt text-[10px]"></i> ${formattedDeadline}
-                        </span>
-                        <span class="status-chip ${config.chipClass} text-[10px]">${task.status}</span>
+                    <div class="flex items-center justify-between gap-3 flex-wrap mt-2">
+                        <!-- Left: Deadline & Status -->
+                        <div class="flex items-center gap-3">
+                            <span class="flex items-center gap-1.5 text-xs font-medium ${isOverdue ? 'text-red-500' : 'text-gray-400'}">
+                                <i class="far fa-calendar-alt text-[10px]"></i> ${formattedDeadline}
+                            </span>
+                            <span class="status-chip ${config.chipClass} text-[10px]">${task.status}</span>
+                        </div>
+                        
+                        <!-- Right: Attached Files -->
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            ${task.files && task.files.length > 0 ? task.files.map((doc, idx) => {
+                                const fileName = doc.file_name || doc.file_path.split('/').pop();
+                                return `
+                                <a href="${doc.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-2 py-0.5 rounded-md shadow-sm">
+                                    <i class="fas fa-paperclip text-[9px] text-blue-500"></i>
+                                    <span class="max-w-[120px] truncate" title="${fileName}">${fileName}</span>
+                                </a>`;
+                            }).join('') : task.file_path ? `
+                            <a href="${task.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-2 py-0.5 rounded-md shadow-sm">
+                                <i class="fas fa-paperclip text-[9px] text-blue-500"></i>
+                                <span class="max-w-[120px] truncate" title="${task.file_path.split('/').pop()}">${task.file_path.split('/').pop()}</span>
+                            </a>` : ''}
+                        </div>
                     </div>
                 </div>
 
