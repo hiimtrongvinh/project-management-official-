@@ -188,7 +188,7 @@ export function renderTaskCards(tasks = [], page = currentTaskPage) {
                     <h3 class="font-bold text-[15px] text-gray-800 leading-snug mb-2.5 group-hover:text-${config.color}-700 transition-colors">${taskDesc}</h3>
                     
                     <!-- Feedback if exists -->
-                    ${task.status === 'Cần sửa' && task.feedback ? `
+                    ${task.status && task.status.toLowerCase().trim() === 'cần sửa' && task.feedback ? `
                     <div class="mb-3 bg-gradient-to-r from-orange-50 to-amber-50 px-3.5 py-2.5 rounded-xl flex gap-2.5 items-start border border-orange-100">
                         <div class="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <i class="fas fa-comment text-orange-500 text-[9px]"></i>
