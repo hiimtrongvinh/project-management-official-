@@ -208,7 +208,7 @@ function createTaskCard(task, projectId) {
                 <p class="font-bold text-sm text-gray-800 truncate">${title}</p>
                 
                 <!-- Feedback if exists (rework comment) -->
-                ${feedback ? `
+                ${status === 'Cần sửa' && feedback ? `
                 <div class="mt-1.5 mb-1.5 bg-gradient-to-r from-orange-50/70 to-amber-50/70 px-2.5 py-1.5 rounded-xl border border-orange-100 border-dashed text-[11px] text-gray-600 leading-relaxed flex gap-1.5 items-start">
                     <i class="fas fa-comment text-orange-500 text-[10px] mt-0.5"></i>
                     <p><span class="font-bold text-gray-700">Phản hồi duyệt:</span> ${feedback}</p>
