@@ -282,7 +282,8 @@ const UserController = {
         });
       }
 
-      const avatarPath = `/uploads/${req.file.filename}`;
+      const subfolder = req.file.mimetype.startsWith('image/') ? 'images' : 'documents';
+      const avatarPath = `/uploads/${subfolder}/${req.file.filename}`;
 
       // Update staff avatar field
       const result = await UserService.updateUser('staff', id, { avatar: avatarPath });

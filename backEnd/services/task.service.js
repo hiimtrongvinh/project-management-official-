@@ -39,8 +39,18 @@ const TaskService = {
       status: newStatus
     });
 
-    if (submitData.file_path) {
-      const { query } = require('../config/database');
+    const { query } = require('../config/database');
+
+    if (submitData.file_paths && submitData.file_paths.length > 0) {
+      for (const filePath of submitData.file_paths) {
+        const fileName = filePath.split('/').pop();
+        await query(
+          `INSERT INTO project_documents (project_id, task_id, file_name, file_path, created_by)
+           VALUES (?, ?, ?, ?, ?)`,
+          [task.project_id, id, fileName, filePath, submitData.accountId]
+        );
+      }
+    } else if (submitData.file_path) {
       const fileName = submitData.file_path.split('/').pop();
       await query(
         `INSERT INTO project_documents (project_id, task_id, file_name, file_path, created_by)

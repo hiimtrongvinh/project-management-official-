@@ -793,8 +793,8 @@ const ProjectService = {
     if (!fs.existsSync(contractDir)) {
       fs.mkdirSync(contractDir, { recursive: true });
     }
-    const contractPath = `uploads/contracts/HD-${projectId}.html`;
-    const fullPath = path.join(__dirname, '../', contractPath);
+    const contractPath = `/uploads/contracts/HD-${projectId}.html`;
+    const fullPath = path.join(__dirname, '../uploads/contracts', `HD-${projectId}.html`);
     
     fs.writeFileSync(fullPath, contractHtml, 'utf8');
 

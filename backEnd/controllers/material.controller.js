@@ -69,7 +69,8 @@ const MaterialController = {
       const supplierId = await getSupplierIdFromAccount(accountId, role);
 
       if (req.file) {
-        req.body.image_url = `/uploads/${req.file.filename}`;
+        const subfolder = req.file.mimetype.startsWith('image/') ? 'images' : 'documents';
+        req.body.image_url = `/uploads/${subfolder}/${req.file.filename}`;
       }
 
       const material = await MaterialService.createMaterial(req.body, supplierId);
@@ -98,7 +99,8 @@ const MaterialController = {
       const supplierId = await getSupplierIdFromAccount(accountId, role);
 
       if (req.file) {
-        req.body.image_url = `/uploads/${req.file.filename}`;
+        const subfolder = req.file.mimetype.startsWith('image/') ? 'images' : 'documents';
+        req.body.image_url = `/uploads/${subfolder}/${req.file.filename}`;
       }
 
       const material = await MaterialService.updateMaterial(req.params.id, req.body, supplierId);

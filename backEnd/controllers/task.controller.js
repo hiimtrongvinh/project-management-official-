@@ -50,8 +50,23 @@ const TaskController = {
   async submitTask(req, res, next) {
     try {
       const taskId = parseInt(req.params.id, 10);
+      
+      // Handle multiple files if uploaded
+      const filePaths = [];
+      if (req.files && req.files.length > 0) {
+        req.files.forEach(file => {
+          const subfolder = file.mimetype.startsWith('image/') ? 'images' : 'documents';
+          filePaths.push(`/uploads/${subfolder}/${file.filename}`);
+        });
+      } else if (req.file) {
+        // Fallback for single file
+        const subfolder = req.file.mimetype.startsWith('image/') ? 'images' : 'documents';
+        filePaths.push(`/uploads/${subfolder}/${req.file.filename}`);
+      }
+
       const submitData = {
-        file_path: req.file ? `/uploads/${req.file.filename}` : req.body.file_path || '',
+        file_paths: filePaths,
+        file_path: filePaths.length > 0 ? filePaths[0] : req.body.file_path || '', // Keep file_path for backward compatibility
         note: req.body.note || '',
         accountId: req.user.id
       };
