@@ -83,7 +83,7 @@ export function renderPhancong(projectId) {
             <!-- Tasks Container (Drag & Drop) -->
             <div class="ml-[19px] pl-6 border-l-2 ${stepNum < currentStep ? 'border-emerald-100' : stepNum === currentStep ? 'border-blue-100' : 'border-gray-100'} pb-4">
                 <div class="space-y-2 task-sortable-list" data-step="${stepNum}" data-project="${projectId}">
-                    ${hasTasks ? validTasks.map(task => createTaskCard(task.id, task.title, task.assignee, task.deadline, task.file, task.status, projectId)).join('')
+                    ${hasTasks ? validTasks.map(task => createTaskCard(task, projectId)).join('')
                 : `<div class="py-3 px-4 text-center text-gray-300 text-xs font-medium border border-dashed border-gray-200 rounded-xl">
                         <i class="fas fa-inbox mr-1"></i> Chưa có công việc cho bước này
                     </div>`}
@@ -160,7 +160,8 @@ function getStatusConfig(status) {
     }
 }
 
-function createTaskCard(id, title, user, date, file, status, projectId) {
+function createTaskCard(task, projectId) {
+    const { id, title, assignee: user, deadline: date, file, status, files } = task;
     const role = localStorage.getItem('authRole');
     const isNhanSu = role === 'staff';
     const isClient = role === 'client';
@@ -176,6 +177,13 @@ function createTaskCard(id, title, user, date, file, status, projectId) {
             <button onclick="event.stopPropagation(); window.handleDeleteTask('${projectId}', '${id}')" title="Xóa" 
                     class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white hover:border-red-500 transition-all">
                 <i class="fas fa-trash text-[10px]"></i>
+            </button>`;
+    }
+    if (status !== 'Chưa nộp' && !isClient) {
+        actionButtons += `
+            <button onclick="event.stopPropagation(); window.xemLaiBaoCaoAdmin('${projectId}', '${id}')" title="Xem báo cáo / Tài liệu" 
+                    class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-teal-600 flex items-center justify-center hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all">
+                <i class="fas fa-eye text-[10px]"></i>
             </button>`;
     }
     if (status === 'Đã nộp' && !isClient && !isNhanSu) {
@@ -205,10 +213,14 @@ function createTaskCard(id, title, user, date, file, status, projectId) {
             </div>
             <div class="flex-1 min-w-0">
                 <p class="font-bold text-sm text-gray-800 truncate">${title}</p>
-                <div class="flex items-center gap-3 mt-1 text-[11px] text-gray-500 font-medium">
+                <div class="flex items-center gap-3 mt-1 text-[11px] text-gray-500 font-medium flex-wrap">
                     <span class="flex items-center gap-1"><i class="fas fa-user-circle text-blue-400"></i>${user}</span>
                     <span class="flex items-center gap-1"><i class="far fa-calendar text-gray-300"></i>${date}</span>
-                    ${file ? `<a href="${file}" target="_blank" onclick="event.stopPropagation()" class="text-blue-500 hover:underline flex items-center gap-1"><i class="fas fa-paperclip"></i>Tài liệu</a>` : ''}
+                    ${files && files.length > 0 ? `
+                        <span class="text-blue-500 flex items-center gap-1"><i class="fas fa-paperclip"></i>${files.length} tài liệu</span>
+                    ` : file ? `
+                        <span class="text-blue-500 flex items-center gap-1"><i class="fas fa-paperclip"></i>1 tài liệu</span>
+                    ` : ''}
                 </div>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -504,6 +516,19 @@ window.showReworkTaskModal = function (projectId, taskId) {
     };
 };
 
+window.handlePhancongFileSelect = function (input) {
+    const label = input.closest('div').querySelector('p');
+    if (!input.files || input.files.length === 0) {
+        label.textContent = 'Kéo thả hoặc bấm để chọn file';
+        return;
+    }
+    if (input.files.length === 1) {
+        label.textContent = input.files[0].name;
+    } else {
+        label.textContent = `${input.files.length} file được chọn: ` + Array.from(input.files).map(f => f.name).join(', ');
+    }
+};
+
 window.showSubmitTaskModal = function (projectId, taskId) {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 modal-overlay z-[200] flex items-center justify-center p-4';
@@ -517,11 +542,11 @@ window.showSubmitTaskModal = function (projectId, taskId) {
         </div>
         <form id="formSubmitTask" class="space-y-4">
             <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Tài liệu đính kèm</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Tài liệu đính kèm (Có thể chọn nhiều)</label>
                 <div class="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-300 transition-colors cursor-pointer" onclick="this.querySelector('input').click()">
                     <i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-2"></i>
                     <p class="text-xs text-gray-500 font-medium">Kéo thả hoặc bấm để chọn file</p>
-                    <input type="file" name="file" required class="hidden" onchange="this.closest('div').querySelector('p').textContent = this.files[0]?.name || 'Chọn file...'">
+                    <input type="file" name="file" required class="hidden" multiple onchange="window.handlePhancongFileSelect(this)">
                 </div>
             </div>
             <div>
@@ -548,6 +573,152 @@ window.showSubmitTaskModal = function (projectId, taskId) {
             else { alert('❌ Lỗi: ' + (result.error?.message || 'Không thể nộp')); }
         } catch (err) { alert('❌ Lỗi kết nối: ' + err.message); }
     };
+};
+
+window.xemLaiBaoCaoAdmin = function (projectId, taskId) {
+    const project = window.projectDetails?.[projectId];
+    if (!project) return;
+    
+    // Find task
+    let task = null;
+    if (project.assignments) {
+        for (const assign of project.assignments) {
+            const found = assign.tasks.find(t => t.id === taskId);
+            if (found) {
+                task = found;
+                break;
+            }
+        }
+    }
+    if (!task) return;
+
+    const formattedDeadline = task.deadline ? task.deadline : 'Không có';
+
+    const modal = document.createElement('div');
+    modal.className = "fixed inset-0 modal-overlay flex items-center justify-center z-[100] p-4";
+    modal.id = "viewAdminReportModal";
+
+    let fileHtml = '';
+    if (task.files && task.files.length > 0) {
+        fileHtml = task.files.map(doc => {
+            const fileName = doc.file_name || doc.file_path.split('/').pop();
+            return `
+            <div class="mt-2 flex items-center justify-between bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+                <div class="flex items-center gap-2.5 overflow-hidden flex-1">
+                    <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
+                    <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
+                </div>
+                <a href="${doc.file_path}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+                    <i class="fas fa-download mr-1"></i> Tải về
+                </a>
+            </div>`;
+        }).join('');
+    } else if (task.file) {
+        const fileName = task.file.split('/').pop();
+        fileHtml = `
+        <div class="mt-2 flex items-center justify-between bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+            <div class="flex items-center gap-2.5 overflow-hidden flex-1">
+                <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
+                <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
+            </div>
+            <a href="${task.file}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+                <i class="fas fa-download mr-1"></i> Tải về
+            </a>
+        </div>`;
+    } else {
+        fileHtml = `<p class="text-xs text-gray-400 italic">Không có file đính kèm</p>`;
+    }
+
+    let feedbackHtml = '';
+    if (task.feedback) {
+        feedbackHtml = `
+        <div class="mb-5 bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-2xl border border-orange-100">
+            <span class="block text-xs font-bold text-orange-600 mb-1 uppercase tracking-wider">Phản hồi của người duyệt</span>
+            <p class="text-sm font-semibold text-gray-700 leading-relaxed">${task.feedback}</p>
+        </div>`;
+    }
+
+    let actionButtonsHtml = `
+        <button type="button" onclick="this.closest('.fixed').remove()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">Đóng</button>
+    `;
+
+    if (task.status === 'Đã nộp') {
+        actionButtonsHtml = `
+            <button type="button" onclick="this.closest('.fixed').remove()" class="px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">Hủy</button>
+            <button type="button" onclick="window.xemLaiBaoCaoAdminAction('${projectId}', '${taskId}', 'rework')" class="px-4 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 shadow-md shadow-orange-200 transition-all">
+                <i class="fas fa-redo mr-1.5"></i>Yêu cầu sửa
+            </button>
+            <button type="button" onclick="window.xemLaiBaoCaoAdminAction('${projectId}', '${taskId}', 'approve')" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-md shadow-emerald-200 transition-all">
+                <i class="fas fa-check mr-1.5"></i>Duyệt báo cáo
+            </button>
+        `;
+    }
+
+    modal.innerHTML = `
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-lg overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleUp">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <i class="fas fa-eye text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-extrabold text-white">Báo cáo công việc (Admin)</h2>
+                    <p class="text-xs text-teal-100/70">Chi tiết thông tin nộp báo cáo & duyệt kết quả</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <!-- Task Info -->
+            <div class="mb-5 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                <span class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Thông tin công việc</span>
+                <h3 class="text-sm font-bold text-gray-800 leading-snug mb-2">${task.title}</h3>
+                <div class="flex flex-wrap gap-2.5 items-center">
+                    <span class="text-xs font-semibold text-gray-500">Người thực hiện: <span class="text-gray-700 font-bold">${task.assignee}</span></span>
+                    <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                    <span class="text-xs font-semibold text-gray-500">Hạn chót: <span class="text-gray-700">${formattedDeadline}</span></span>
+                    <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                    <span class="status-chip ${task.status.toLowerCase() === 'đã duyệt' ? 'status-chip-green' : task.status.toLowerCase() === 'đã nộp' ? 'status-chip-blue' : 'status-chip-orange'} text-[10px]">${task.status}</span>
+                </div>
+            </div>
+
+            <!-- Feedback if exists -->
+            ${feedbackHtml}
+
+            <!-- Report content -->
+            <div class="mb-5">
+                <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Nội dung báo cáo / ghi chú nộp bài</label>
+                <div class="bg-gray-50/50 px-4 py-3.5 border border-gray-100 rounded-xl">
+                    <p class="text-sm font-semibold text-gray-700 leading-relaxed">${task.submit_note || 'Không có ghi chú'}</p>
+                </div>
+            </div>
+
+            <!-- Attached File -->
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Các file đính kèm kết quả</label>
+                <div class="max-h-48 overflow-y-auto pr-1">
+                    ${fileHtml}
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
+                ${actionButtonsHtml}
+            </div>
+        </div>
+    </div>`;
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
+};
+
+window.xemLaiBaoCaoAdminAction = async function(projectId, taskId, action) {
+    document.getElementById('viewAdminReportModal')?.remove();
+    if (action === 'approve') {
+        await window.handleApproveTaskDirect(projectId, taskId);
+    } else if (action === 'rework') {
+        window.showReworkTaskModal(projectId, taskId);
+    }
 };
 
 window.handleAdvanceStep = async function (projectId, nextStep) {

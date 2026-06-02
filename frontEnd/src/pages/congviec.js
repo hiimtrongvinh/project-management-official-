@@ -407,6 +407,19 @@ function getStatusConfig(task) {
     }
 }
 
+window.handleFileSelect = function (input) {
+    const label = document.getElementById('uploadFileName');
+    if (!input.files || input.files.length === 0) {
+        label.textContent = 'Kéo thả hoặc bấm để chọn file';
+        return;
+    }
+    if (input.files.length === 1) {
+        label.textContent = input.files[0].name;
+    } else {
+        label.textContent = `${input.files.length} file được chọn: ` + Array.from(input.files).map(f => f.name).join(', ');
+    }
+};
+
 window.openSubmitTaskModal = function (taskId) {
     const modal = document.createElement('div');
     modal.className = "fixed inset-0 modal-overlay flex items-center justify-center z-[100] p-4";
@@ -421,7 +434,7 @@ window.openSubmitTaskModal = function (taskId) {
                 </div>
                 <div>
                     <h2 class="text-lg font-extrabold text-white">Nộp kết quả công việc</h2>
-                    <p class="text-xs text-purple-100/70">Tải lên file báo cáo và ghi chú tiến độ</p>
+                    <p class="text-xs text-purple-100/70">Tải lên các file báo cáo và ghi chú tiến độ</p>
                 </div>
             </div>
         </div>
@@ -433,9 +446,9 @@ window.openSubmitTaskModal = function (taskId) {
                     <div class="w-14 h-14 bg-gray-100 group-hover:bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3 transition-colors">
                         <i class="fas fa-cloud-upload-alt text-xl text-gray-300 group-hover:text-purple-500 transition-colors"></i>
                     </div>
-                    <p class="text-sm text-gray-500 font-semibold" id="uploadFileName">Kéo thả hoặc bấm để chọn file</p>
+                    <p class="text-sm text-gray-500 font-semibold" id="uploadFileName">Kéo thả hoặc bấm để chọn file (Có thể chọn nhiều)</p>
                     <p class="text-[10px] text-gray-400 mt-1">PDF, DOCX, ZIP, hình ảnh (tối đa 10MB)</p>
-                    <input type="file" id="submitTaskFile" required class="hidden" onchange="document.getElementById('uploadFileName').textContent = this.files[0]?.name || 'Chọn file...'">
+                    <input type="file" id="submitTaskFile" required class="hidden" multiple onchange="window.handleFileSelect(this)">
                 </div>
             </div>
             <div class="mb-6">
@@ -458,10 +471,12 @@ window.handleTaskSubmit = async function (e, taskId) {
     e.preventDefault();
     const fileInput = document.getElementById('submitTaskFile');
     const noteInput = document.getElementById('submitTaskNote');
-    if (!fileInput.files[0]) return;
+    if (!fileInput.files || fileInput.files.length === 0) return;
 
     const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
+    for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append('file', fileInput.files[i]);
+    }
     formData.append('note', noteInput.value);
 
     try {
@@ -496,10 +511,24 @@ window.xemLaiCongViec = (taskId) => {
     modal.id = "viewReportModal";
 
     let fileHtml = '';
-    if (task.file_path) {
+    if (task.files && task.files.length > 0) {
+        fileHtml = task.files.map(doc => {
+            const fileName = doc.file_name || doc.file_path.split('/').pop();
+            return `
+            <div class="mt-2 flex items-center justify-between bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+                <div class="flex items-center gap-2.5 overflow-hidden flex-1">
+                    <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
+                    <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
+                </div>
+                <a href="${doc.file_path}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+                    <i class="fas fa-download mr-1"></i> Tải về
+                </a>
+            </div>`;
+        }).join('');
+    } else if (task.file_path) {
         const fileName = task.file_path.split('/').pop();
         fileHtml = `
-        <div class="mt-1 flex items-center justify-between bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+        <div class="mt-2 flex items-center justify-between bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
             <div class="flex items-center gap-2.5 overflow-hidden flex-1">
                 <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
                 <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
@@ -555,14 +584,16 @@ window.xemLaiCongViec = (taskId) => {
             <div class="mb-5">
                 <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Nội dung báo cáo / ghi chú nộp bài</label>
                 <div class="bg-gray-50/50 px-4 py-3.5 border border-gray-100 rounded-xl">
-                    <p class="text-sm font-semibold text-gray-700 leading-relaxed">${task.submit_note || task.description || 'Không có ghi chú'}</p>
+                    <p class="text-sm font-semibold text-gray-700 leading-relaxed">${task.submit_note || 'Không có ghi chú'}</p>
                 </div>
             </div>
 
             <!-- Attached File -->
             <div class="mb-6">
-                <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">File đính kèm kết quả</label>
-                ${fileHtml}
+                <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Các file đính kèm kết quả</label>
+                <div class="max-h-48 overflow-y-auto pr-1">
+                    ${fileHtml}
+                </div>
             </div>
 
             <!-- Footer Buttons -->

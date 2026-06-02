@@ -94,7 +94,10 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
                 id: t.id, title: t.title || t.description || 'Không có tiêu đề',
                 assignee: t.assignee_name || 'Chưa phân công',
                 deadline: t.deadline ? new Date(t.deadline).toLocaleDateString('vi-VN') : 'Không có',
-                file: t.file_path || '', status: t.status || 'Chưa nộp'
+                file: t.file_path || '', status: t.status || 'Chưa nộp',
+                files: t.files || [],
+                submit_note: t.submit_note || '',
+                feedback: t.feedback || ''
             }));
             return { step: `Bước ${stepNum}:`, tasks: stepTasks };
         });

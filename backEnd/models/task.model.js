@@ -5,13 +5,98 @@ const { query } = require('../config/database');
  */
 const TaskModel = {
   /**
+   * Helper function to enrich tasks with files, submission notes and feedback comments.
+   * @param {Array} tasks
+   * @returns {Promise<Array>} Enriched tasks
+   */
+  async enrichTasks(tasks) {
+    if (!tasks || tasks.length === 0) return tasks;
+
+    const taskIds = tasks.map(t => t.id);
+
+    // Fetch documents
+    const documents = await query(
+      `SELECT id, task_id, file_name, file_path, created_at 
+       FROM project_documents 
+       WHERE task_id IN (${taskIds.map(() => '?').join(', ')})`,
+      taskIds
+    );
+
+    // Fetch submission notes (activity logs with action = 'Nộp báo cáo')
+    const stringTaskIds = taskIds.map(id => String(id));
+    const logs = await query(
+      `SELECT entity_id, details, created_at 
+       FROM activity_logs 
+       WHERE entity_type = 'task' AND action = 'Nộp báo cáo' AND entity_id IN (${stringTaskIds.map(() => '?').join(', ')})
+       ORDER BY created_at DESC`,
+      stringTaskIds
+    );
+
+    // Fetch feedback (task comments)
+    const comments = await query(
+      `SELECT task_id, content, created_at 
+       FROM task_comments 
+       WHERE task_id IN (${taskIds.map(() => '?').join(', ')})
+       ORDER BY created_at DESC`,
+      taskIds
+    );
+
+    // Group documents, logs, and comments by task_id
+    const docsMap = {};
+    documents.forEach(doc => {
+      if (!docsMap[doc.task_id]) docsMap[doc.task_id] = [];
+      docsMap[doc.task_id].push(doc);
+    });
+
+    const logsMap = {};
+    logs.forEach(log => {
+      if (!logsMap[log.entity_id]) logsMap[log.entity_id] = [];
+      logsMap[log.entity_id].push(log);
+    });
+
+    const commentsMap = {};
+    comments.forEach(comment => {
+      if (!commentsMap[comment.task_id]) commentsMap[comment.task_id] = [];
+      commentsMap[comment.task_id].push(comment);
+    });
+
+    // Enrich tasks
+    tasks.forEach(task => {
+      task.files = docsMap[task.id] || [];
+      // Keep single file_path for backward compatibility
+      task.file_path = task.files.length > 0 ? task.files[0].file_path : null;
+
+      // Extract submission note from details
+      const taskLogs = logsMap[String(task.id)] || [];
+      let submitNote = '';
+      if (taskLogs.length > 0) {
+        try {
+          const details = JSON.parse(taskLogs[0].details);
+          submitNote = details.note || '';
+        } catch (e) {
+          submitNote = '';
+        }
+      }
+      task.submit_note = submitNote;
+
+      // Extract feedback (latest comment)
+      const taskComments = commentsMap[task.id] || [];
+      task.feedback = taskComments.length > 0 ? taskComments[0].content : null;
+    });
+
+    return tasks;
+  },
+
+  /**
    * Find a task by ID.
    * @param {string} id
    * @returns {Promise<Object|null>} Task or null
    */
   async findById(id) {
     const rows = await query('SELECT * FROM tasks WHERE id = ?', [id]);
-    return rows.length > 0 ? rows[0] : null;
+    if (rows.length === 0) return null;
+    const enriched = await this.enrichTasks(rows);
+    return enriched[0];
   },
 
   /**
@@ -20,7 +105,7 @@ const TaskModel = {
    * @returns {Promise<Array>} Task rows
    */
   async findByProjectId(projectId) {
-    return query(
+    const tasks = await query(
       `SELECT t.*, a.name as assignee_name 
        FROM tasks t
        LEFT JOIN staffs a ON t.assignee_id = a.id
@@ -28,6 +113,7 @@ const TaskModel = {
        ORDER BY t.step ASC, t.created_at DESC`,
       [projectId]
     );
+    return this.enrichTasks(tasks);
   },
 
   /**
@@ -36,7 +122,7 @@ const TaskModel = {
    * @returns {Promise<Array>} Task rows
    */
   async findByAssigneeId(staffId) {
-    return query(
+    const tasks = await query(
       `SELECT t.*, p.title as project_title 
        FROM tasks t
        LEFT JOIN projects p ON t.project_id = p.id
@@ -44,6 +130,7 @@ const TaskModel = {
        ORDER BY t.deadline ASC`,
       [staffId]
     );
+    return this.enrichTasks(tasks);
   },
 
   /**
@@ -51,13 +138,14 @@ const TaskModel = {
    * @returns {Promise<Array>} All task rows
    */
   async findAll() {
-    return query(
+    const tasks = await query(
       `SELECT t.*, p.title as project_title, s.name as assignee_name
        FROM tasks t
        LEFT JOIN projects p ON t.project_id = p.id
        LEFT JOIN staffs s ON t.assignee_id = s.id
        ORDER BY t.created_at DESC`
     );
+    return this.enrichTasks(tasks);
   },
 
   /**
