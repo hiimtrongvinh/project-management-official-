@@ -411,10 +411,10 @@ function getStatusConfig(task) {
     }
 }
 
-window.handleFileSelect = function (input) {
+window.handleTaskFileSelect = function (input) {
     const label = document.getElementById('uploadFileName');
     if (!input.files || input.files.length === 0) {
-        label.textContent = 'Kéo thả hoặc bấm để chọn file';
+        label.textContent = 'Kéo thả hoặc bấm để chọn file (Có thể chọn nhiều)';
         return;
     }
     if (input.files.length === 1) {
@@ -452,7 +452,7 @@ window.openSubmitTaskModal = function (taskId) {
                     </div>
                     <p class="text-sm text-gray-500 font-semibold text-wrap break-all" id="uploadFileName">Kéo thả hoặc bấm để chọn file (Có thể chọn nhiều)</p>
                     <p class="text-[10px] text-gray-400 mt-1">PDF, DOCX, ZIP, RAR, hình ảnh (tối đa 10MB)</p>
-                    <input type="file" id="submitTaskFile" required class="hidden" multiple onclick="event.stopPropagation()" onchange="window.handleFileSelect(this)">
+                    <input type="file" id="submitTaskFile" required class="hidden" multiple onclick="event.stopPropagation()" onchange="window.handleTaskFileSelect(this)">
                 </div>
             </div>
             <div class="flex justify-end gap-3">

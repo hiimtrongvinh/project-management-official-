@@ -89,7 +89,7 @@ export function renderTaoyeucau() {
                     </div>
                     
                     <div class="min-h-[70px] p-5 bg-gray-50/50 rounded-[32px] border border-dashed border-gray-200" id="fileContainer">
-                        <input type="file" id="fileInput" class="hidden" multiple onchange="handleFileSelect(this)">
+                        <input type="file" id="fileInput" class="hidden" multiple onchange="window.handleRequestFileSelect(this)">
                         <div id="fileList" class="flex flex-wrap gap-3 w-full">
                             <p id="noFileText" class="text-gray-300 italic text-sm w-full text-center py-2">Chưa có tài liệu nào được đính kèm.</p>
                         </div>
@@ -111,7 +111,7 @@ window.formatCurrency = window.formatCurrency || function (input) {
     }
 };
 
-window.handleFileSelect = function (input) {
+window.handleRequestFileSelect = function (input) {
     const fileList = document.getElementById('fileList');
     const noFileText = document.getElementById('noFileText');
     if (!fileList) return;
