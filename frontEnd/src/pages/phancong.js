@@ -518,9 +518,10 @@ window.showReworkTaskModal = function (projectId, taskId) {
 };
 
 window.handlePhancongFileSelect = function (input) {
-    const label = input.closest('div').querySelector('p');
+    const label = document.getElementById('uploadFileNamePhancong');
+    if (!label) return;
     if (!input.files || input.files.length === 0) {
-        label.textContent = 'Kéo thả hoặc bấm để chọn file';
+        label.textContent = 'Kéo thả hoặc bấm để chọn file (Có thể chọn nhiều)';
         return;
     }
     if (input.files.length === 1) {
@@ -533,30 +534,39 @@ window.handlePhancongFileSelect = function (input) {
 window.showSubmitTaskModal = function (projectId, taskId) {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 modal-overlay z-[200] flex items-center justify-center p-4';
+    modal.id = "submitTaskModalPhancong";
     modal.innerHTML = `
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-scaleUp">
-        <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
-                <i class="fas fa-cloud-upload-alt"></i>
-            </div>
-            <h3 class="text-lg font-extrabold text-gray-800">Nộp báo cáo kết quả</h3>
-        </div>
-        <form id="formSubmitTask" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Tài liệu đính kèm (Có thể chọn nhiều)</label>
-                <div class="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-300 transition-colors cursor-pointer" onclick="this.querySelector('input').click()">
-                    <i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-2"></i>
-                    <p class="text-xs text-gray-500 font-medium">Kéo thả hoặc bấm để chọn file</p>
-                    <input type="file" name="file" required class="hidden" multiple onchange="window.handlePhancongFileSelect(this)">
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-lg overflow-hidden border border-slate-200/80 shadow-md shadow-slate-100 flex flex-col animate-scaleUp">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <i class="fas fa-cloud-upload-alt text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-extrabold text-white">Nộp báo cáo kết quả</h2>
+                    <p class="text-xs text-purple-100/70">Tải lên các file báo cáo kết quả của bạn</p>
                 </div>
             </div>
-            <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Ghi chú</label>
-                <textarea name="note" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-400 bg-gray-50/50 text-sm resize-none" rows="2" placeholder="Ghi chú thêm..."></textarea>
+        </div>
+        
+        <form id="formSubmitTask" class="p-6">
+            <div class="mb-5">
+                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">File kết quả *</label>
+                <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:border-purple-300 hover:bg-purple-50/30 transition-all cursor-pointer group" onclick="this.querySelector('input').click()">
+                    <div class="w-14 h-14 bg-gray-100 group-hover:bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3 transition-colors">
+                        <i class="fas fa-cloud-upload-alt text-xl text-gray-300 group-hover:text-purple-500 transition-colors"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 font-semibold text-wrap break-all" id="uploadFileNamePhancong">Kéo thả hoặc bấm để chọn file (Có thể chọn nhiều)</p>
+                    <p class="text-[10px] text-gray-400 mt-1">PDF, DOCX, ZIP, RAR, hình ảnh (tối đa 10MB)</p>
+                    <input type="file" name="file" required class="hidden" multiple onclick="event.stopPropagation()" onchange="window.handlePhancongFileSelect(this)">
+                </div>
             </div>
-            <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
-                <button type="button" onclick="this.closest('.fixed').remove()" class="btn-ghost text-sm px-4 py-2">Hủy</button>
-                <button type="submit" class="btn-primary text-sm px-5 py-2">Nộp kết quả</button>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="this.closest('.fixed').remove()" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Hủy</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 shadow-lg shadow-purple-200 transition-all">
+                    <i class="fas fa-paper-plane mr-1.5"></i>Nộp kết quả
+                </button>
             </div>
         </form>
     </div>`;
@@ -565,12 +575,24 @@ window.showSubmitTaskModal = function (projectId, taskId) {
 
     modal.querySelector('form').onsubmit = async (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target);
+        const fileInput = modal.querySelector('input[type="file"]');
+        if (!fileInput.files || fileInput.files.length === 0) return;
+
+        const fd = new FormData();
+        for (let i = 0; i < fileInput.files.length; i++) {
+            fd.append('file', fileInput.files[i]);
+        }
+        fd.append('note', 'Nộp báo cáo kết quả công việc.');
+
         try {
             const token = localStorage.getItem('token');
             const res = await fetch(`/api/tasks/${taskId}/submit`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd });
             const result = await res.json();
-            if (result.success) { modal.remove(); refreshProjectDetail(projectId); }
+            if (result.success) { 
+                modal.remove(); 
+                alert('✅ Đã nộp báo cáo thành công!');
+                refreshProjectDetail(projectId); 
+            }
             else { alert('❌ Lỗi: ' + (result.error?.message || 'Không thể nộp')); }
         } catch (err) { alert('❌ Lỗi kết nối: ' + err.message); }
     };

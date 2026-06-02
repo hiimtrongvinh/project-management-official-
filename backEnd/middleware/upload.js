@@ -19,7 +19,13 @@ const ALLOWED_MIME_TYPES = [
   'image/webp',
   'image/gif',
   'image/svg+xml',
-  'application/octet-stream' // for .dwg files
+  'application/octet-stream', // for .dwg files
+  'application/zip',
+  'application/x-zip-compressed',
+  'application/x-zip',
+  'application/x-rar-compressed',
+  'application/vnd.rar',
+  'application/rar'
 ];
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

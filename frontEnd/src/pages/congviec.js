@@ -438,7 +438,7 @@ window.openSubmitTaskModal = function (taskId) {
                 </div>
                 <div>
                     <h2 class="text-lg font-extrabold text-white">Nộp kết quả công việc</h2>
-                    <p class="text-xs text-purple-100/70">Tải lên các file báo cáo và ghi chú tiến độ</p>
+                    <p class="text-xs text-purple-100/70">Tải lên các file báo cáo kết quả của bạn</p>
                 </div>
             </div>
         </div>
@@ -450,14 +450,10 @@ window.openSubmitTaskModal = function (taskId) {
                     <div class="w-14 h-14 bg-gray-100 group-hover:bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3 transition-colors">
                         <i class="fas fa-cloud-upload-alt text-xl text-gray-300 group-hover:text-purple-500 transition-colors"></i>
                     </div>
-                    <p class="text-sm text-gray-500 font-semibold" id="uploadFileName">Kéo thả hoặc bấm để chọn file (Có thể chọn nhiều)</p>
-                    <p class="text-[10px] text-gray-400 mt-1">PDF, DOCX, ZIP, hình ảnh (tối đa 10MB)</p>
-                    <input type="file" id="submitTaskFile" required class="hidden" multiple onchange="window.handleFileSelect(this)">
+                    <p class="text-sm text-gray-500 font-semibold text-wrap break-all" id="uploadFileName">Kéo thả hoặc bấm để chọn file (Có thể chọn nhiều)</p>
+                    <p class="text-[10px] text-gray-400 mt-1">PDF, DOCX, ZIP, RAR, hình ảnh (tối đa 10MB)</p>
+                    <input type="file" id="submitTaskFile" required class="hidden" multiple onclick="event.stopPropagation()" onchange="window.handleFileSelect(this)">
                 </div>
-            </div>
-            <div class="mb-6">
-                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Ghi chú tiến độ</label>
-                <textarea id="submitTaskNote" rows="3" placeholder="Mô tả ngắn gọn kết quả công việc..." class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 focus:shadow-sm bg-gray-50/50 text-sm resize-none transition-all"></textarea>
             </div>
             <div class="flex justify-end gap-3">
                 <button type="button" onclick="this.closest('.fixed').remove()" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Hủy</button>
@@ -474,14 +470,13 @@ window.openSubmitTaskModal = function (taskId) {
 window.handleTaskSubmit = async function (e, taskId) {
     e.preventDefault();
     const fileInput = document.getElementById('submitTaskFile');
-    const noteInput = document.getElementById('submitTaskNote');
     if (!fileInput.files || fileInput.files.length === 0) return;
 
     const formData = new FormData();
     for (let i = 0; i < fileInput.files.length; i++) {
         formData.append('file', fileInput.files[i]);
     }
-    formData.append('note', noteInput.value);
+    formData.append('note', 'Nộp báo cáo kết quả công việc.');
 
     try {
         const token = localStorage.getItem('token');
