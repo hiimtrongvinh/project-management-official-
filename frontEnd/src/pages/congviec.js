@@ -399,9 +399,7 @@ function getStatusConfig(task) {
         case "đã nộp":
             return {
                 color: "blue", icon: "fa-paper-plane", chipClass: "status-chip-blue",
-                actions: `<button onclick="xemLaiCongViec('${task.id}')" class="bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm shadow-blue-200 hover:shadow-md hover:shadow-blue-300">
-                    <i class="fas fa-eye mr-1.5"></i>Xem báo cáo
-                </button>`
+                actions: ``
             };
         case "cần sửa":
             return {
@@ -413,9 +411,7 @@ function getStatusConfig(task) {
         case "đã duyệt":
             return {
                 color: "emerald", icon: "fa-check-circle", chipClass: "status-chip-green",
-                actions: `<button onclick="xemLaiCongViec('${task.id}')" class="bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm shadow-emerald-200 hover:shadow-md hover:shadow-emerald-300">
-                    <i class="fas fa-eye mr-1.5"></i>Xem báo cáo
-                </button>`
+                actions: ``
             };
         default:
             return { color: "gray", icon: "fa-circle", chipClass: "status-chip-gray", actions: '' };

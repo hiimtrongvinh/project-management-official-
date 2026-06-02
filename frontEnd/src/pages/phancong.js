@@ -161,7 +161,7 @@ function getStatusConfig(status) {
 }
 
 function createTaskCard(task, projectId) {
-    const { id, title, assignee: user, deadline: date, file, status, files } = task;
+    const { id, title, assignee: user, deadline: date, file, status, files, submit_note, feedback } = task;
     const role = localStorage.getItem('authRole');
     const isNhanSu = role === 'staff';
     const isClient = role === 'client';
@@ -177,13 +177,6 @@ function createTaskCard(task, projectId) {
             <button onclick="event.stopPropagation(); window.handleDeleteTask('${projectId}', '${id}')" title="Xóa" 
                     class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white hover:border-red-500 transition-all">
                 <i class="fas fa-trash text-[10px]"></i>
-            </button>`;
-    }
-    if (status !== 'Chưa nộp' && !isClient) {
-        actionButtons += `
-            <button onclick="event.stopPropagation(); window.xemLaiBaoCaoAdmin('${projectId}', '${id}')" title="Xem báo cáo / Tài liệu" 
-                    class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-teal-600 flex items-center justify-center hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all">
-                <i class="fas fa-eye text-[10px]"></i>
             </button>`;
     }
     if (status === 'Đã nộp' && !isClient && !isNhanSu) {
@@ -213,18 +206,40 @@ function createTaskCard(task, projectId) {
             </div>
             <div class="flex-1 min-w-0">
                 <p class="font-bold text-sm text-gray-800 truncate">${title}</p>
+                
+                <!-- Feedback if exists (rework comment) -->
+                ${feedback ? `
+                <div class="mt-1.5 mb-1.5 bg-gradient-to-r from-orange-50/70 to-amber-50/70 px-2.5 py-1.5 rounded-xl border border-orange-100 border-dashed text-[11px] text-gray-600 leading-relaxed flex gap-1.5 items-start">
+                    <i class="fas fa-comment text-orange-500 text-[10px] mt-0.5"></i>
+                    <p><span class="font-bold text-gray-700">Phản hồi duyệt:</span> ${feedback}</p>
+                </div>` : ''}
+                
+                <!-- Submission note if exists -->
+                ${submit_note ? `
+                <div class="mt-1.5 mb-1.5 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 px-2.5 py-1.5 rounded-xl border border-blue-100/70 border-dashed text-[11px] text-gray-600 leading-relaxed flex gap-1.5 items-start">
+                    <i class="fas fa-sticky-note text-blue-400 text-[10px] mt-0.5"></i>
+                    <p><span class="font-bold text-gray-700">Ghi chú nộp:</span> ${submit_note}</p>
+                </div>` : ''}
+
                 <div class="flex items-center gap-3 mt-1 text-[11px] text-gray-500 font-medium flex-wrap">
                     <span class="flex items-center gap-1"><i class="fas fa-user-circle text-blue-400"></i>${user}</span>
                     <span class="flex items-center gap-1"><i class="far fa-calendar text-gray-300"></i>${date}</span>
-                    ${files && files.length > 0 ? `
-                        <span class="text-blue-500 flex items-center gap-1"><i class="fas fa-paperclip"></i>${files.length} tài liệu</span>
-                    ` : file ? `
-                        <span class="text-blue-500 flex items-center gap-1"><i class="fas fa-paperclip"></i>1 tài liệu</span>
-                    ` : ''}
+                    <span class="status-chip ${config.chipClass} text-[10px] px-2 py-0.5">${status}</span>
+                    ${files && files.length > 0 ? files.map((doc, idx) => {
+                        const fileName = doc.file_name || doc.file_path.split('/').pop();
+                        return `
+                        <a href="${doc.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-1.5 py-0.5 rounded-md shadow-sm">
+                            <i class="fas fa-paperclip text-blue-500"></i>
+                            <span class="max-w-[100px] truncate" title="${fileName}">${fileName}</span>
+                        </a>`;
+                    }).join('') : file ? `
+                    <a href="${file}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-1.5 py-0.5 rounded-md shadow-sm">
+                        <i class="fas fa-paperclip text-blue-500"></i>
+                        <span class="max-w-[100px] truncate" title="${file.split('/').pop()}">${file.split('/').pop()}</span>
+                    </a>` : ''}
                 </div>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0">
-                <span class="status-chip ${config.chipClass} text-[10px] px-2 py-0.5">${status}</span>
                 ${actionButtons}
             </div>
         </div>
