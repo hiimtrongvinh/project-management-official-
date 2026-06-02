@@ -15,6 +15,10 @@ const ALLOWED_MIME_TYPES = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'image/png',
   'image/jpeg',
+  'image/jpg',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml',
   'application/octet-stream' // for .dwg files
 ];
 
