@@ -370,7 +370,8 @@ window.previewDocument = function (filePath, fileName) {
             </div>`;
         } else {
             const publicUrl = window.location.origin + filePath;
-            const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(publicUrl)}`;
+            const cacheBuster = Date.now();
+            const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(publicUrl + '?v=' + cacheBuster)}`;
             contentHtml = `<iframe src="${officeViewerUrl}" class="w-full h-[75vh] border-0 rounded-b-2xl"></iframe>`;
         }
     } else {
