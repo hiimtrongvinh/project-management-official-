@@ -392,7 +392,9 @@ function getStatusConfig(task) {
         case "đã nộp":
             return {
                 color: "blue", icon: "fa-paper-plane", chipClass: "status-chip-blue",
-                actions: ``
+                actions: `<button onclick="openSubmitTaskModal('${task.id}')" class="bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm shadow-blue-200 hover:shadow-md hover:shadow-blue-300">
+                    <i class="fas fa-redo mr-1.5"></i>Nộp lại
+                </button>`
             };
         case "cần sửa":
             return {
