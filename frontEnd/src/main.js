@@ -27,7 +27,7 @@ import { renderNotificationBell, startNotificationPolling, stopNotificationPolli
 // --- PREMIUM TOAST & CONFIRM UTILITIES ---
 window.showToast = function (message, type = 'success') {
     const msgStr = String(message);
-    
+
     // Auto detect toast type based on text content & emojis
     if (msgStr.includes('❌') || msgStr.toLowerCase().includes('lỗi') || msgStr.toLowerCase().includes('thất bại') || msgStr.toLowerCase().includes('không thể') || msgStr.toLowerCase().includes('không được')) {
         type = 'error';
@@ -47,7 +47,7 @@ window.showToast = function (message, type = 'success') {
 
     const toast = document.createElement('div');
     toast.className = 'flex items-center gap-3 px-5 py-4 bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-xl max-w-sm pointer-events-auto transform translate-x-12 opacity-0 transition-all duration-300 ease-out';
-    
+
     let iconClass = 'fas fa-check-circle text-emerald-500 text-lg animate-bounce-sm';
     if (type === 'error') {
         iconClass = 'fas fa-times-circle text-red-500 text-lg animate-bounce-sm';
@@ -61,10 +61,9 @@ window.showToast = function (message, type = 'success') {
     let cleanMsg = msgStr.replace(/^[✅❌⚠️⏳💡ℹ️]\s*/, '');
 
     toast.innerHTML = `
-        <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-xl ${
-            type === 'success' ? 'bg-emerald-50' : 
-            type === 'error' ? 'bg-red-50' : 
-            type === 'warning' ? 'bg-amber-50' : 'bg-blue-50'
+        <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-xl ${type === 'success' ? 'bg-emerald-50' :
+            type === 'error' ? 'bg-red-50' :
+                type === 'warning' ? 'bg-amber-50' : 'bg-blue-50'
         }">
             <i class="${iconClass}"></i>
         </div>
@@ -106,7 +105,7 @@ window.showConfirm = function (message) {
         const modal = document.createElement('div');
         modal.className = "fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[99999] p-4 animate-fadeIn";
         modal.id = "customConfirmModal";
-        
+
         modal.innerHTML = `
         <div class="bg-white rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl flex flex-col border border-gray-100 animate-scaleIn">
             <div class="p-6 space-y-4">
@@ -127,14 +126,14 @@ window.showConfirm = function (message) {
                 </button>
             </div>
         </div>`;
-        
+
         document.body.appendChild(modal);
-        
+
         const close = (result) => {
             modal.remove();
             resolve(result);
         };
-        
+
         modal.querySelector('#confirmCancelBtn').onclick = () => close(false);
         modal.querySelector('#confirmOkBtn').onclick = () => close(true);
         modal.onclick = (e) => { if (e.target === modal) close(false); };
@@ -336,50 +335,19 @@ window.goToDangKyKhachHang = function goToDangKyKhachHang() {
 };
 
 // --- DOCUMENT PREVIEW UTILITY ---
-window.previewDocument = function (filePath, fileName) {
+// --- DOCUMENT PREVIEW UTILITY (BẢN FIX TỰ RENDER CLIENT-SIDE) ---
+window.previewDocument = async function (filePath, fileName) {
     const ext = filePath.split('.').pop().toLowerCase();
-    
-    // Create Modal Element
+
+    // Khởi tạo Modal Element
     const modal = document.createElement('div');
     modal.className = "fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fadeIn";
     modal.id = "documentPreviewModal";
-    
-    let contentHtml = '';
-    let isSupported = true;
-    
-    // Check if it's running on localhost
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    if (['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext)) {
-        contentHtml = `<div class="w-full h-full flex items-center justify-center p-4">
-            <img src="${filePath}" alt="${fileName}" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-lg" />
-        </div>`;
-    } else if (ext === 'pdf') {
-        contentHtml = `<iframe src="${filePath}" class="w-full h-[75vh] border-0 rounded-b-2xl"></iframe>`;
-    } else if (['docx', 'xlsx', 'pptx'].includes(ext)) {
-        if (isLocal) {
-            contentHtml = `<div class="p-8 text-center flex flex-col items-center justify-center h-[50vh]">
-                <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mb-4 text-amber-500 text-2xl">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3 class="text-base font-bold text-gray-800 mb-2">Xem trước Office chỉ hoạt động trên máy chủ Staging/Production</h3>
-                <p class="text-xs text-gray-400 max-w-sm mb-6">Môi trường Local (localhost) không hỗ trợ do máy chủ Microsoft không thể truy cập trực tiếp vào máy tính của bạn. Vui lòng tải xuống để xem hoặc thử nghiệm trên tên miền chính thức.</p>
-                <a href="${filePath}" download class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-200">
-                    <i class="fas fa-download mr-1.5"></i>Tải xuống tệp
-                </a>
-            </div>`;
-        } else {
-            const publicUrl = window.location.origin + filePath;
-            const cacheBuster = Date.now();
-            const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(publicUrl + '?v=' + cacheBuster)}`;
-            contentHtml = `<iframe src="${officeViewerUrl}" class="w-full h-[75vh] border-0 rounded-b-2xl"></iframe>`;
-        }
-    } else {
-        isSupported = false;
-    }
-    
+
+    let isSupported = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'pdf', 'docx', 'xlsx'].includes(ext);
+
     if (!isSupported) {
-        // Fallback: trigger browser download directly and don't open modal
+        // Fallback: Nếu là file đuôi lạ (.zip, .dwg...) tự động kích hoạt tải xuống
         const a = document.createElement('a');
         a.href = filePath;
         a.download = fileName;
@@ -388,24 +356,20 @@ window.previewDocument = function (filePath, fileName) {
         a.remove();
         return;
     }
-    
+
+    // Build cấu trúc Modal đồng bộ Tailwind CSS của dự án e-Teck
     modal.innerHTML = `
-    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full ${ext === 'pdf' || ['docx', 'xlsx', 'pptx'].includes(ext) ? 'max-w-5xl' : 'max-w-3xl'} overflow-hidden border border-slate-200/80 shadow-2xl flex flex-col animate-scaleUp">
-        <!-- Modal Header -->
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-5xl overflow-hidden border border-slate-200/80 shadow-2xl flex flex-col animate-scaleUp">
         <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-500">
-                    <i class="${
-                        ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext) ? 'fas fa-image' : 
-                        ext === 'pdf' ? 'fas fa-file-pdf' : 'fas fa-file-word'
-                    } text-lg"></i>
+                    <i class="${['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext) ? 'fas fa-image' : ext === 'pdf' ? 'fas fa-file-pdf' : 'fas fa-file-excel'} text-lg"></i>
                 </div>
                 <div class="min-w-0">
                     <h2 class="text-sm font-bold text-gray-800 truncate" title="${fileName}">${fileName}</h2>
-                    <p class="text-[10px] text-gray-400 font-medium">Xem trước tài liệu</p>
+                    <p class="text-[10px] text-gray-400 font-medium">Xem trước tài liệu bảo mật nội bộ</p>
                 </div>
             </div>
-            
             <div class="flex items-center gap-2">
                 <a href="${filePath}" download="${fileName}" class="w-9 h-9 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors" title="Tải xuống tệp tin">
                     <i class="fas fa-download text-sm"></i>
@@ -416,14 +380,63 @@ window.previewDocument = function (filePath, fileName) {
             </div>
         </div>
         
-        <!-- Preview Content -->
-        <div class="bg-slate-50/50">
-            ${contentHtml}
+        <div class="bg-slate-50/50 p-4 overflow-y-auto max-h-[75vh]" id="inner-preview-body">
+            <div class="flex flex-col items-center justify-center py-12 space-y-3" id="preview-loading-spinner">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                <p class="text-gray-500 text-xs font-medium">Đang giải mã và tải tệp tin bảo mật...</p>
+            </div>
         </div>
     </div>`;
-    
+
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     document.body.appendChild(modal);
+
+    // Kích hoạt luồng Fetch dữ liệu kèm Token phiên đăng nhập và tự render
+    try {
+        const response = await fetch(filePath);
+        if (!response.ok) throw new Error("Không thể bốc dữ liệu file từ VPS");
+        const blob = await response.blob();
+
+        const bodyContainer = document.getElementById('inner-preview-body');
+        const spinner = document.getElementById('preview-loading-spinner');
+        if (spinner) spinner.remove();
+
+        if (['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext)) {
+            bodyContainer.innerHTML = `<img src="${URL.createObjectURL(blob)}" alt="${fileName}" class="max-w-full max-h-[70vh] object-contain rounded-lg mx-auto shadow" />`;
+        } else if (ext === 'pdf') {
+            bodyContainer.innerHTML = `<iframe src="${URL.createObjectURL(blob)}" class="w-full h-[70vh] border-0 rounded-b-xl"></iframe>`;
+        } else if (ext === 'docx') {
+            const wordRenderDiv = document.createElement('div');
+            wordRenderDiv.className = "bg-white shadow mx-auto p-8 max-w-[800px] overflow-x-auto text-black";
+            bodyContainer.appendChild(wordRenderDiv);
+            // Kích hoạt engine của docx-preview đã nhúng ở index.html
+            await docx.renderAsync(blob, wordRenderDiv);
+        } else if (ext === 'xlsx') {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const htmlTable = XLSX.utils.sheet_to_html(worksheet);
+                bodyContainer.innerHTML = `
+                    <div class="overflow-x-auto bg-white border border-gray-200 rounded-xl p-4 shadow-sm text-xs font-sans text-gray-700">
+                        <style>
+                            table { border-collapse: collapse; width: 100%; }
+                            th, td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; }
+                            tr:nth-child(even) { background-color: #f9fafb; }
+                        </style>
+                        ${htmlTable}
+                    </div>`;
+            };
+            reader.readAsArrayBuffer(blob);
+        }
+    } catch (err) {
+        console.error(err);
+        document.getElementById('inner-preview-body').innerHTML = `
+            <div class="p-4 bg-red-50 text-red-700 rounded-xl border border-red-100 text-center text-xs font-semibold">
+                ❌ Không thể mở trình xem trước tài liệu: ${err.message}
+            </div>`;
+    }
 };
 
 // Chạy ứng dụng lần đầu tiên
