@@ -25,7 +25,9 @@ const TaskService = {
   },
 
   async submitTask(id, submitData) {
+    console.log('TaskService.submitTask called. id =', id, 'submitData =', JSON.stringify(submitData));
     const task = await TaskModel.findById(id);
+    console.log('TaskService.submitTask findById result:', task ? 'found' : 'null');
     if (!task) {
       const error = new Error('Task not found');
       error.statusCode = 404;
@@ -41,7 +43,15 @@ const TaskService = {
 
     const { query } = require('../config/database');
 
-    if (submitData.file_paths && submitData.file_paths.length > 0) {
+    if (submitData.files && submitData.files.length > 0) {
+      for (const fileObj of submitData.files) {
+        await query(
+          `INSERT INTO project_documents (project_id, task_id, file_name, file_path, created_by)
+           VALUES (?, ?, ?, ?, ?)`,
+          [task.project_id, id, fileObj.file_name, fileObj.file_path, submitData.accountId]
+        );
+      }
+    } else if (submitData.file_paths && submitData.file_paths.length > 0) {
       for (const filePath of submitData.file_paths) {
         const fileName = filePath.split('/').pop();
         await query(

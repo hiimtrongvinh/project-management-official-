@@ -93,7 +93,9 @@ const TaskModel = {
    * @returns {Promise<Object|null>} Task or null
    */
   async findById(id) {
+    console.log('TaskModel.findById query running for id:', id);
     const rows = await query('SELECT * FROM tasks WHERE id = ?', [id]);
+    console.log('TaskModel.findById query returned rows count:', rows.length);
     if (rows.length === 0) return null;
     const enriched = await this.enrichTasks(rows);
     return enriched[0];

@@ -50,21 +50,29 @@ const TaskController = {
   async submitTask(req, res, next) {
     try {
       const taskId = parseInt(req.params.id, 10);
+      console.log('TaskController.submitTask: taskId =', taskId, 'req.files =', req.files ? req.files.length : 'none', 'req.file =', req.file ? 'yes' : 'no');
       
-      // Handle multiple files if uploaded
-      const filePaths = [];
+      const files = [];
       if (req.files && req.files.length > 0) {
         req.files.forEach(file => {
           const subfolder = file.mimetype.startsWith('image/') ? 'images' : 'documents';
-          filePaths.push(`/uploads/${subfolder}/${file.filename}`);
+          files.push({
+            file_name: file.originalname,
+            file_path: `/uploads/${subfolder}/${file.filename}`
+          });
         });
       } else if (req.file) {
-        // Fallback for single file
         const subfolder = req.file.mimetype.startsWith('image/') ? 'images' : 'documents';
-        filePaths.push(`/uploads/${subfolder}/${req.file.filename}`);
+        files.push({
+          file_name: req.file.originalname,
+          file_path: `/uploads/${subfolder}/${req.file.filename}`
+        });
       }
 
+      const filePaths = files.map(f => f.file_path);
+
       const submitData = {
+        files: files,
         file_paths: filePaths,
         file_path: filePaths.length > 0 ? filePaths[0] : req.body.file_path || '', // Keep file_path for backward compatibility
         note: req.body.note || '',
@@ -77,6 +85,7 @@ const TaskController = {
         message: 'Task submitted successfully.'
       });
     } catch (error) {
+      console.error('TaskController.submitTask Error:', error.message, error.stack);
       if (error.statusCode) {
         return res.status(error.statusCode).json({
           success: false,
