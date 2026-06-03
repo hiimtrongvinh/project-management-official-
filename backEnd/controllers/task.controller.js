@@ -56,15 +56,17 @@ const TaskController = {
       if (req.files && req.files.length > 0) {
         req.files.forEach(file => {
           const subfolder = file.mimetype.startsWith('image/') ? 'images' : 'documents';
+          const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
           files.push({
-            file_name: file.originalname,
+            file_name: originalName,
             file_path: `/uploads/${subfolder}/${file.filename}`
           });
         });
       } else if (req.file) {
         const subfolder = req.file.mimetype.startsWith('image/') ? 'images' : 'documents';
+        const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
         files.push({
-          file_name: req.file.originalname,
+          file_name: originalName,
           file_path: `/uploads/${subfolder}/${req.file.filename}`
         });
       }

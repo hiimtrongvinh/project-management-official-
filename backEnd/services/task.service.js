@@ -43,6 +43,30 @@ const TaskService = {
 
     const { query } = require('../config/database');
 
+    // Delete old task files from disk and database (replace old files with new ones)
+    try {
+      const oldDocs = await query(
+        'SELECT file_path FROM project_documents WHERE task_id = ?',
+        [id]
+      );
+      const path = require('path');
+      const fs = require('fs');
+      for (const doc of oldDocs) {
+        if (doc.file_path) {
+          const relativePath = doc.file_path.startsWith('/') ? doc.file_path.slice(1) : doc.file_path;
+          const fullDiskPath = path.join(process.cwd(), relativePath);
+          if (fs.existsSync(fullDiskPath)) {
+            fs.unlinkSync(fullDiskPath);
+            console.log('Deleted old task file from disk:', fullDiskPath);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error deleting old task files from disk:', err.message);
+    }
+
+    await query('DELETE FROM project_documents WHERE task_id = ?', [id]);
+
     if (submitData.files && submitData.files.length > 0) {
       for (const fileObj of submitData.files) {
         await query(
