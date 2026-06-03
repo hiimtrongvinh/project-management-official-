@@ -214,12 +214,12 @@ function createTaskCard(task, projectId) {
                     ${files && files.length > 0 ? files.map((doc, idx) => {
                         const fileName = doc.file_name || doc.file_path.split('/').pop();
                         return `
-                        <a href="${doc.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-1.5 py-0.5 rounded-md shadow-sm">
+                        <a href="#" onclick="event.stopPropagation(); event.preventDefault(); window.previewDocument('${doc.file_path}', '${fileName.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-1.5 py-0.5 rounded-md shadow-sm">
                             <i class="fas fa-paperclip text-[9px] text-blue-500"></i>
                             <span class="max-w-[120px] truncate" title="${fileName}">${fileName}</span>
                         </a>`;
                     }).join('') : file ? `
-                    <a href="${file}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-1.5 py-0.5 rounded-md shadow-sm">
+                    <a href="#" onclick="event.stopPropagation(); event.preventDefault(); window.previewDocument('${file}', '${file.split('/').pop().replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-1.5 py-0.5 rounded-md shadow-sm">
                         <i class="fas fa-paperclip text-[9px] text-blue-500"></i>
                         <span class="max-w-[120px] truncate" title="${file.split('/').pop()}">${file.split('/').pop()}</span>
                     </a>` : ''}
@@ -631,9 +631,9 @@ window.xemLaiBaoCaoAdmin = function (projectId, taskId) {
                     <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
                     <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
                 </div>
-                <a href="${doc.file_path}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
-                    <i class="fas fa-download mr-1"></i> Tải về
-                </a>
+                <button onclick="window.previewDocument('${doc.file_path}', '${fileName.replace(/'/g, "\\'")}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+                    <i class="fas fa-eye mr-1"></i> Xem trước
+                </button>
             </div>`;
         }).join('');
     } else if (task.file) {
@@ -644,9 +644,9 @@ window.xemLaiBaoCaoAdmin = function (projectId, taskId) {
                 <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
                 <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
             </div>
-            <a href="${task.file}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
-                <i class="fas fa-download mr-1"></i> Tải về
-            </a>
+            <button onclick="window.previewDocument('${task.file}', '${fileName.replace(/'/g, "\\'")}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+                <i class="fas fa-eye mr-1"></i> Xem trước
+            </button>
         </div>`;
     } else {
         fileHtml = `<p class="text-xs text-gray-400 italic">Không có file đính kèm</p>`;

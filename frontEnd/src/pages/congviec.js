@@ -205,12 +205,12 @@ export function renderTaskCards(tasks = [], page = currentTaskPage) {
                         ${task.files && task.files.length > 0 ? task.files.map((doc, idx) => {
                             const fileName = doc.file_name || doc.file_path.split('/').pop();
                             return `
-                            <a href="${doc.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-2 py-0.5 rounded-md shadow-sm">
+                            <a href="#" onclick="event.stopPropagation(); event.preventDefault(); window.previewDocument('${doc.file_path}', '${fileName.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-2 py-0.5 rounded-md shadow-sm">
                                 <i class="fas fa-paperclip text-[9px] text-blue-500"></i>
                                 <span class="max-w-[120px] truncate" title="${fileName}">${fileName}</span>
                             </a>`;
                         }).join('') : task.file_path ? `
-                        <a href="${task.file_path}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-2 py-0.5 rounded-md shadow-sm">
+                        <a href="#" onclick="event.stopPropagation(); event.preventDefault(); window.previewDocument('${task.file_path}', '${task.file_path.split('/').pop().replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors px-2 py-0.5 rounded-md shadow-sm">
                             <i class="fas fa-paperclip text-[9px] text-blue-500"></i>
                             <span class="max-w-[120px] truncate" title="${task.file_path.split('/').pop()}">${task.file_path.split('/').pop()}</span>
                         </a>` : ''}
@@ -532,9 +532,9 @@ window.xemLaiCongViec = (taskId) => {
                     <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
                     <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
                 </div>
-                <a href="${doc.file_path}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
-                    <i class="fas fa-download mr-1"></i> Tải về
-                </a>
+                <button onclick="window.previewDocument('${doc.file_path}', '${fileName.replace(/'/g, "\\'")}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+                    <i class="fas fa-eye mr-1"></i> Xem trước
+                </button>
             </div>`;
         }).join('');
     } else if (task.file_path) {
@@ -545,9 +545,9 @@ window.xemLaiCongViec = (taskId) => {
                 <i class="fas fa-file-alt text-blue-500 text-lg flex-shrink-0"></i>
                 <span class="text-xs font-bold text-gray-700 truncate" title="${fileName}">${fileName}</span>
             </div>
-            <a href="${task.file_path}" target="_blank" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
-                <i class="fas fa-download mr-1"></i> Tải về
-            </a>
+            <button onclick="window.previewDocument('${task.file_path}', '${fileName.replace(/'/g, "\\'")}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex-shrink-0 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors ml-2">
+                <i class="fas fa-eye mr-1"></i> Xem trước
+            </button>
         </div>`;
     } else {
         fileHtml = `<p class="text-xs text-gray-400 italic">Không có file đính kèm</p>`;

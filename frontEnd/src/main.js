@@ -335,6 +335,96 @@ window.goToDangKyKhachHang = function goToDangKyKhachHang() {
     }
 };
 
+// --- DOCUMENT PREVIEW UTILITY ---
+window.previewDocument = function (filePath, fileName) {
+    const ext = filePath.split('.').pop().toLowerCase();
+    
+    // Create Modal Element
+    const modal = document.createElement('div');
+    modal.className = "fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fadeIn";
+    modal.id = "documentPreviewModal";
+    
+    let contentHtml = '';
+    let isSupported = true;
+    
+    // Check if it's running on localhost
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext)) {
+        contentHtml = `<div class="w-full h-full flex items-center justify-center p-4">
+            <img src="${filePath}" alt="${fileName}" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-lg" />
+        </div>`;
+    } else if (ext === 'pdf') {
+        contentHtml = `<iframe src="${filePath}" class="w-full h-[75vh] border-0 rounded-b-2xl"></iframe>`;
+    } else if (['docx', 'xlsx', 'pptx'].includes(ext)) {
+        if (isLocal) {
+            contentHtml = `<div class="p-8 text-center flex flex-col items-center justify-center h-[50vh]">
+                <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mb-4 text-amber-500 text-2xl">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="text-base font-bold text-gray-800 mb-2">Xem trước Office chỉ hoạt động trên máy chủ Staging/Production</h3>
+                <p class="text-xs text-gray-400 max-w-sm mb-6">Môi trường Local (localhost) không hỗ trợ do máy chủ Microsoft không thể truy cập trực tiếp vào máy tính của bạn. Vui lòng tải xuống để xem hoặc thử nghiệm trên tên miền chính thức.</p>
+                <a href="${filePath}" download class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-200">
+                    <i class="fas fa-download mr-1.5"></i>Tải xuống tệp
+                </a>
+            </div>`;
+        } else {
+            const publicUrl = window.location.origin + filePath;
+            const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(publicUrl)}`;
+            contentHtml = `<iframe src="${officeViewerUrl}" class="w-full h-[75vh] border-0 rounded-b-2xl"></iframe>`;
+        }
+    } else {
+        isSupported = false;
+    }
+    
+    if (!isSupported) {
+        // Fallback: trigger browser download directly and don't open modal
+        const a = document.createElement('a');
+        a.href = filePath;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+    }
+    
+    modal.innerHTML = `
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full ${ext === 'pdf' || ['docx', 'xlsx', 'pptx'].includes(ext) ? 'max-w-5xl' : 'max-w-3xl'} overflow-hidden border border-slate-200/80 shadow-2xl flex flex-col animate-scaleUp">
+        <!-- Modal Header -->
+        <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-500">
+                    <i class="${
+                        ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext) ? 'fas fa-image' : 
+                        ext === 'pdf' ? 'fas fa-file-pdf' : 'fas fa-file-word'
+                    } text-lg"></i>
+                </div>
+                <div class="min-w-0">
+                    <h2 class="text-sm font-bold text-gray-800 truncate" title="${fileName}">${fileName}</h2>
+                    <p class="text-[10px] text-gray-400 font-medium">Xem trước tài liệu</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <a href="${filePath}" download="${fileName}" class="w-9 h-9 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors" title="Tải xuống tệp tin">
+                    <i class="fas fa-download text-sm"></i>
+                </a>
+                <button onclick="document.getElementById('documentPreviewModal').remove()" class="w-9 h-9 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Preview Content -->
+        <div class="bg-slate-50/50">
+            ${contentHtml}
+        </div>
+    </div>`;
+    
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
+};
+
 // Chạy ứng dụng lần đầu tiên
 console.log("%c✅ e-Teck Projects Demo đã sẵn sàng!", "color: #1e40af; font-weight: bold");
 window.initApp();
