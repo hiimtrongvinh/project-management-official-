@@ -485,7 +485,18 @@ window.handleTaskSubmit = async function (e, taskId) {
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
         });
-        const result = await response.json();
+
+        let result;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            result = await response.json();
+        } else {
+            if (response.status === 413) {
+                throw new Error('Dung lượng tệp tải lên vượt quá giới hạn cho phép (tối đa 10MB/file, tổng 100MB).');
+            }
+            throw new Error(`Phản hồi không hợp lệ từ máy chủ (Mã lỗi: ${response.status}).`);
+        }
+
         if (result.success) {
             alert('✅ Đã nộp báo cáo thành công!');
             document.getElementById('submitTaskModal')?.remove();
@@ -495,7 +506,7 @@ window.handleTaskSubmit = async function (e, taskId) {
         }
     } catch (error) {
         console.error('Lỗi khi nộp công việc:', error);
-        alert('❌ Có lỗi xảy ra khi nộp công việc.');
+        alert('❌ Có lỗi xảy ra khi nộp công việc: ' + error.message);
     }
 };
 
