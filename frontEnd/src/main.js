@@ -367,7 +367,7 @@ window.previewDocument = async function (filePath, fileName) {
                 </div>
                 <div class="min-w-0">
                     <h2 class="text-sm font-bold text-gray-800 truncate" title="${fileName}">${fileName}</h2>
-                    <p class="text-[10px] text-gray-400 font-medium">Xem trước tài liệu bảo mật nội bộ</p>
+                    <p class="text-[10px] text-gray-400 font-medium">Xem trước tài liệu</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
