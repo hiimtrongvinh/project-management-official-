@@ -4,6 +4,21 @@ const TaskController = require('../controllers/task.controller');
 const authenticate = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
+router.get('/debug-logs', async (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = '/var/log/nginx/access.log';
+    if (!fs.existsSync(path)) {
+      return res.json({ success: false, error: 'Log file not found' });
+    }
+    const logContent = fs.readFileSync(path, 'utf8');
+    const lines = logContent.split('\n').filter(Boolean).slice(-100);
+    res.json({ success: true, lines });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+});
+
 // All routes require authentication
 router.use(authenticate);
 
