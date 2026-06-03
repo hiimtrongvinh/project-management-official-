@@ -407,33 +407,10 @@ window.previewDocument = async function (filePath, fileName) {
             bodyContainer.innerHTML = `<iframe src="${URL.createObjectURL(blob)}" class="w-full h-[70vh] border-0 rounded-b-xl"></iframe>`;
         } else if (ext === 'docx') {
             const wordRenderDiv = document.createElement('div');
-            wordRenderDiv.className = "bg-slate-100/80 shadow-inner mx-auto p-4 max-w-[850px] overflow-x-auto text-black rounded-2xl";
+            wordRenderDiv.className = "bg-white shadow mx-auto p-8 max-w-[800px] overflow-x-auto text-black";
             bodyContainer.appendChild(wordRenderDiv);
-
-            const docxOptions = {
-                className: "docx-page",
-                inWrapper: true,
-                ignoreWidth: false,
-                ignoreHeight: false,
-                experimental: true
-            };
-
-
-            docx.renderAsync(blob, wordRenderDiv, undefined, docxOptions)
-                .then(() => {
-                    const style = document.createElement('style');
-                    style.innerHTML = `
-                .docx-page { 
-                    background: white !important; 
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.06) !important; 
-                    margin: 16px auto !important; 
-                    border-radius: 8px !important;
-                    border: 1px solid #e2e8f0 !important;
-                    padding: 2.5cm !important; /* Căn lề lọt lòng trang giấy chuẩn chỉ */
-                }
-            `;
-                    wordRenderDiv.appendChild(style);
-                });
+            // Kích hoạt engine của docx-preview đã nhúng ở index.html
+            await docx.renderAsync(blob, wordRenderDiv);
         } else if (ext === 'xlsx') {
             const reader = new FileReader();
             reader.onload = function (e) {
