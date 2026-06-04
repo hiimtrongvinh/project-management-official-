@@ -406,6 +406,67 @@ const ProjectController = {
       }
       next(error);
     }
+  },
+
+  async createHandoverNote(req, res, next) {
+    try {
+      const projectId = req.params.id;
+      const result = await ProjectService.createHandoverNote(projectId, req.user.id);
+      res.json({
+        success: true,
+        data: result,
+        message: 'Biên bản bàn giao đã được lập thành công!'
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
+  },
+
+  async createAcceptanceNote(req, res, next) {
+    try {
+      const projectId = req.params.id;
+      const result = await ProjectService.createAcceptanceNote(projectId, req.user.id);
+      res.json({
+        success: true,
+        data: result,
+        message: 'Biên bản nghiệm thu đã được lập thành công!'
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
+  },
+
+  async createPaymentRequest(req, res, next) {
+    try {
+      const projectId = req.params.id;
+      const { phase } = req.body;
+      const result = await ProjectService.createPaymentRequest(projectId, req.user.id, parseInt(phase || 1));
+      res.json({
+        success: true,
+        data: result,
+        message: `Đề nghị thanh toán đợt ${phase} đã được lập thành công!`
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
   }
 };
 

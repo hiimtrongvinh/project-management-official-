@@ -865,6 +865,835 @@ const ProjectService = {
       file_name: fileName,
       file_path: contractPath
     };
+  },
+
+  async createHandoverNote(projectId, creatorId) {
+    const fs = require('fs');
+    const path = require('path');
+    const ExcelJS = require('exceljs');
+
+    const project = await ProjectModel.findById(projectId);
+    if (!project) {
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Fetch project materials/items
+    const projectItems = await query(
+      `SELECT pi.*, m.name as material_name, m.sku as material_sku, m.unit as material_unit, m.price as material_price
+       FROM project_items pi
+       LEFT JOIN materials m ON pi.material_id = m.id
+       WHERE pi.project_id = ?`,
+      [projectId]
+    );
+
+    if (projectItems.length === 0) {
+      const error = new Error('No materials found in the project. Please add materials before creating a document.');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+
+    const clientName = project.client_name || 'Họ và tên khách hàng';
+    const clientTaxCode = project.client_tax_code || '........................';
+    const clientPhone = project.client_phone || '........................';
+    const clientAddress = project.client_address || '........................';
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Bien ban ban giao');
+
+    worksheet.pageSetup.orientation = 'portrait';
+    worksheet.pageSetup.paperSize = 9; // A4
+
+    worksheet.columns = [
+      { key: 'stt', width: 6 },
+      { key: 'item', width: 48 },
+      { key: 'unit', width: 10 },
+      { key: 'qty', width: 10 },
+      { key: 'remark', width: 15 }
+    ];
+
+    // Header info
+    worksheet.getCell('C1').value = 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD';
+    worksheet.getCell('C1').font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell('C2').value = 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK';
+    worksheet.getCell('C2').font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell('C3').value = 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Duong, Hai Phong';
+    worksheet.getCell('C3').font = { name: 'Times New Roman', size: 9, italic: true };
+    worksheet.getCell('C4').value = 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496';
+    worksheet.getCell('C4').font = { name: 'Times New Roman', size: 9, italic: true };
+    worksheet.getCell('C5').value = 'Website: www.e-teck.vn                Email: admin@e-teck.vn';
+    worksheet.getCell('C5').font = { name: 'Times New Roman', size: 9, italic: true };
+
+    // Title
+    worksheet.mergeCells('A7:E7');
+    const titleCell = worksheet.getCell('A7');
+    titleCell.value = 'DELIVERY NOTE AND WARRANTY / BIÊN BẢN BÀN GIAO KIÊM BẢO HÀNH';
+    titleCell.font = { name: 'Times New Roman', size: 14, bold: true };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getRow(7).height = 25;
+
+    // Customer & Document Info
+    worksheet.getCell('A10').value = 'Customer / Khách hàng:';
+    worksheet.getCell('A10').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B10').value = clientName;
+    worksheet.getCell('B10').font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell('D10').value = 'No / Số:';
+    worksheet.getCell('D10').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
+    worksheet.getCell('E10').value = `BB-BG-${projectId}`;
+    worksheet.getCell('E10').font = { name: 'Times New Roman', size: 10, bold: true };
+
+    worksheet.getCell('A11').value = 'Address / Địa chỉ:';
+    worksheet.getCell('A11').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B11').value = clientAddress;
+    worksheet.getCell('B11').font = { name: 'Times New Roman', size: 10 };
+    worksheet.getCell('D11').value = 'Date / Ngày:';
+    worksheet.getCell('D11').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
+    worksheet.getCell('E11').value = `${day}/${month}/${year}`;
+    worksheet.getCell('E11').font = { name: 'Times New Roman', size: 10, bold: true };
+
+    worksheet.getCell('A12').value = 'Attn / Gửi tới:';
+    worksheet.getCell('A12').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B12').value = clientName;
+    worksheet.getCell('B12').font = { name: 'Times New Roman', size: 10 };
+
+    worksheet.getCell('A13').value = 'Tel No. / Số điện thoại:';
+    worksheet.getCell('A13').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B13').value = clientPhone;
+    worksheet.getCell('B13').font = { name: 'Times New Roman', size: 10 };
+
+    // Intro
+    worksheet.mergeCells('A15:E15');
+    const introCell = worksheet.getCell('A15');
+    introCell.value = `Hôm nay, ngày ${day} tháng ${month} năm ${year}, tại trụ sở Công ty........................................... ; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:`;
+    introCell.font = { name: 'Times New Roman', size: 10 };
+    introCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+    worksheet.getRow(15).height = 30;
+
+    // Table Headers
+    const headers = [
+      'No.\nSTT',
+      'Items\nDanh mục hàng hóa & dịch vụ',
+      'Unit\nĐơn Vị',
+      'Qty\nSL',
+      'Remark\nBảo hành'
+    ];
+    worksheet.getRow(17).height = 30;
+    headers.forEach((h, idx) => {
+      const col = String.fromCharCode(65 + idx); // A, B, C, D, E
+      const cell = worksheet.getCell(`${col}17`);
+      cell.value = h;
+      cell.font = { name: 'Times New Roman', size: 10, bold: true };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+
+    let currentRow = 18;
+    projectItems.forEach((item, index) => {
+      worksheet.getCell(`A${currentRow}`).value = index + 1;
+      worksheet.getCell(`B${currentRow}`).value = item.material_name;
+      worksheet.getCell(`C${currentRow}`).value = item.material_unit;
+      worksheet.getCell(`D${currentRow}`).value = item.quantity;
+      worksheet.getCell(`E${currentRow}`).value = '12 tháng';
+
+      ['A', 'B', 'C', 'D', 'E'].forEach(col => {
+        const cell = worksheet.getCell(`${col}${currentRow}`);
+        cell.font = { name: 'Times New Roman', size: 10 };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+        if (col === 'A' || col === 'C' || col === 'D' || col === 'E') {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        } else {
+          cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+        }
+      });
+      currentRow++;
+    });
+
+    // Add labor row if labor_fee > 0
+    if (parseFloat(project.labor_fee || 0) > 0) {
+      worksheet.getCell(`A${currentRow}`).value = projectItems.length + 1;
+      worksheet.getCell(`B${currentRow}`).value = 'Thi công chạy dây điện & hệ thống quang / System cabling & optical installation';
+      worksheet.getCell(`C${currentRow}`).value = 'Set / Gói';
+      worksheet.getCell(`D${currentRow}`).value = 1;
+      worksheet.getCell(`E${currentRow}`).value = '12 tháng';
+
+      ['A', 'B', 'C', 'D', 'E'].forEach(col => {
+        const cell = worksheet.getCell(`${col}${currentRow}`);
+        cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+        if (col === 'A' || col === 'C' || col === 'D' || col === 'E') {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        } else {
+          cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+        }
+      });
+      currentRow++;
+    }
+
+    currentRow++; // Empty row spacing
+
+    // Exclusions
+    worksheet.getCell(`B${currentRow}`).value = 'Các trường hợp không được bảo hành / Warranty exclusions:';
+    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true, underline: true };
+    currentRow++;
+
+    const exclusions = [
+      '- Các sản phẩm bị biến dạng cơ khí / Mechanically deformed products',
+      '- Lỗi do sử dụng thao tác sai kỹ thuật, rơi vỡ, cháy nổ, hỏa hoạn, sự cố điện / Misuse, drops, burns, fire, electrical issues',
+      '- Tem bảo hành của công ty hoặc của nhà cung cấp bị rách, sửa đổi, dán đè / Broken, altered, overwritten warranty stamps',
+      '- Không có phiếu bảo hành hoặc Phiếu bảo hành bị sửa chữa, tẩy xóa / Missing, repaired, erased warranty card',
+      '- Các phụ kiện bị hao mòn trong quá trình sử dụng / Accessories worn out during use'
+    ];
+
+    exclusions.forEach(ex => {
+      worksheet.getCell(`B${currentRow}`).value = ex;
+      worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 9 };
+      currentRow++;
+    });
+
+    currentRow++; // Spacer
+
+    worksheet.getCell(`B${currentRow}`).value = 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau. / This Delivery Note & Warranty shall be made into 02 originals. Each Party keeps 01 original.';
+    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
+    currentRow += 2;
+
+    // Signatures
+    worksheet.getCell(`B${currentRow}`).value = "Deliverier's Signature / Chữ ký người giao hàng";
+    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'center' };
+
+    worksheet.getCell(`D${currentRow}`).value = "Receiver's Signature / Chữ ký người nhận hàng";
+    worksheet.getCell(`D${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell(`D${currentRow}`).alignment = { horizontal: 'center' };
+    worksheet.mergeCells(`D${currentRow}:E${currentRow}`);
+
+    // Save to file
+    const contractDir = path.join(__dirname, '../uploads/contracts');
+    if (!fs.existsSync(contractDir)) {
+      fs.mkdirSync(contractDir, { recursive: true });
+    }
+    const fileName = `Biên bản bàn giao - BB-BG-${projectId}.xlsx`;
+    const docPath = `/uploads/contracts/BB-BG-${projectId}.xlsx`;
+    const fullPath = path.join(contractDir, `BB-BG-${projectId}.xlsx`);
+
+    await workbook.xlsx.writeFile(fullPath);
+
+    // Database upsert
+    const existing = await query(
+      'SELECT id FROM project_documents WHERE project_id = ? AND file_name = ?',
+      [projectId, fileName]
+    );
+
+    if (existing.length === 0) {
+      await query(
+        `INSERT INTO project_documents (project_id, task_id, file_name, file_path, created_by)
+         VALUES (?, NULL, ?, ?, ?)`,
+        [projectId, fileName, docPath, creatorId]
+      );
+    } else {
+      await query(
+        'UPDATE project_documents SET file_path = ?, created_by = ? WHERE id = ?',
+        [docPath, creatorId, existing[0].id]
+      );
+    }
+
+    // Log Activity
+    await query(
+      'INSERT INTO activity_logs (user_id, action, entity_type, entity_id, details) VALUES (?, ?, ?, ?, ?)',
+      [creatorId, 'handover_created', 'project', projectId, JSON.stringify({ file: fileName })]
+    );
+
+    // Notify client
+    const clientAccountId = await getProjectClientAccountId(projectId);
+    if (clientAccountId) {
+      await notify([clientAccountId], {
+        type: 'project_step_advanced',
+        title: 'Biên bản bàn giao & Bảo hành đã được lập',
+        message: `e-Teck đã lập Biên bản bàn giao kiêm bảo hành cho dự án "${project.title}". Vui lòng kiểm tra và tải về.`,
+        related_type: 'project',
+        related_id: projectId
+      });
+    }
+
+    return {
+      success: true,
+      file_name: fileName,
+      file_path: docPath
+    };
+  },
+
+  async createAcceptanceNote(projectId, creatorId) {
+    const fs = require('fs');
+    const path = require('path');
+    const ExcelJS = require('exceljs');
+
+    const project = await ProjectModel.findById(projectId);
+    if (!project) {
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Fetch project materials/items
+    const projectItems = await query(
+      `SELECT pi.*, m.name as material_name, m.sku as material_sku, m.unit as material_unit, m.price as material_price
+       FROM project_items pi
+       LEFT JOIN materials m ON pi.material_id = m.id
+       WHERE pi.project_id = ?`,
+      [projectId]
+    );
+
+    if (projectItems.length === 0) {
+      const error = new Error('No materials found in the project. Please add materials before creating a document.');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+
+    const clientName = project.client_name || 'Họ và tên khách hàng';
+    const clientTaxCode = project.client_tax_code || '........................';
+    const clientPhone = project.client_phone || '........................';
+    const clientAddress = project.client_address || '........................';
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Bien ban nghiem thu');
+
+    worksheet.pageSetup.orientation = 'portrait';
+    worksheet.pageSetup.paperSize = 9; // A4
+
+    worksheet.columns = [
+      { key: 'stt', width: 6 },
+      { key: 'item', width: 35 },
+      { key: 'unit', width: 10 },
+      { key: 'qty', width: 8 },
+      { key: 'price', width: 14 },
+      { key: 'total', width: 16 },
+      { key: 'remark', width: 12 }
+    ];
+
+    // Header info
+    worksheet.getCell('C1').value = 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD';
+    worksheet.getCell('C1').font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell('C2').value = 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢN CÔNG NGHỆ E-TECK';
+    worksheet.getCell('C2').font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell('C3').value = 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Duong, Hai Phong';
+    worksheet.getCell('C3').font = { name: 'Times New Roman', size: 9, italic: true };
+    worksheet.getCell('C4').value = 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496';
+    worksheet.getCell('C4').font = { name: 'Times New Roman', size: 9, italic: true };
+    worksheet.getCell('C5').value = 'Website: www.e-teck.vn                Email: admin@e-teck.vn';
+    worksheet.getCell('C5').font = { name: 'Times New Roman', size: 9, italic: true };
+
+    // Title
+    worksheet.mergeCells('A7:G7');
+    const titleCell = worksheet.getCell('A7');
+    titleCell.value = 'ACCEPTANCE NOTE / BIÊN BẢN NGHIỆM THU';
+    titleCell.font = { name: 'Times New Roman', size: 14, bold: true };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getRow(7).height = 25;
+
+    // Customer & Document Info
+    worksheet.getCell('A10').value = 'Customer / Khách hàng:';
+    worksheet.getCell('A10').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B10').value = clientName;
+    worksheet.getCell('B10').font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell('F10').value = 'No / Số:';
+    worksheet.getCell('F10').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
+    worksheet.getCell('G10').value = `BB-NT-${projectId}`;
+    worksheet.getCell('G10').font = { name: 'Times New Roman', size: 10, bold: true };
+
+    worksheet.getCell('A11').value = 'Address / Địa chỉ:';
+    worksheet.getCell('A11').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B11').value = clientAddress;
+    worksheet.getCell('B11').font = { name: 'Times New Roman', size: 10 };
+    worksheet.getCell('F11').value = 'Date / Ngày:';
+    worksheet.getCell('F11').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
+    worksheet.getCell('G11').value = `${day}/${month}/${year}`;
+    worksheet.getCell('G11').font = { name: 'Times New Roman', size: 10, bold: true };
+
+    worksheet.getCell('A12').value = 'Attn / Gửi tới:';
+    worksheet.getCell('A12').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B12').value = clientName;
+    worksheet.getCell('B12').font = { name: 'Times New Roman', size: 10 };
+
+    worksheet.getCell('A13').value = 'Tel No. / Số điện thoại:';
+    worksheet.getCell('A13').font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.getCell('B13').value = clientPhone;
+    worksheet.getCell('B13').font = { name: 'Times New Roman', size: 10 };
+
+    // Intro
+    worksheet.mergeCells('A15:G15');
+    const introCell = worksheet.getCell('A15');
+    introCell.value = `Hôm nay, ngày ${day} tháng ${month} năm ${year}, tại trụ sở CÔNG TY......................................................................................; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:`;
+    introCell.font = { name: 'Times New Roman', size: 10 };
+    introCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+    worksheet.getRow(15).height = 30;
+
+    // Table Headers
+    const headers = [
+      'No.\nSTT',
+      'Items\nDanh mục hàng hóa & dịch vụ',
+      'Unit\nĐơn Vị',
+      'Qty\nSL',
+      'Unit Price\nĐơn Giá',
+      'Sub Total\nThành Tiền',
+      'Warranty\nBảo Hành'
+    ];
+    worksheet.getRow(17).height = 30;
+    headers.forEach((h, idx) => {
+      const col = String.fromCharCode(65 + idx); // A, B, C, D, E, F, G
+      const cell = worksheet.getCell(`${col}17`);
+      cell.value = h;
+      cell.font = { name: 'Times New Roman', size: 10, bold: true };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+
+    let totalContractValue = 0;
+    let currentRow = 18;
+    projectItems.forEach((item, index) => {
+      const unitPrice = parseFloat(item.material_price || 0) * (1 + parseInt(item.markup || 10) / 100);
+      const amount = unitPrice * parseInt(item.quantity || 1);
+      totalContractValue += amount;
+
+      worksheet.getCell(`A${currentRow}`).value = index + 1;
+      worksheet.getCell(`B${currentRow}`).value = item.material_name;
+      worksheet.getCell(`C${currentRow}`).value = item.material_unit;
+      worksheet.getCell(`D${currentRow}`).value = item.quantity;
+      worksheet.getCell(`E${currentRow}`).value = unitPrice;
+      worksheet.getCell(`F${currentRow}`).value = amount;
+      worksheet.getCell(`G${currentRow}`).value = '12 tháng';
+
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(col => {
+        const cell = worksheet.getCell(`${col}${currentRow}`);
+        cell.font = { name: 'Times New Roman', size: 10 };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+        if (col === 'E' || col === 'F') {
+          cell.numFmt = '#,##0"đ"';
+          cell.alignment = { vertical: 'middle', horizontal: 'right' };
+        } else if (col === 'B') {
+          cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+        } else {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        }
+      });
+      currentRow++;
+    });
+
+    // Add labor row if labor_fee > 0
+    const laborFee = parseFloat(project.labor_fee || 0);
+    if (laborFee > 0) {
+      totalContractValue += laborFee;
+
+      worksheet.getCell(`A${currentRow}`).value = projectItems.length + 1;
+      worksheet.getCell(`B${currentRow}`).value = 'Thi công chạy dây điện & hệ thống quang / System cabling & optical installation';
+      worksheet.getCell(`C${currentRow}`).value = 'Set / Gói';
+      worksheet.getCell(`D${currentRow}`).value = 1;
+      worksheet.getCell(`E${currentRow}`).value = laborFee;
+      worksheet.getCell(`F${currentRow}`).value = laborFee;
+      worksheet.getCell(`G${currentRow}`).value = '12 tháng';
+
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(col => {
+        const cell = worksheet.getCell(`${col}${currentRow}`);
+        cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+        if (col === 'E' || col === 'F') {
+          cell.numFmt = '#,##0"đ"';
+          cell.alignment = { vertical: 'middle', horizontal: 'right' };
+        } else if (col === 'B') {
+          cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+        } else {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        }
+      });
+      currentRow++;
+    }
+
+    // Grand total row
+    worksheet.mergeCells(`A${currentRow}:E${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = 'Grand Total Price / Tổng tiền thanh toán (VND):';
+    worksheet.getCell(`A${currentRow}`).alignment = { horizontal: 'right', vertical: 'middle' };
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell(`A${currentRow}`).border = {
+      top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+    };
+
+    worksheet.getCell(`F${currentRow}`).value = totalContractValue;
+    worksheet.getCell(`F${currentRow}`).numFmt = '#,##0"đ"';
+    worksheet.getCell(`F${currentRow}`).alignment = { horizontal: 'right', vertical: 'middle' };
+    worksheet.getCell(`F${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true, color: { argb: 'FF1D4ED8' } };
+    worksheet.getCell(`F${currentRow}`).border = {
+      top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+    };
+
+    worksheet.getCell(`G${currentRow}`).border = {
+      top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+    };
+    currentRow++;
+
+    currentRow++; // spacing
+
+    // Evaluation notes
+    const notes = [
+      '* Về khối lượng / Quantity:',
+      '  - Đầy đủ chủng loại / Full varieties',
+      '  - Đúng chủng loại / Correct varieties',
+      '',
+      '* Về chất lượng thiết bị, vật tư / Equipment & Material Quality:',
+      '  - Đạt yêu cầu / Meets requirements',
+      '',
+      '* Về lắp đặt thiết bị, vật tư / Installation:',
+      '  - Đạt yêu cầu / Meets requirements',
+      '',
+      '* Cài đặt, đưa thiết bị vào hoạt động / Commissioning:',
+      '  - Thiết bị hoạt động bình thường / Equipment operates normally',
+      '',
+      '* Kết luận / Conclusion:',
+      '  - Chấp nhận nghiệm thu sản phẩm để sử dụng / Accept products for use.'
+    ];
+
+    notes.forEach(note => {
+      worksheet.getCell(`B${currentRow}`).value = note;
+      worksheet.getCell(`B${currentRow}`).font = {
+        name: 'Times New Roman',
+        size: 10,
+        bold: note.startsWith('*')
+      };
+      currentRow++;
+    });
+
+    currentRow++; // spacer
+
+    worksheet.getCell(`B${currentRow}`).value = 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau. / This Acceptance Note shall be made into 02 originals. Each Party keeps 01 original.';
+    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
+    currentRow += 2;
+
+    // Signatures
+    worksheet.getCell(`B${currentRow}`).value = "Deliverier's Signature / Chữ ký người giao hàng";
+    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'center' };
+
+    worksheet.getCell(`F${currentRow}`).value = "Receiver's Signature / Chữ ký người nhận hàng";
+    worksheet.getCell(`F${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell(`F${currentRow}`).alignment = { horizontal: 'center' };
+    worksheet.mergeCells(`F${currentRow}:G${currentRow}`);
+
+    // Save to file
+    const contractDir = path.join(__dirname, '../uploads/contracts');
+    if (!fs.existsSync(contractDir)) {
+      fs.mkdirSync(contractDir, { recursive: true });
+    }
+    const fileName = `Biên bản nghiệm thu - BB-NT-${projectId}.xlsx`;
+    const docPath = `/uploads/contracts/BB-NT-${projectId}.xlsx`;
+    const fullPath = path.join(contractDir, `BB-NT-${projectId}.xlsx`);
+
+    await workbook.xlsx.writeFile(fullPath);
+
+    // Database upsert
+    const existing = await query(
+      'SELECT id FROM project_documents WHERE project_id = ? AND file_name = ?',
+      [projectId, fileName]
+    );
+
+    if (existing.length === 0) {
+      await query(
+        `INSERT INTO project_documents (project_id, task_id, file_name, file_path, created_by)
+         VALUES (?, NULL, ?, ?, ?)`,
+        [projectId, fileName, docPath, creatorId]
+      );
+    } else {
+      await query(
+        'UPDATE project_documents SET file_path = ?, created_by = ? WHERE id = ?',
+        [docPath, creatorId, existing[0].id]
+      );
+    }
+
+    // Log Activity
+    await query(
+      'INSERT INTO activity_logs (user_id, action, entity_type, entity_id, details) VALUES (?, ?, ?, ?, ?)',
+      [creatorId, 'acceptance_created', 'project', projectId, JSON.stringify({ file: fileName })]
+    );
+
+    // Notify client
+    const clientAccountId = await getProjectClientAccountId(projectId);
+    if (clientAccountId) {
+      await notify([clientAccountId], {
+        type: 'project_step_advanced',
+        title: 'Biên bản nghiệm thu đã được lập',
+        message: `e-Teck đã lập Biên bản nghiệm thu cho dự án "${project.title}". Vui lòng kiểm tra và tải về.`,
+        related_type: 'project',
+        related_id: projectId
+      });
+    }
+
+    return {
+      success: true,
+      file_name: fileName,
+      file_path: docPath
+    };
+  },
+
+  async createPaymentRequest(projectId, creatorId, phase) {
+    const fs = require('fs');
+    const path = require('path');
+    const docx = require('docx');
+    const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
+    const { convertVNDToWords, convertVNDToWordsEn } = require('../utils/numberToWords');
+
+    const project = await ProjectModel.findById(projectId);
+    if (!project) {
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Fetch project materials/items to calculate totalValue
+    const projectItems = await query(
+      `SELECT pi.*, m.name as material_name, m.sku as material_sku, m.unit as material_unit, m.price as material_price
+       FROM project_items pi
+       LEFT JOIN materials m ON pi.material_id = m.id
+       WHERE pi.project_id = ?`,
+      [projectId]
+    );
+
+    let totalValue = 0;
+    const laborFee = parseFloat(project.labor_fee || 0);
+    totalValue += laborFee;
+
+    projectItems.forEach(item => {
+      const sellPrice = parseFloat(item.material_price || 0) * (1 + parseInt(item.markup || 10) / 100);
+      const totalSell = sellPrice * parseInt(item.quantity || 1);
+      totalValue += totalSell;
+    });
+
+    // Calculate requested amount based on phase (1 = 40%, 2 = 60%)
+    const percentage = phase === 1 ? 0.4 : 0.6;
+    const paymentAmount = Math.round(totalValue * percentage);
+    const amountWordsVi = convertVNDToWords(paymentAmount);
+    const amountWordsEn = convertVNDToWordsEn(paymentAmount);
+
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const monthsEnglish = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const monthEn = monthsEnglish[today.getMonth()];
+
+    const clientName = project.client_name || 'Họ và tên khách hàng';
+    const clientTaxCode = project.client_tax_code || '........................';
+    const clientPhone = project.client_phone || '........................';
+    const clientAddress = project.client_address || '........................';
+
+    // Word Document generation
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            // National Title (Centered)
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [
+                new TextRun({ text: "SOCIALIST REPUBLIC OF VIETNAM", bold: true, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 360 },
+              children: [
+                new TextRun({ text: "Independence – Freedom - Happiness", bold: true, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Title (Centered)
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 360 },
+              children: [
+                new TextRun({ text: "PAYMENT REQUEST", bold: true, size: 28, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Dear
+            new Paragraph({
+              spacing: { after: 180 },
+              children: [
+                new TextRun({ text: "Dear: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: clientName, bold: true, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Address
+            new Paragraph({
+              spacing: { after: 180 },
+              children: [
+                new TextRun({ text: "Địa chỉ: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: clientAddress, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Tax Code
+            new Paragraph({
+              spacing: { after: 240 },
+              children: [
+                new TextRun({ text: "MST: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: clientTaxCode, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Regarding and request amount
+            new Paragraph({
+              spacing: { after: 240 },
+              children: [
+                new TextRun({ text: `Regarding the Contract No. HD-${projectId}, we respectfully request the payment: `, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: `${paymentAmount.toLocaleString('vi-VN')} đồng `, bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: `(${paymentAmount.toLocaleString('vi-VN')} VND / In words: ${amountWordsVi} / ${amountWordsEn} USD).`, italic: true, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Account Name
+            new Paragraph({
+              spacing: { after: 120 },
+              children: [
+                new TextRun({ text: "- Account Name: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: "CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK", size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Account Number
+            new Paragraph({
+              spacing: { after: 240 },
+              children: [
+                new TextRun({ text: "- Account Number: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: "88688588 at ACB, Duyen Hai branch", size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Closing
+            new Paragraph({
+              spacing: { after: 120 },
+              children: [
+                new TextRun({ text: "Looking forward to receiving cooperation from you.", size: 24, font: "Times New Roman" }),
+              ]
+            }),
+            new Paragraph({
+              spacing: { after: 480 },
+              children: [
+                new TextRun({ text: "We sincerely thank you!", bold: true, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+
+            // Date (Right Aligned)
+            new Paragraph({
+              alignment: AlignmentType.RIGHT,
+              spacing: { after: 480 },
+              children: [
+                new TextRun({ text: `Hai Phong, ${monthEn} ${day}, ${year}`, italic: true, size: 24, font: "Times New Roman" }),
+              ]
+            }),
+          ]
+        }
+      ]
+    });
+
+    const buffer = await Packer.toBuffer(doc);
+
+    // Save File
+    const contractDir = path.join(__dirname, '../uploads/contracts');
+    if (!fs.existsSync(contractDir)) {
+      fs.mkdirSync(contractDir, { recursive: true });
+    }
+    const fileName = `Đề nghị thanh toán đợt ${phase} - DN-TT${phase}-${projectId}.docx`;
+    const docPath = `/uploads/contracts/DN-TT${phase}-${projectId}.docx`;
+    const fullPath = path.join(contractDir, `DN-TT${phase}-${projectId}.docx`);
+
+    fs.writeFileSync(fullPath, buffer);
+
+    // Database upsert
+    const existing = await query(
+      'SELECT id FROM project_documents WHERE project_id = ? AND file_name = ?',
+      [projectId, fileName]
+    );
+
+    if (existing.length === 0) {
+      await query(
+        `INSERT INTO project_documents (project_id, task_id, file_name, file_path, created_by)
+         VALUES (?, NULL, ?, ?, ?)`,
+        [projectId, fileName, docPath, creatorId]
+      );
+    } else {
+      await query(
+        'UPDATE project_documents SET file_path = ?, created_by = ? WHERE id = ?',
+        [docPath, creatorId, existing[0].id]
+      );
+    }
+
+    // Log Activity
+    await query(
+      'INSERT INTO activity_logs (user_id, action, entity_type, entity_id, details) VALUES (?, ?, ?, ?, ?)',
+      [creatorId, 'payment_request_created', 'project', projectId, JSON.stringify({ file: fileName, phase })]
+    );
+
+    // Notify client
+    const clientAccountId = await getProjectClientAccountId(projectId);
+    if (clientAccountId) {
+      await notify([clientAccountId], {
+        type: 'project_step_advanced',
+        title: `Đề nghị thanh toán Đợt ${phase} đã được lập`,
+        message: `e-Teck đã lập Đề nghị thanh toán đợt ${phase} cho dự án "${project.title}". Vui lòng kiểm tra và thực hiện thanh toán.`,
+        related_type: 'project',
+        related_id: projectId
+      });
+    }
+
+    return {
+      success: true,
+      file_name: fileName,
+      file_path: docPath
+    };
   }
 };
 

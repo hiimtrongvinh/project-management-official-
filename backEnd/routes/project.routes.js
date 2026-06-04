@@ -46,4 +46,13 @@ router.put('/:id/send-quotation', ProjectController.sendQuotation);
 // POST /api/projects/:id/contract - Admin/Staff generates contract
 router.post('/:id/contract', ProjectController.createContract);
 
+// POST /api/projects/:id/handover - Admin/Staff generates handover note
+router.post('/:id/handover', ProjectController.createHandoverNote);
+
+// POST /api/projects/:id/acceptance - Admin/Staff generates acceptance note
+router.post('/:id/acceptance', ProjectController.createAcceptanceNote);
+
+// POST /api/projects/:id/payment-request - Admin/Staff generates payment request
+router.post('/:id/payment-request', ProjectController.createPaymentRequest);
+
 module.exports = router;

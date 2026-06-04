@@ -126,7 +126,7 @@ export function renderTabVattuDuan(projectId, role) {
                     <td></td>
                 </tr>
                 <tr class="bg-blue-50/30 font-extrabold border-t-2 border-blue-100">
-                    <td class="px-5 py-4 text-blue-800 text-sm" colspan="5">TỔNG CỘNG BÁO GIÁ KHÁCH HÀNG</td>
+                    <td class="px-5 py-4 text-blue-800 text-sm" colspan="5">Tổng cộng</td>
                     <td class="px-4 py-4 text-blue-700 text-base font-black" id="vattuGrandTotalCell">${grandTotal.toLocaleString()}đ</td>
                     <td></td>
                 </tr>
@@ -158,29 +158,95 @@ export function renderTabVattuDuan(projectId, role) {
             const currentStatus = statusMap[pendingQuo.status] || { text: pendingQuo.status, class: 'bg-gray-50 text-gray-700 border-gray-200' };
 
             const documentsList = project?.documentsList || [];
-            const contractDoc = documentsList.find(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế'));
-            let contractSectionHtml = '';
+            const docTypes = [
+                {
+                    key: 'contract',
+                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế')),
+                    title: 'Hợp đồng kinh tế song ngữ',
+                    subtitle: 'Bilingual Purchasing Contract',
+                    icon: 'fa-file-contract',
+                    colorClass: 'bg-purple-50/50 border-purple-100 text-purple-700 hover:bg-purple-100/50',
+                    badgeColor: 'bg-purple-100 text-purple-700',
+                    ext: 'HTML'
+                },
+                {
+                    key: 'handover',
+                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Biên bản bàn giao')),
+                    title: 'Biên bản bàn giao & Bảo hành',
+                    subtitle: 'Delivery Note & Warranty',
+                    icon: 'fa-file-signature',
+                    colorClass: 'bg-emerald-50/50 border-emerald-100 text-emerald-700 hover:bg-emerald-100/50',
+                    badgeColor: 'bg-emerald-100 text-emerald-700',
+                    ext: 'Excel'
+                },
+                {
+                    key: 'acceptance',
+                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Biên bản nghiệm thu')),
+                    title: 'Biên bản nghiệm thu',
+                    subtitle: 'Acceptance Note',
+                    icon: 'fa-clipboard-check',
+                    colorClass: 'bg-teal-50/50 border-teal-100 text-teal-700 hover:bg-teal-100/50',
+                    badgeColor: 'bg-teal-100 text-teal-700',
+                    ext: 'Excel'
+                },
+                {
+                    key: 'payment1',
+                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Đề nghị thanh toán đợt 1')),
+                    title: 'Đề nghị thanh toán Đợt 1',
+                    subtitle: 'Payment Request Phase 1 (40%)',
+                    icon: 'fa-file-invoice-dollar',
+                    colorClass: 'bg-blue-50/50 border-blue-100 text-blue-700 hover:bg-blue-100/50',
+                    badgeColor: 'bg-blue-100 text-blue-700',
+                    ext: 'Word'
+                },
+                {
+                    key: 'payment2',
+                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Đề nghị thanh toán đợt 2')),
+                    title: 'Đề nghị thanh toán Đợt 2',
+                    subtitle: 'Payment Request Phase 2 (60%)',
+                    icon: 'fa-file-invoice-dollar',
+                    colorClass: 'bg-indigo-50/50 border-indigo-100 text-indigo-700 hover:bg-indigo-100/50',
+                    badgeColor: 'bg-indigo-100 text-indigo-700',
+                    ext: 'Word'
+                }
+            ];
 
-            if (contractDoc) {
-                contractSectionHtml = `
-                    <div class="bg-purple-50/50 border border-purple-100 rounded-2xl p-4 flex items-center justify-between shadow-sm mt-3 animate-fadeIn">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-700">
-                                <i class="fas fa-file-contract text-base"></i>
+            const activeDocs = docTypes.filter(d => d.doc);
+            let docsGridHtml = '';
+
+            if (activeDocs.length > 0) {
+                const cardsHtml = activeDocs.map(d => {
+                    const viewTitle = d.title.replace(/'/g, "\\'");
+                    return `
+                        <div class="${d.colorClass} border rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all animate-fadeIn">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas ${d.icon} text-base"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-extrabold text-gray-800 text-sm truncate">${d.title}</p>
+                                    <p class="text-[10px] text-gray-400 font-medium truncate">${d.subtitle}</p>
+                                    <div class="flex items-center gap-1.5 mt-1">
+                                        <span class="px-2 py-0.5 rounded-full ${d.badgeColor} text-[9px] font-bold">Đã thiết lập</span>
+                                        <span class="px-1.5 py-0.5 rounded-full bg-white/80 text-gray-500 text-[8px] font-bold uppercase border border-gray-200/50">${d.ext}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-extrabold text-gray-800 text-sm">Hợp đồng kinh tế song ngữ</p>
-                                <p class="text-xs text-purple-600 font-medium">Trạng thái: <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold">Đã thiết lập</span></p>
+                            <div class="flex gap-1.5 flex-shrink-0 ml-2">
+                                <button onclick="window.handleViewDocumentPreview('${projectId}', '${d.doc.file_path}', '${viewTitle}')" class="bg-white hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm flex items-center gap-1 border border-gray-200/60" title="Xem trực tuyến">
+                                    <i class="fas fa-eye text-[10px]"></i> Xem
+                                </button>
+                                <a href="/${d.doc.file_path}" target="_blank" download class="bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-xl transition-all shadow-sm border border-gray-200/60 flex items-center justify-center" title="Tải xuống tệp tin">
+                                    <i class="fas fa-download text-xs"></i>
+                                </a>
                             </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="window.handleViewContract('${projectId}', '${contractDoc.file_path}')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all shadow-sm flex items-center gap-1.5">
-                                <i class="fas fa-eye"></i> Xem hợp đồng
-                            </button>
-                            <a href="/${contractDoc.file_path}" target="_blank" download class="bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5">
-                                <i class="fas fa-download"></i> Tải về HTML
-                            </a>
-                        </div>
+                    `;
+                }).join('');
+
+                docsGridHtml = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        ${cardsHtml}
                     </div>
                 `;
             }
@@ -208,7 +274,7 @@ export function renderTabVattuDuan(projectId, role) {
                             </div>
                         ` : ''}
                     </div>
-                    ${contractSectionHtml}
+                    ${docsGridHtml}
                 </div>`;
         } else {
             clientQuotationControlHtml = `
@@ -220,6 +286,10 @@ export function renderTabVattuDuan(projectId, role) {
 
     const isSendQuoDisabled = project.currentStep !== 2;
     const isCreateContractDisabled = project.currentStep < 2;
+    const isHandoverDisabled = project.currentStep < 3;
+    const isAcceptanceDisabled = project.currentStep < 3;
+    const isPayment1Disabled = !documentsList.some(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế'));
+    const isPayment2Disabled = !documentsList.some(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế')) || !documentsList.some(d => d.file_name && d.file_name.includes('Biên bản nghiệm thu'));
 
     const controlsHtml = isClient
         ? ''
@@ -235,11 +305,41 @@ export function renderTabVattuDuan(projectId, role) {
                     class="${isSendQuoDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
                 <i class="fas fa-paper-plane"></i> Gửi báo giá ${project.currentStep > 2 ? '(Đã gửi)' : ''}
             </button>
-            <button onclick="window.handleCreateContract('${projectId}')" 
-                    ${isCreateContractDisabled ? 'disabled' : ''} 
-                    class="${isCreateContractDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-purple-600 hover:bg-purple-700 text-white shadow-md'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
-                <i class="fas fa-file-contract"></i> Lập hợp đồng
-            </button>
+            
+            <!-- Dropdown Hồ sơ / Chứng từ -->
+            <div class="relative inline-block text-left" id="docActionsDropdown">
+                <button onclick="window.toggleDocDropdown(event)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-md">
+                    <i class="fas fa-file-alt"></i> Hồ sơ / Chứng từ <i class="fas fa-chevron-up text-[10px]"></i>
+                </button>
+                <div id="docDropdownMenu" class="hidden absolute right-0 bottom-full mb-2 w-64 rounded-2xl shadow-xl bg-white border border-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 p-2 space-y-1">
+                    <button onclick="window.handleCreateContract('${projectId}')" 
+                            ${isCreateContractDisabled ? 'disabled' : ''} 
+                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isCreateContractDisabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
+                        <i class="fas fa-file-contract w-4 text-purple-600 text-center"></i> Lập hợp đồng
+                    </button>
+                    <button onclick="window.handleCreateHandover('${projectId}')" 
+                            ${isHandoverDisabled ? 'disabled' : ''} 
+                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isHandoverDisabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
+                        <i class="fas fa-file-signature w-4 text-emerald-600 text-center"></i> Lập biên bản bàn giao (Excel)
+                    </button>
+                    <button onclick="window.handleCreateAcceptance('${projectId}')" 
+                            ${isAcceptanceDisabled ? 'disabled' : ''} 
+                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isAcceptanceDisabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
+                        <i class="fas fa-clipboard-check w-4 text-teal-600 text-center"></i> Lập biên bản nghiệm thu (Excel)
+                    </button>
+                    <div class="border-t border-gray-100 my-1"></div>
+                    <button onclick="window.handleCreatePaymentRequest('${projectId}', 1)" 
+                            ${isPayment1Disabled ? 'disabled' : ''} 
+                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isPayment1Disabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
+                        <i class="fas fa-file-invoice-dollar w-4 text-blue-600 text-center"></i> ĐNTT Đợt 1 (40% - Word)
+                    </button>
+                    <button onclick="window.handleCreatePaymentRequest('${projectId}', 2)" 
+                            ${isPayment2Disabled ? 'disabled' : ''} 
+                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isPayment2Disabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
+                        <i class="fas fa-file-invoice-dollar w-4 text-indigo-600 text-center"></i> ĐNTT Đợt 2 (60% - Word)
+                    </button>
+                </div>
+            </div>
         </div>`;
 
     return `
@@ -411,7 +511,7 @@ window.recalculateGrandTotal = function () {
     });
     const laborFeeInput = document.getElementById('vattuProjectLaborFee');
     const laborFee = laborFeeInput ? parseInt(laborFeeInput.value.replace(/[^0-9]/g, '')) || 0 : 0;
-    
+
     const grandTotal = totalMaterialsSell + laborFee;
     const grandTotalCell = document.getElementById('vattuGrandTotalCell');
     if (grandTotalCell) grandTotalCell.textContent = grandTotal.toLocaleString() + 'đ';
@@ -794,4 +894,104 @@ window.handleViewContract = function (projectId, filePath) {
 
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     document.body.appendChild(modal);
+};
+
+window.toggleDocDropdown = function (event) {
+    if (event) event.stopPropagation();
+    const dropdown = document.getElementById('docDropdownMenu');
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+};
+
+// Close dropdown on click outside
+document.addEventListener('click', function (e) {
+    const dropdown = document.getElementById('docDropdownMenu');
+    const btn = document.querySelector('button[onclick^="window.toggleDocDropdown"]');
+    if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
+
+window.handleCreateHandover = async function (projectId) {
+    if (!await window.showConfirm('Bạn có chắc chắn muốn lập Biên bản bàn giao kiêm bảo hành (Excel) cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/projects/${projectId}/handover`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (result.success) {
+            window.showToast('✅ Đã lập Biên bản bàn giao kiêm bảo hành thành công!', 'success');
+            const role = localStorage.getItem('authRole');
+            const { openProjectDetail } = await import('./chitietduan.js');
+            await openProjectDetail(projectId, role, 'vattuduan');
+        } else {
+            window.showToast('❌ Lập biên bản thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
+        }
+    } catch (err) {
+        window.showToast('❌ Lỗi kết nối: ' + err.message, 'error');
+    }
+};
+
+window.handleCreateAcceptance = async function (projectId) {
+    if (!await window.showConfirm('Bạn có chắc chắn muốn lập Biên bản nghiệm thu (Excel) cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/projects/${projectId}/acceptance`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (result.success) {
+            window.showToast('✅ Đã lập Biên bản nghiệm thu thành công!', 'success');
+            const role = localStorage.getItem('authRole');
+            const { openProjectDetail } = await import('./chitietduan.js');
+            await openProjectDetail(projectId, role, 'vattuduan');
+        } else {
+            window.showToast('❌ Lập biên bản thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
+        }
+    } catch (err) {
+        window.showToast('❌ Lỗi kết nối: ' + err.message, 'error');
+    }
+};
+
+window.handleCreatePaymentRequest = async function (projectId, phase) {
+    if (!await window.showConfirm(`Bạn có chắc chắn muốn lập Đề nghị thanh toán Đợt ${phase} (Word) cho dự án này?`)) return;
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/projects/${projectId}/payment-request`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ phase })
+        });
+        const result = await res.json();
+        if (result.success) {
+            window.showToast(`✅ Đã lập Đề nghị thanh toán Đợt ${phase} thành công!`, 'success');
+            const role = localStorage.getItem('authRole');
+            const { openProjectDetail } = await import('./chitietduan.js');
+            await openProjectDetail(projectId, role, 'vattuduan');
+        } else {
+            window.showToast('❌ Lập đề nghị thanh toán thất bại: ' + (result.error?.message || 'Lỗi không xác định'), 'error');
+        }
+    } catch (err) {
+        window.showToast('❌ Lỗi kết nối: ' + err.message, 'error');
+    }
+};
+
+window.handleViewDocumentPreview = function (projectId, filePath, viewTitle) {
+    const ext = filePath.split('.').pop().toLowerCase();
+    if (ext === 'html') {
+        window.handleViewContract(projectId, filePath);
+    } else {
+        const fileName = filePath.split('/').pop();
+        window.previewDocument(filePath, fileName);
+    }
 };

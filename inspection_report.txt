@@ -1,0 +1,360 @@
+
+============================================================
+Inspecting Excel: Bien ban ban giao.xlsx
+============================================================
+Sheet names: ['Sheet1']
+
+Sheet: Sheet1 (Rows: 39, Cols: 6)
+Row 01: ['', '', 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD']
+Row 02: ['', '', 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK']
+Row 03: ['', '', 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Duong, Hai Phong']
+Row 04: ['', '', 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496']
+Row 05: ['', '', 'Website: www.e-teck.vn                Email: admin@e-teck.vn']
+Row 07: ['DELIVERY NOTE AND WARRANTY / BIÊN BẢN BÀN GIAO KIÊM BẢO HÀNH']
+Row 10: ['', 'Customer / Khách hàng:  ', '', '', 'No / Số: ']
+Row 11: ['', 'Address / Địa chỉ: ', '', '', 'Date / Ngày: ']
+Row 12: ['', 'Attn / Gửi tới: ']
+Row 13: ['', 'Tel No. / Số điện thoại: ']
+Row 15: ['', 'Hôm nay, ngày        tháng      năm , tại trụ sở Công ty........................................... ; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:']
+Row 17: ['No.', 'Items', 'Unit', 'Qty', 'Remark']
+Row 18: ['STT', 'Danh mục hàng hóa & dịch vụ', 'Đơn Vị', 'SL']
+Row 19: ['1', 'Cáp quang Vinacap 4FO SigleMode', 'm', '500', '12 tháng', 'N/A']
+Row 20: ['2', 'Dây điện 2x2.5 Cadisun (cấp nguồn cho tủ Rack)', 'm', '400', '12 tháng', 'N/A']
+Row 21: ['3', 'ODF 4 Gắn rack', 'Pcs', '4', '12 tháng', 'N/A']
+Row 22: ['4', 'Dây nhảy SingleMode', 'Pcs', '8', '12 tháng', 'N/A']
+Row 23: ['5', 'Bộ chuyển đổi quang điện 10/100/1000', 'Pcs', '4', '12 tháng', 'N/A']
+Row 24: ['6', 'Ống cứng SP D25', 'M', '500', '12 tháng', 'N/A']
+Row 25: ['7', 'Tủ rack 10U D600', 'Pcs', '4', '12 tháng', 'N/A']
+Row 26: ['8', 'Aptomat 2 cực 32Acho tủ Rack', 'pcs', '5', '12 tháng', 'N/A']
+Row 27: ['9', 'Vật tư phụ (băng dính, lặt nhựa, sâu vít,….)', 'Set', '1', '12 tháng', 'N/A']
+Row 28: ['10', 'Thi công chạy dây điện & hệ thống quang\n- Put pipe to protect cable\n- Run fiber cable\n- Run electrical cable\n- Install rack\n- Terminate & weld fiber cable\n- Testing', 'Set', '1', '12 tháng', 'N/A']
+Row 30: ['', 'Các trường hợp đồng không được bảo hành:\n- Các sản phẩm bị biến dạng cơ khí\n- Lỗi do sử dụng thao tác sai kỹ thuật, rơi vỡ, cháy nổ, hỏa hoạn, sự cố điện\n- Tem bảo hành của công ty hoặc của nhà cung cấp bị rách, sửa đổi, dán đè\n- Không có phiếu bảo hành hoặc Phiếu bảo hành bị sửa chữa, tẩy xóa\n- Các phụ kiện bị hao mòn trong quá trình sử dụng']
+Row 32: ['', 'This Delivery Note & Warranty shall be made into 02 orginals. Each Party keeps 01 original.']
+Row 33: ['', 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau.']
+Row 35: ['', "Deliverier's Signature\nChữ ký người giao hàng", '', '', "Receiver's Signature\nChữ ký người nhận hàng"]
+
+============================================================
+Inspecting Excel: Bien ban nghiem thu.xlsx
+============================================================
+Sheet names: ['Sheet1']
+
+Sheet: Sheet1 (Rows: 73, Cols: 14)
+Row 01: ['', '', 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD']
+Row 02: ['', '', 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK']
+Row 03: ['', '', 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Duong, Hai Phong']
+Row 04: ['', '', 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496']
+Row 05: ['', '', 'Website: www.e-teck.vn                Email: admin@e-teck.vn']
+Row 07: ['ACCEPTANCE NOTE  / BIÊN BẢN NGHIỆM THU']
+Row 10: ['', 'Customer / Khách hàng:  ', '', '', '', '', 'No / Số: ']
+Row 11: ['', 'Address / Địa chỉ: ', '', '', '', '', 'Date / Ngày: ']
+Row 12: ['', 'Attn / Gửi tới: ']
+Row 13: ['', 'Tel No. / Số điện thoại: ']
+Row 15: ['', 'Hôm nay, ngày          tháng              năm               , tại trụ sở CÔNG TY......................................................................................; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:']
+Row 17: ['No.', 'Items', 'Unit', 'Qty', 'Unit Price', 'Sub Total', 'VAT (10%)', 'Total Price', 'Warranty']
+Row 18: ['STT', 'Danh mục hàng hóa & dịch vụ', 'Đơn Vị', 'SL', 'Đơn Giá', 'Tổng Cộng', '', 'Tổng Tiền', 'Bảo Hành']
+Row 19: ['I', 'Thi công cáp quang trong Xưởng 1', '', '', '', '', '', '23882650']
+Row 20: ['1-1', 'Dây thuê bao cáp quang 4FO (ống lỏng)', 'm', '120', '8800', '1056000', '105600', '1161600', '12 tháng']
+Row 21: ['1-2', 'Dây điện 2x2.5', 'm', '130', '26500', '3445000', '344500', '3789500']
+Row 22: ['1-3', 'Hộp ODF 4FO', 'Cái', '1', '610000', '610000', '61000', '671000']
+Row 23: ['1-4', 'Dây nhảy quang SC-SC 3m', 'Chiếc', '2', '95000', '190000', '19000', '209000']
+Row 24: ['1-5', 'Bộ chuyển đổi quang điện loại sợi đơn', 'Chiếc', '1', '1725000', '1725000', '172500', '1897500']
+Row 25: ['1-6', 'Ống tròn cứng SP9025', 'm', '115', '11700', '1345500', '134550', '1480050']
+Row 26: ['1-7', 'Tủ mạng 10u-D600', 'Chiếc', '1', '2590000', '2590000', '259000', '2849000']
+Row 27: ['1-8', 'Aptomat 2P', 'Chiếc', '1', '250000', '250000', '25000', '275000']
+Row 28: ['1-9', 'Vật tư phụ (băng dính, lặt nhựa, sâu vít,….)', 'Gói', '1', '1000000', '1000000', '100000', '1100000']
+Row 29: ['1-10', 'Thi công hệ thống mạng', 'Gói', '1', '9500000', '9500000', '950000', '10450000']
+Row 30: ['II', 'Thi công cáp quang trong Xưởng 2', '', '', '', '', '', '23395350']
+Row 31: ['2-1', 'Dây thuê bao cáp quang 4FO (ống lỏng)', 'm', '125', '8800', '1100000', '110000', '1210000', '12 tháng']
+Row 32: ['2-2', 'Dây điện 2x2.5', 'm', '105', '26500', '2782500', '278250', '3060750']
+Row 33: ['2-3', 'Hộp ODF 4FO', 'Cái', '1', '610000', '610000', '61000', '671000']
+Row 34: ['2-4', 'Dây nhảy quang SC-SC 3m', 'Chiếc', '2', '95000', '190000', '19000', '209000']
+Row 35: ['2-5', 'Bộ chuyển đổi quang điện loại sợi đơn', 'Chiếc', '1', '1725000', '1725000', '172500', '1897500']
+Row 36: ['2-6', 'Ống tròn cứng SP9025', 'm', '130', '11700', '1521000', '152100', '1673100']
+Row 37: ['2-7', 'Tủ mạng 10u-D600', 'Chiếc', '1', '2590000', '2590000', '259000', '2849000']
+Row 38: ['2-8', 'Aptomat 2P', 'Chiếc', '1', '250000', '250000', '25000', '275000']
+Row 39: ['2-9', 'Vật tư phụ (băng dính, lặt nhựa, sâu vít,….)', 'Gói', '1', '1000000', '1000000', '100000', '1100000']
+Row 40: ['2-10', 'Thi công hệ thống mạng', 'Gói', '1', '9500000', '9500000', '950000', '10450000']
+Row 41: ['III', 'Thi công cáp quang trong Xưởng 3', '', '', '', '', '', '22488950']
+Row 42: ['3-1', 'Dây thuê bao cáp quang 4FO (ống lỏng)', 'm', '135', '8800', '1188000', '118800', '1306800', '12 tháng']
+Row 43: ['3-2', 'Dây điện 2x2.5', 'm', '75', '26500', '1987500', '198750', '2186250']
+Row 44: ['3-3', 'Hộp ODF 4FO', 'Cái', '1', '610000', '610000', '61000', '671000']
+Row 45: ['3-4', 'Dây nhảy quang SC-SC 3m', 'Chiếc', '2', '95000', '190000', '19000', '209000']
+Row 46: ['3-5', 'Bộ chuyển đổi quang điện loại sợi đơn', 'Chiếc', '1', '1725000', '1725000', '172500', '1897500']
+Row 47: ['3-6', 'Ống tròn cứng SP9025', 'm', '120', '11700', '1404000', '140400', '1544400']
+Row 48: ['3-7', 'Tủ mạng 10u-D600', 'Chiếc', '1', '2590000', '2590000', '259000', '2849000']
+Row 49: ['3-8', 'Aptomat 2P', 'Chiếc', '1', '250000', '250000', '25000', '275000']
+Row 50: ['3-9', 'Vật tư phụ (băng dính, lặt nhựa, sâu vít,….)', 'Gói', '1', '1000000', '1000000', '100000', '1100000']
+Row 51: ['3-10', 'Thi công hệ thống mạng', 'Gói', '1', '9500000', '9500000', '950000', '10450000']
+Row 52: ['IV', 'Thi công cáp quang trong Xưởng 5', '', '', '', '', '', '23249050']
+Row 53: ['4-1', 'Cáp quang Vinacap 4FO SigleMode', 'm', '120', '8800', '1056000', '105600', '1161600', '12 tháng']
+Row 54: ['4-2', 'Dây điện 2x2.5 Cadisun (cấp nguồn cho tủ Rack)', 'm', '90', '26500', '2385000', '238500', '2623500']
+Row 55: ['4-3', 'ODF 4 Gắn rack', 'Cái', '1', '610000', '610000', '61000', '671000']
+Row 56: ['4-4', 'Dây nhảy SingleMode', 'Chiếc', '2', '95000', '190000', '19000', '209000']
+Row 57: ['4-5', 'Bộ chuyển đổi quang điện 10/100/1000', 'Chiếc', '1', '1725000', '1725000', '172500', '1897500']
+Row 58: ['4-6', 'Ống cứng SP D25', 'm', '135', '11700', '1579500', '157950', '1737450']
+Row 59: ['4-7', 'Tủ rack 10U D600', 'Chiếc', '1', '2590000', '2590000', '259000', '2849000']
+Row 60: ['4-8', 'Aptomat 2 cực 32Acho tủ Rack', 'Chiếc', '2', '250000', '500000', '50000', '550000']
+Row 61: ['4-9', 'Vật tư phụ (băng dính, lặt nhựa, sâu vít,….)', 'Gói', '1', '1000000', '1000000', '100000', '1100000']
+Row 62: ['4-10', 'Thi công hệ thống mạng', 'Gói', '1', '9500000', '9500000', '950000', '10450000']
+Row 63: ['', 'Grand Total Price / Tổng tiền thanh toán (VND)', '', '', '', '84560000', '8456000', '93016000']
+Row 64: ['', '* Về khối lượng:\n- Đầy đủ chủng loại\n- Đúng chủng loại\n\n* Về chất lượng thiết bị, vật tư:\n- Đạt yêu cầu\n\n* Về lắp đặt thiết bị, vật tư\n- Đạt yêu cầu\n\n* Cài đặt, đưa thiết bị vào hoạt động:\n- Thiết bị hoạt động bình thường\n\n* Kết luận:\n- Chấp nhận nghiệm thu sản phẩm để sử dụng.']
+Row 66: ['', 'This Acceptance Note shall be made into 02 orginals. Each Party keeps 01 original.']
+Row 67: ['', 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau.']
+Row 69: ['', "Deliverier's Signature\nChữ ký người giao hàng", '', '', '', "Receiver's Signature\nChữ ký người nhận hàng"]
+
+============================================================
+Inspecting Word Doc: PR.doc
+============================================================
+--- UTF-16LE Extracted Paragraphs/Segments ---
+Seg16 000: SOCIALIST REPUBLIC OF VIETNAM Independence
+Seg16 001: Freedom - Happiness PAYMENT REQUEST Dear: Địa chỉ: MST: Regarding the Contract No......, we respectfully request the first payment: ............đồng (.........................VND) Account Name: CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK Account Number: 88688588 at ACB, Duyen Hai branch Looking forward to receiving cooperation from you. We sincerely thank you
+Seg16 002: 㽯ᘀ䝨謝㔀脈䩃 䩡 䡭Ъ䡳Ъᘙ
+Seg16 003: 㽯㔀脈䩃 䩡 䡭Ъ䡳Ъᔔ퍨
+Seg16 004: ᘀ콨렾 ᥊䈀Ī䩃 䩡 桰
+Seg16 005: ᘀ콨렾 ᥊䈀Ī䩃 䩡 䡭Ъ桰
+Seg16 006: 䡳Ъᔔと멋ᘀ콨렾䌀ᩊ愀ᩊ
+Seg16 007: ᔐ੨씟ᘀ畨㼠䀀愈ÿᘚꉨ㬆䀀愈䏿ᩊ愀ᩊ洀
+Seg16 008: ᘩ๨깜 ᥊㔀脈࠶䊁Ī䩃
+Seg16 009: ᜀ Hai Phong, June
+Seg16 010: e-Teck Technology Integration
+Seg16 011: Training Limited Company No. 24 Doan Ket lane, Thanh Toan residential area, An Dong ward, Hai Phong city Tel: 0225.3601.496 www.e-teck.vn
+Seg16 012: ᘀ㽨鸏唀Ĉᔠ굨䝮ᘀ굨䝮㔀脈
+Seg16 013: ᔢ๨깜ᘀ콨렾㔀脈࠶䎁ᩊ愀ᩊ洀
+Seg16 014: ᘀ콨렾 ᥊㔀脈࠶䊁Ī䩃
+Seg16 015: 桰䀤aᔝ嵨ꕇᘀ䕨漎䈀༪䩃
+Seg16 016: ԅ쨍㝴틳쒉㟋鬳慽杴ÿ쯪
+Seg16 017: 刬晥牥湥散嘠敩楷杮䌠湯楤楴湯椠
+Seg16 018: ¼ÁÆËÐÕÛàåëðöǻāćčēęğĥīĲĸľŅŌŒřŠŧŮŵżƃƋƒƚơƩƱƹǁǉǑǙǡǩǲ˺ȃȌȔȝȦȯȸɁɋɔɝɧɱɺʄʎʘʢʬʶˁˋ˕ˠ˫ϵ̸̡̖̭̀̋̓͏͚ͦͲ;ΊΖ΢ήκχϓϠϬӹІГРЭлшѕѣѱѾҌҚҨҶӄӓӡӰ׾ԍԜԫԺՉ՘էշֆֵ֖֦ׅוץ۶؆ؖاطوٙ٪ٻڌڝگۀۑۣߵ܇ܙܫܽݏݡݴކޙެ޿ߒߥࣸࠋࠟ࠲ࡆ࡚࡮ࢂ࢖ࢪࢾ࣒ࣧ৻ऐथऺॏ।ॹএত঺৏৥ૻ਑ਧ਽੔੪ઁઘમૅ૜௳ଋଢହ୑୩஀஘ரை௡೹ఒపృ౜౵ಎಧೀ೙ෳ഍ദീ൚൴ඎඩසෞ໸ณฮ้๤๿ປຶ໒࿮༉༥ཁཞེྖླ࿏წဉဦ၃ၡၾႛႹთᇵᄓᄱᅏᅭᆌᆪᇉየሇሦቅቤኄኣዃᏣጃጣፃ፣ᎃᎤᏅᓥᐆᐧᑉᑪᒋᒭᓎᗰᔒᔴᕖᕸᖛᖽᛠᘃᘦᙉᙬᚏᚲᛖ៺᜝ᝁᝥញឮ្᣷᠛ᡀᡥᢊ᢯ᣕ᧺ᤠ᥅ᥫᦑᦷ᫝ᨄᨪᩑ᩷᪞᫅ᯬᬔᬻ᭣ᮊ᮲᳚ᰂᰪ᱒ᱻᲣ᳌᷵ᴞᵇᵰᶙ᷃ỬḖṀṪẔẾῩἓἾὩᾔ
+Seg16 019: 㓱㐫㑥㒞㗘㔓㕍㖇㗂㛽㘷㙲㚮㟩㜤㝠㞜㣗㠔㡐㢌㧈㤅㥂㥿㦼㫹㨶㩴㪲㯯㬭㭫㮪㳨㰧㱥㲤㷣㴢㵡㶡㻠㸠㹠㺠㿠㼡㽡㾢䃢䀣䁤䂦䇧䄩䅪䆬䋮䈰䉲䊵䏷䌺䍽䓀䐃䑇䒊䗎䔒䕕䖚䛞䘢䙧䚫䟰䜵䝻䣀䠅䡋䢑䧗䤝䥣䦩䫰䨷䩽䯄䬌䭓䮚䳢䰪䱲䶺䴂䵊䶓仜严乮侷伀佉侓僝倧偱冻儆児军勦刱剼叇匓卟厪哶呂咏嗛唨啵囂嘏噜嚩執坄垒壠堯塽始多奩媸娇婖媦寵孅宕峥尵岆巖崧嵸廉帚幬徽式彡悳怅恗悪懼慏憢拵扉抜揰捃掗擫摀撔早攽斒曧昽暒柨朽枓棩栿梖槬楃榚櫱橈檟毷歏殧泿汗涯洈浠溹渒湫濄漞潸烑瀫炆燠焺熕狰牋玦猁獝璸琔瑰痌用疅盡瘾皛矸睖碳砑确秌礪禉竧穆箥笄筣糂簡粁緡絁纡縁繢翂缣羄胥聇膨脊腫苍舰芒菴荗蒺萝蒀藣蕇蚫蘎虲蟗蜻袟蠄衩觎褳覙諾詤诊謰讖購豣跊贱趘軿蹦迎輶邞逆遮釖鄿銨鈑鉺鏣鍍钶鐠钊间镟雉阴鞟霊靵飠題馸餤馐髼驨鯕魂鲯鰜鲉鷷鵤黒鹀龮鼝龋ꃺꁩꇘꅇꊶꈦꎖꌆꍶꓦꑖꗇꔸꚩꘚꚋꟽꝮ
+Seg16 020: ꤷꪩꨜꮏꬂꭵ곩걜귐굄꺸긭꾡꼖낋뀀끵뇪녠닖뉋돂댸뒮됥떜딓뚊똁뙹런띨룠롙맑륊뫂먻뮵묮벧밡붛봕뺏븊뺄뿿뽺샵쁰쇬셧싣쉟쏛썘쓔쑑엎앋웈왆쟃읁좿젽즼줺쪹쨸쮷쬶첶찵춵촵캵츶쾶켷킸퀹톺턼튾툿폁퍄퓆푉헋핎훑확ퟘ흜
+Seg16 021: ࠌࠈࠉऌఉ଑ଊᔑఏ༌᠕ጓጕ᠓఑ఌఌᄌఌఌఌఌఌఌఌఌఌఌఌఌఌఌഁଋญဍฎᐐฎᐎดฎᐎ఑ఌఌᄑఌఌఌ఑ఌఌఌఌఌఌఌఌఌఌఌఌఌ
+Seg16 022: ̀ĀЂ؅ࠇਉċĀąāā
+Seg16 023: 툸봫墲ꓯ࿇둭樂塵씜ￃ谀뻮땭垟鶱꿬省矤츿
+Seg16 024: 䦒䥊鈤陒홯딮䍏៩᯵獀᮫ꩨ뵫풴갿ÿﮧ澕榱
+Seg16 025: 酾念듖荿柈駩ÿｭ茀譛ﻈ疭킣뷺潹扴՜쌹
+Seg16 026: 次婃က픂췺志뫗맅鿀㒳塺㵭榩뿶狀ﴎＳ
+Seg16 027: ᤐ鵈藾緰恒欌뻴쭧ꊗ譿럾뻶窞
+Seg16 028: 저㿴꿒퐻灈瀭㤤Ⴎ݁顫ﯡ狍튵闺
+Seg16 029: ﺧ쾸ﾡ଀뷩陋焜꼣㙏䬸ﯚ䠲饘晔啣躕旱뀷孙盇溸
+Seg16 030: 笋㽽髸៲푝蚺䰷뿀ⴿ棛懇졻쟤搌
+Seg16 031: ự龡풓꾳᧪콟볤삽ᩪ贾띴ᓹᯖ靚Ⰼᷱ
+Seg16 032: 惽幤싙엩㸼ꗯ䞍揶᛭ÿ꽒쯴꺝꺫钵쏐홭㊸잪笮횎דּ幎薏뫗픏錮䭟矄᳭䯦纲䛎廇滭륽촿뮵䚿细
+Seg16 033: ᷬ괿깇浝砸㬽蟶筏猜珫掫๬닶㺆᧋㙽럗淖翵朷膢揵갗姴緄
+Seg16 034: 岌ഇྼﾥꄀ뜵쾮쯴底헋町匝醁犸࿗癵醴塵
+Seg16 035: 뉰盛ぎ鷶狌滵鞙湮ᤅ倷导沬䗛떠磌뷶
+Seg16 036: 뤨讈Ӣ뽫ﲚ㕒ꍇ⑩傒ꤲ鈤䩉
+Seg16 037: 锤ꕮ畦㝘ꞿϳꄏ툚ꏳ䝽찟퍯䩺
+Seg16 038: 犻ﱃﵞ⑬댏렱朞屫滥ᄦऀ딏覀琓ੜ疍涃
+Seg16 039: 緕趁텮鹝뗡盯뇦㵶輆㶬ꌯ
+Seg16 040: 뙻龪메廏샺鯌쨯辮蛆䣗㖇퓃
+Seg16 041: 櫽痨獛逝硍㚶겜놆諦熬洍
+Seg16 042: 鹤嬛뤙㿶ᗹ禵헏龞풝걾幵펗揩篽ﶪ
+Seg16 043: 꿊酪唕厑珫ᮚ딭릌蝹뗕뿆퍗毾꿔
+Seg16 044: 圿秫㕙ݵ奔㕕쿘蕍率髋韩ﯙ瞫
+Seg16 045: 樞q鎖驋䳯滾滦땯䝹덏븺풓찾铭幙夽Ү㶋ᴫ汥湭䘟涻᛽
+Seg16 046: 쟐쨈Ḳ夠ꑌὁ稰ྦᙑ਻姟㮕걫瀍㽡㛰궹
+Seg16 047: ｻ鬀ꪶ뿟젘儫쭟ÿ流鋋ᆟ逐ᦕ
+Seg16 048: Ꭱ徫䞟썏ⴃ뻊粬諌騃緲푇뷣䀹
+Seg16 049: 뽳צּ튿옣鴨奴姷슉쐄杊ꍮ
+Seg16 050: 箭뛭緇ᘻ塚퓅蕛敦헵꽐垧殒
+Seg16 051: 즱ﷇ쟆㻖㪆仯࿻熮䢿㷋큀ÿ瞠한
+Seg16 052: 엳垗띿໾᎛钣题뛴밼үꢣ倦퐒埰쟯ﯕ
+Seg16 053: 翺㷡면퓗馾㫕㡝笌鿱뾋짐
+Seg16 054: 镽旙宱罕箣稶ẙ盛䌅ꠃ进ᢐ᧒껓
+Seg16 055: 鐽땽ꃟ콦뛨课ꟓ䃒郧㞐翗뻹잤
+Seg16 056: ᫣髆ࣃ眃꺽柝埭㨱嚧ᣌ풕盬擤믠
+Seg16 057: 秌ୣ쿜낱믅붶놏羖竄힊罐햭몰꽽跙
+Seg16 058: 筽ﾟ渀馮嵳롅뤘嶕䕃掔ﵺ線ﮍ弝
+Seg16 059: 捣꼺핅픱렃婖搋יִ綶ꜟ䗯൉᜼닾ÿ
+Seg16 060: ݨ뽳纜鲟ÿ勏᥻ᵣ赝挏毁
+Seg16 061: 䃛䫾钕泓걺魭湵ೠ㐞ꛜ媒휫ꕿ柅龜뎢ᨛ
+Seg16 062: 說)孓ī股ꄱ횰훎罻묵閜凔㙻孟恭蘠ꆽ䟂蜎
+Seg16 063: 閖꿠᝟㭞ÿ턎ᓺ굯鯾푷樋텶ܭ㙇靈뚛ﮦ
+Seg16 064: 䬀튏ꍻ鳳銦硚ﬨ꾕砕翝锯
+Seg16 065: ༀ牰湩却硩整湥楂扴潯l
+Seg16 066: ఀ倀爀漀漀昀 匀攀琀甀瀀
+Seg16 067: က牣灯桗湥牐湩楴杮潢汯
+Seg16 068: 潃祰楲桧⁴挨 㤱㠹䠠睥敬瑴倭捡慫摲䌠浯慰祮
+Seg16 069: 刬晥牥湥散嘠敩楷杮䌠湯楤楴湯椠
+Seg16 070: 㜀㬀䀀䔀䨀伀吀夀帀挀栀洀爀眀簀脀蘀謀退销騀鼀ꐀ꤀글눀뜀밀섀였쬀퀀픀
+Seg16 071: 㠁㸁䔁䰁刁夁态朁渁甁簁茁謁鈁騁ꄁ꤁넁뤁섁줁턁
+Seg16 072: 㠂䄂䬂吂崂朂焂稂萂踂頂ꈂ갂똂섂쬂픂
+Seg16 073: ⴃ㠃䌃伃娃昃爃縃訃阃ꈃ긃먃윃팃
+Seg16 074: 賈؄ጄ ⴄ㬄䠄唄挄焄縄谄騄ꠄ똄쐄팄
+Seg16 075: 㨅䤅堅朅眅蘅阅ꘅ딅씅픅
+Seg16 076: 䤖氖輖눖혖猪ᴗ䄗攗褗긗툗
+Seg16 077: ന㼨焨ꈨ퐨ة㠩欩鴩퀩Ȫ㔪株鬪켪ȫ㘫椫鴫턫Ԭ㤬測ꈬ휬భ䄭瘭ꬭ
+Seg16 078: 怷鰷휷ᐸ倸谸져Թ䈹缹밹魯㘺琺눺
+Seg16 079: 硝쥝ᩞ汞뵞ཟ慟덟ՠ坠ꩠﱠ佡ꉡ
+Seg16 080: 佫ꝫｫ坬꽬࡭恭륭ቮ歮쑮ṯ硯텯
+Seg16 081: 馉ﺉ撊쪊る隋ﲋ掌쪌ㆍ颍ﾍ暎캎㚏麏ڐ源횐㾑ꢑᆒ窒
+Seg16 082: 䲘뢘⒙邙ﲙ梚햚䊛꾛Ნ覜
+Seg16 083: 忂壃퓃凄컄䯅죅䛆쏆䇇뿇㷈볈㫉막㣊럊㛋뛋㗌뗌㗍뗍㛎뛎㟏룏㧐뫐㳑뻑㿒쇒䓓웓䧔쯔仕퇕嗖峗
+Seg16 084: Ā萀ఀࠈईఈउᄌ਋ᄋ༕ఌᔏጘᔓጓᄘఌఌఌ఑ఌఌఌఌఌఌఌఌఌఌఌఌఌČ଍ഋഎฐဎดฎᐔฎฎᄔఌఌᄌ఑ఌఌᄌఌఌఌఌఌఌఌఌఌఌఌఌఌఌ샿ᄀ
+Seg16 085: ĀȀЃ؅ࠇਉဋĀĄȃȄ܅ࠆ̅
+Seg16 086: ᄂЃሡԱ允፡焢㊁ᐆꆑ䊱
+Seg16 087: ȂȁЄЃ؅܇ԆĵȀ̑ㄡВ允煡ጢ
+Seg16 088: ﾙ洀ÿ它좋귾ꍵ𢡄禽瑯屢㤅壃
+Seg16 089: 봗놕篏ᢃ峀㣧À屪勢콓磽싺
+Seg16 090: ℯ䍫ᩚÝȐ𥉉ퟍ흟얺삹뎟稴浘ꤽ
+Seg16 091: 햍嶝ぢ䇲ិী熋ÿ࿫᯸崪픿Ǭ䯵ꛪ則惋
+Seg16 092: 徰ᵫມ昣༖巶읦ÿ话媮弽꼂ᾭ꩖銲듟똾
+Seg16 093: 쟈網彏䬿绪絛텏㓾荺捈洺뛳妺㣧᫽훚맓矏꿮ꥁ緎獌뗛棎漮
+Seg16 094: 抟෪铪ㄶ賳ݜ밍ꔏÿ㖡ﺷ껞
+Seg16 095: 裫榚ÿ盐픻ﱿ锭ꁿ婜ϵ藫疏톖陝
+Seg16 096: ÿ뷂㽶ｗ씀䳟ꗩ㶙蹄颣耠엶㼌哰眻
+Seg16 097: 傶䇺婫럳뗩篭ꪶ咟쾺艹쳀
+Seg16 098: 署釅䮎ꩯ㺷ື魃鱃࿗ꏪ茘骈圜䭗
+Seg16 099: 쯄惘疫虻몮鈾믾皍䬞讱쫫᦯ᗹ酕
+Seg16 100: 驳ⴛ貵떹헺욵垿ﻓ푫햯ﷴ蝅᯵㿫
+Seg16 101: 홖퐗돎寻풡࣫堹ꮿ臤릧沀㾲ꧡ
+Seg16 102: 彑ￋ䄀쭭龒ထ閐䘙臨ࡥÿﱛ
+Seg16 103: 遰⁴௱쾟싉훩徇鎣燓፷㐭
+Seg16 104: 跾轱랳ꏘ쫊ށ͉圯度ﮘꎟﻇ灎䮛ﶦ뭕㾣븮骑
+Seg16 105: 껴蛻쩈貉뭀焷ྏἇ뇸쟉웽훇蘾
+Seg16 106: 묬뻴뮢ᥱ氽擢紸貚珜놠緯赥뛝뇚啛ꍿ㙻饺ꜞ׺̓邏툘팙뾮憝괅ꋃ
+Seg16 107: 辶졂귈㾣娬槪塽ꪭ喳륵믵굎狻
+Seg16 108: ㆻ쳡捹뇏얰뚻辽隱쑿詺僗굿냕綺殍뤮횷幽暐萶
+Seg16 109: 煄煱ﵩ཮魃毵緪域ῳ㩻좉类
+Seg16 110: 향蜆餖킪緭齻ÿ깮玙䕝ᢸ閹䍝鑅穣䛽赽᷻晟
+Seg16 111: 緒ඣኹ맆닕Ⳬ㡭ﯘ럷好繎뾺淦僚똕걙㶓曇
+Seg16 112: द퇟륬䉩猆㸼쪘縃猯ꎆ忽
+Seg16 113: 씱秎栭猇鲿齾ﾜ케筒挙崝ྍ셣驫
+Seg16 114: ጴ륎頿煌䴱푵걩凗ꤎ䚛룖᝽㧶즨ꜥ䞂䊹ꮸ矴ᇼ粜海叝윎ᦛḭ駗ᮛ뛻䓯
+Seg16 115: 婴멸헟律଀旪몡箷ꁃ滹敏㻦囷굉Î銖묶ﵤ樟䠢酨䋇몸
+Seg16 116: ꄁㆀ낡컖篖㕿鲻풕筑弶浛
+Seg16 117: ฀𣏕演ﺭ瞛௔癪ⷑ䜇댶鯹ꚶ
+Seg16 118: 楉鿠槖磳累巈蚅뷦ꊮ魶持癈
+Seg16 119: Adobe Photoshop
+Seg16 120: Adobe Photoshop CS6
+Seg16 121: 椠㵤圢䴵䴰䍰桥䡩牺卥乺捔歺㥣
+Seg16 122: 浸湬㩳㵸愢潤敢渺㩳敭慴
+Seg16 123: 浸湬㩳桰瑯獯潨㵰栢瑴㩰
+Seg16 124: 獮愮潤敢挮浯瀯潨潴桳灯ㄯ
+Seg16 125: 砠灭䵍䤺獮慴据䥥㵄砢灭椮摩㜺㠰ㅄㅅ䄹㐴䕆ㄸ㤱䌴㤵㙁
+Seg16 126: 砠灭䵍䐺捯浵湥䥴㵄砢灭搮摩
+Seg16 127: 㤲ぁ㤴䄹㑂䕅ㄸ㠱㘷䙁䄴ぃ㐵䉅㜶
+Seg16 128: 砠灭䵍伺楲楧慮䑬捯浵湥䥴㵄砢灭搮摩
+Seg16 129: 㤲ぁ㤴䄹㑂䕅ㄸ㠱㘷䙁䄴ぃ㐵䉅㜶
+Seg16 130: 瀼潨潴桳灯䐺捯浵湥䅴据獥潴獲
+Seg16 131: 楤㩤䌰䙁䙁㘷㑂䐴㡅ㄱ㤹䉄㕄㝆䑂㠷㤳䐴
+Seg16 132: 摲㩦慂㹧㰠瀯潨潴桳灯䐺捯浵湥䅴据獥潴獲
+Seg16 133: 猠䕴瑶椺獮慴据䥥㵄砢灭椮摩
+Seg16 134: 㤲ぁ㤴䄹㑂䕅ㄸ㠱㘷䙁䄴ぃ㐵䉅㜶
+Seg16 135: 瑳癅㩴潳瑦慷敲杁湥㵴䄢潤敢倠潨潴桳灯䌠㙓
+Seg16 136: 猠䕴瑶椺獮慴据䥥㵄砢灭椮摩㘺㡅ㅄㅅ䄹㐴䕆ㄸ㤱䌴㤵㙁
+Seg16 137: 瑳癅㩴潳瑦慷敲杁湥㵴䄢潤敢倠潨潴桳灯䌠㙓
+Seg16 138: 猠䕴瑶椺獮慴据䥥㵄砢灭椮摩㘺㡆ㅄㅅ䄹㐴䕆ㄸ㤱䌴㤵㙁
+Seg16 139: 瑳癅㩴潳瑦慷敲杁湥㵴䄢潤敢倠潨潴桳灯䌠㙓
+Seg16 140: 猠䕴瑶瀺牡浡瑥牥㵳昢潲
+Seg16 141: 桰瑯獯潨⁰潴椠慭敧樯数
+Seg16 142: 㸯㰠摲㩦楬猠䕴瑶愺瑣潩㵮搢牥癩摥
+Seg16 143: 牦浯愠灰楬慣楴湯瘯摮愮潤敢瀮潨潴桳灯琠
+Seg16 144: 猠䕴瑶椺獮慴据䥥㵄砢灭椮摩㜺㠰ㅄㅅ䄹㐴䕆ㄸ㤱䌴㤵㙁
+Seg16 145: 瑳癅㩴潳瑦慷敲杁湥㵴䄢潤敢倠潨潴桳灯䌠㙓
+Seg16 146: 摲㩦敓㹱㰠砯灭䵍䠺獩潴祲
+Seg16 147: 砼灭䵍䐺牥癩摥牆浯猠剴晥椺獮慴据䥥㵄砢灭椮摩㘺㡆ㅄㅅ䄹㐴䕆ㄸ㤱䌴㤵㙁
+Seg16 148: 猠剴晥携捯浵湥䥴㵄砢灭搮摩
+Seg16 149: 㤲ぁ㤴䄹㑂䕅ㄸ㠱㘷䙁䄴ぃ㐵䉅㜶
+
+--- UTF-8 Extracted Paragraphs/Segments ---
+Seg8 000: 2018:05:04 21:06:12
+Seg8 001: Copyright (c) 1998 Hewlett-Packard Company
+Seg8 002: sRGB IEC61966-2.1
+Seg8 003: sRGB IEC61966-2.1
+Seg8 004: IEC http://www.iec.ch
+Seg8 005: IEC http://www.iec.ch
+Seg8 006: .IEC 61966-2.1 Default RGB colour space - sRGB
+Seg8 007: .IEC 61966-2.1 Default RGB colour space - sRGB
+Seg8 008: ,Reference Viewing Condition in IEC61966-2.1
+Seg8 009: ,Reference Viewing Condition in IEC61966-2.1
+Seg8 010: ,9,n,,- -A-v--.
+Seg8 011: A)AjAAB0BrBBC:C
+Seg8 012: HKHHI IcIIJ7J
+Seg8 013: S_SSTBTTU(UuUV
+Seg8 014: aOaabIbbcCccd
+Seg8 015: dde=eef=ffg=ggh
+Seg8 016: hhiCiijHjjkOkklWlm
+Seg8 017: nkno oxop+ppq:qqrKrs
+Seg8 018: zpg_XQKFAǿ=ȼ:ɹ8ʷ6˶5̵5͵6ζ7ϸ9к
+Seg8 019: ݖ ޢ)߯6DScs 2F[p
+Seg8 020: O68K2HXTfcUe7Y[vnj
+Seg8 021: uvuXV]Z X_]ns S:
+Seg8 022: WWKIֵVju[s Mx6抬q mw5n7u.ӺV
+Seg8 023: TYU5Ms˚w2_Kƺ jq
+Seg8 024: p-pt BJ]%a7_m
+Seg8 025: printSixteenBitbool
+Seg8 026: printerNameTEXT
+Seg8 027: printProofSetupObjc
+Seg8 028: printOutputOptions
+Seg8 029: vectorDatabool
+Seg8 030: cropWhenPrintingbool
+Seg8 031: cropRectBottomlong
+Seg8 032: cropRectLeftlong
+Seg8 033: cropRectRightlong
+Seg8 034: cropRectToplong
+Seg8 035: autoGenerated
+Seg8 036: cellTextIsHTMLbool
+Seg8 037: horzAlignenum
+Seg8 038: ESliceHorzAlign
+Seg8 039: vertAlignenum
+Seg8 040: ESliceVertAlign
+Seg8 041: bgColorTypeenum
+Seg8 042: ESliceBGColorType
+Seg8 043: topOutsetlong
+Seg8 044: leftOutsetlong
+Seg8 045: bottomOutsetlong
+Seg8 046: rightOutsetlong
+Seg8 047: Copyright (c) 1998 Hewlett-Packard Company
+Seg8 048: sRGB IEC61966-2.1
+Seg8 049: sRGB IEC61966-2.1
+Seg8 050: IEC http://www.iec.ch
+Seg8 051: IEC http://www.iec.ch
+Seg8 052: .IEC 61966-2.1 Default RGB colour space - sRGB
+Seg8 053: .IEC 61966-2.1 Default RGB colour space - sRGB
+Seg8 054: ,Reference Viewing Condition in IEC61966-2.1
+Seg8 055: ,Reference Viewing Condition in IEC61966-2.1
+Seg8 056: ,9,n,,- -A-v--.
+Seg8 057: A)AjAAB0BrBBC:C
+Seg8 058: HKHHI IcIIJ7J
+Seg8 059: S_SSTBTTU(UuUV
+Seg8 060: aOaabIbbcCccd
+Seg8 061: dde=eef=ffg=ggh
+Seg8 062: hhiCiijHjjkOkklWlm
+Seg8 063: nkno oxop+ppq:qqrKrs
+Seg8 064: zpg_XQKFAǿ=ȼ:ɹ8ʷ6˶5̵5͵6ζ7ϸ9к
+Seg8 065: ݖ ޢ)߯6DScs 2F[p
+Seg8 066: O68K2HXTfcUe7Y[vnj
+Seg8 067: uvuXV]Z X_]ns S:
+Seg8 068: WWKIֵVju[s Mx6抬q mw5n7u.ӺV
+Seg8 069: TYU5Ms˚w2_Kƺ jq
+Seg8 070: p-pt BJ]%a7_m
+Seg8 071: http://ns.adobe.com/xap/1.0/
+Seg8 072: xpacket begin=
+Seg8 073: W5M0MpCehiHzreSzNTczkc9d
+Seg8 074: x:xmpmeta xmlns:x=
+Seg8 075: adobe:ns:meta/
+Seg8 076: rdf:RDF xmlns:rdf=
+Seg8 077: http://www.w3.org/1999/02/22-rdf-syntax-ns
+Seg8 078: rdf:Description rdf:about=
+Seg8 079: http://ns.adobe.com/xap/1.0/
+Seg8 080: xmlns:photoshop=
+Seg8 081: http://ns.adobe.com/photoshop/1.0/
+Seg8 082: http://purl.org/dc/elements/1.1/
+Seg8 083: http://ns.adobe.com/xap/1.0/mm/
+Seg8 084: http://ns.adobe.com/xap/1.0/sType/ResourceEvent
+Seg8 085: http://ns.adobe.com/xap/1.0/sType/ResourceRef
+Seg8 086: xmp:CreatorTool=
+Seg8 087: xmp:CreateDate=
+Seg8 088: 2018-05-03T15:37:51+07:00
+Seg8 089: xmp:MetadataDate=
+Seg8 090: 2018-05-04T21:06:12+07:00
+Seg8 091: xmp:ModifyDate=
+Seg8 092: 2018-05-04T21:06:12+07:00
+Seg8 093: photoshop:ColorMode=
+Seg8 094: xmpMM:InstanceID=
+Seg8 095: xmp.iid:708D1E19A44FE81194C59A632BB32906
+Seg8 096: xmpMM:DocumentID=
+Seg8 097: xmp.did:329A0499AB4EE811876AF4AC054EB672
+Seg8 098: xmpMM:OriginalDocumentID=
+Seg8 099: xmp.did:329A0499AB4EE811876AF4AC054EB672
