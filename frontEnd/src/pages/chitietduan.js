@@ -210,6 +210,7 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
             <!-- Tabs -->
             <div class="px-6 py-2 border-b border-gray-50 bg-gray-50/50 flex-shrink-0 flex flex-wrap justify-between items-center gap-3">
                 <div class="flex items-center gap-1">${tabsHtml}</div>
+                <div id="tabExtraActions" class="flex items-center gap-2"></div>
             </div>
 
             <!-- Content -->
@@ -311,6 +312,22 @@ export function switchTab(btn, tab, projectId) {
     if (!modalContent) return;
 
     const role = localStorage.getItem('authRole');
+
+    const extraActionsEl = document.getElementById('tabExtraActions');
+    if (extraActionsEl) {
+        if (tab === 'vattuduan' && role !== 'client') {
+            extraActionsEl.innerHTML = `
+                <button onclick="window.saveVattuChanges('${projectId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-md">
+                    <i class="fas fa-save"></i> Lưu thay đổi
+                </button>
+                <button onclick="window.openSideDrawerChonVattu('${projectId}')" class="btn-primary text-xs px-3.5 py-2.5 flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Chọn vật tư từ kho
+                </button>
+            `;
+        } else {
+            extraActionsEl.innerHTML = '';
+        }
+    }
 
     if (tab === 'hoso') {
         const renderHosoFn = window.renderHoso || renderHoso;

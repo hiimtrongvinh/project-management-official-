@@ -283,12 +283,6 @@ export function renderTabVattuDuan(projectId, role) {
     const controlsHtml = isClient
         ? ''
         : `<div class="flex flex-wrap justify-end items-center gap-2.5 pt-2 flex-shrink-0">
-            <button onclick="saveVattuChanges('${projectId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-md">
-                <i class="fas fa-save"></i> Lưu thay đổi
-            </button>
-            <button onclick="openSideDrawerChonVattu('${projectId}')" class="btn-primary text-xs px-4 py-2.5 flex items-center gap-2">
-                <i class="fas fa-plus"></i> Chọn vật tư từ kho
-            </button>
             <button onclick="window.handleSendQuotation('${projectId}')" 
                     ${isSendQuoDisabled ? 'disabled' : ''} 
                     class="${isSendQuoDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
