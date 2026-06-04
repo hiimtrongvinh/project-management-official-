@@ -151,7 +151,7 @@ export function renderHoso(projectId, isEditMode = false) {
             <div class="flex flex-col flex-shrink-0 pt-3 border-t border-gray-100/40">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">Tài liệu đính kèm</h3>
                 <div class="flex gap-3 overflow-x-auto pb-1 custom-scrollbar">
-                    ${profile.documents && profile.documents.length > 0 ? profile.documents.map(doc => createSmallDoc(doc)).join('') : '<span class="text-xs text-gray-400 italic">Chưa có tài liệu</span>'}
+                    ${project.documentsList && project.documentsList.length > 0 ? project.documentsList.map(doc => createSmallDoc(doc)).join('') : '<span class="text-xs text-gray-400 italic">Chưa có tài liệu</span>'}
                 </div>
             </div>
         </div>
@@ -190,9 +190,11 @@ function createSmallMember(projectId, staffId, name = '', role, avatar, isClient
     </div>`;
 }
 
-function createSmallDoc(file) {
-    return `<div class="flex-shrink-0 flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg text-sm font-bold text-gray-700 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
-        <i class="fas fa-file text-blue-500"></i>${file}
+function createSmallDoc(doc) {
+    const fileName = doc.file_name || doc.file_path.split('/').pop();
+    const filePath = doc.file_path;
+    return `<div onclick="window.previewDocument('${filePath}', '${fileName.replace(/'/g, "\\'")}')" class="flex-shrink-0 flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg text-sm font-bold text-gray-700 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
+        <i class="fas fa-file text-blue-500"></i>${fileName}
     </div>`;
 }
 
