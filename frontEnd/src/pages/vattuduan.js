@@ -13,6 +13,7 @@ export function renderTabVattuDuan(projectId, role) {
     const laborFee = project?.profile?.laborFee || 0;
     const grandTotal = totalMaterialsSell + laborFee;
     const formattedLaborFee = laborFee ? new Intl.NumberFormat('vi-VN').format(laborFee) : '';
+    const documentsList = project?.documentsList || [];
 
     const groupedData = projectMaterials.reduce((acc, item) => {
         if (!acc[item.supplier]) acc[item.supplier] = { status: item.status, items: [] };
@@ -157,7 +158,6 @@ export function renderTabVattuDuan(projectId, role) {
             };
             const currentStatus = statusMap[pendingQuo.status] || { text: pendingQuo.status, class: 'bg-gray-50 text-gray-700 border-gray-200' };
 
-            const documentsList = project?.documentsList || [];
             const docTypes = [
                 {
                     key: 'contract',
