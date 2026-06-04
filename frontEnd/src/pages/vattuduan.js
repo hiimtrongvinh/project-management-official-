@@ -828,7 +828,7 @@ window.handleCreateContract = async function (projectId) {
     }
 };
 
-window.handleViewContract = function (projectId, filePath) {
+window.handleViewContract = async function (projectId, filePath) {
     const modal = document.createElement('div');
     modal.className = "fixed inset-0 bg-black/10 flex items-center justify-center z-[200] p-4 backdrop-blur-md";
     modal.id = "contractPreviewModal";
@@ -849,7 +849,7 @@ window.handleViewContract = function (projectId, filePath) {
             </div>
         </div>
         <div class="flex-1 overflow-y-auto p-2 bg-gray-100 flex justify-center custom-scrollbar">
-            <iframe id="contractIframe" src="${filePath}" style="width: 100%; height: 100%; border: none; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></iframe>
+            <iframe id="contractIframe" style="width: 100%; height: 100%; border: none; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></iframe>
         </div>
     </div>`;
 
@@ -863,6 +863,31 @@ window.handleViewContract = function (projectId, filePath) {
 
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     document.body.appendChild(modal);
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(filePath, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Không thể tải tệp tin hợp đồng');
+        const html = await res.text();
+        const iframe = document.getElementById('contractIframe');
+        if (iframe) {
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(html);
+            doc.close();
+        }
+    } catch (err) {
+        console.error(err);
+        const iframe = document.getElementById('contractIframe');
+        if (iframe) {
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(`<div style="color:red;padding:20px;font-family:sans-serif;font-weight:bold;">❌ Lỗi: Không thể tải bản xem trước hợp đồng. Chi tiết: ${err.message}</div>`);
+            doc.close();
+        }
+    }
 };
 
 
