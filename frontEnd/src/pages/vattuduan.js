@@ -297,17 +297,17 @@ export function renderTabVattuDuan(projectId, role) {
             <button onclick="window.handleCreateHandover('${projectId}')" 
                     ${isHandoverDisabled ? 'disabled' : ''} 
                     class="${isHandoverDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
-                <i class="fas fa-file-signature"></i> Lập BB bàn giao
+                <i class="fas fa-file-signature"></i> Lập biên bản bàn giao
             </button>
             <button onclick="window.handleCreateAcceptance('${projectId}')" 
                     ${isAcceptanceDisabled ? 'disabled' : ''} 
                     class="${isAcceptanceDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
-                <i class="fas fa-clipboard-check"></i> Lập BB nghiệm thu
+                <i class="fas fa-clipboard-check"></i> Lập biên bản nghiệm thu
             </button>
             <button onclick="window.handleCreatePaymentRequest('${projectId}')" 
                     ${isPaymentDisabled ? 'disabled' : ''} 
                     class="${isPaymentDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
-                <i class="fas fa-file-invoice-dollar"></i> Lập ĐNTT
+                <i class="fas fa-file-invoice-dollar"></i> Gửi đề nghị thanh toán
             </button>
         </div>`;
 
