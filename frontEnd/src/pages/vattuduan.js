@@ -190,23 +190,13 @@ export function renderTabVattuDuan(projectId, role) {
                     ext: 'Excel'
                 },
                 {
-                    key: 'payment1',
-                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Đề nghị thanh toán đợt 1')),
-                    title: 'Đề nghị thanh toán Đợt 1',
-                    subtitle: 'Payment Request Phase 1 (40%)',
+                    key: 'payment',
+                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Đề nghị thanh toán')),
+                    title: 'Đề nghị thanh toán',
+                    subtitle: 'Payment Request',
                     icon: 'fa-file-invoice-dollar',
                     colorClass: 'bg-blue-50/50 border-blue-100 text-blue-700 hover:bg-blue-100/50',
                     badgeColor: 'bg-blue-100 text-blue-700',
-                    ext: 'Word'
-                },
-                {
-                    key: 'payment2',
-                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Đề nghị thanh toán đợt 2')),
-                    title: 'Đề nghị thanh toán Đợt 2',
-                    subtitle: 'Payment Request Phase 2 (60%)',
-                    icon: 'fa-file-invoice-dollar',
-                    colorClass: 'bg-indigo-50/50 border-indigo-100 text-indigo-700 hover:bg-indigo-100/50',
-                    badgeColor: 'bg-indigo-100 text-indigo-700',
                     ext: 'Word'
                 }
             ];
@@ -288,8 +278,7 @@ export function renderTabVattuDuan(projectId, role) {
     const isCreateContractDisabled = project.currentStep < 2;
     const isHandoverDisabled = project.currentStep < 3;
     const isAcceptanceDisabled = project.currentStep < 3;
-    const isPayment1Disabled = !documentsList.some(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế'));
-    const isPayment2Disabled = !documentsList.some(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế')) || !documentsList.some(d => d.file_name && d.file_name.includes('Biên bản nghiệm thu'));
+    const isPaymentDisabled = !documentsList.some(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế'));
 
     const controlsHtml = isClient
         ? ''
@@ -306,40 +295,26 @@ export function renderTabVattuDuan(projectId, role) {
                 <i class="fas fa-paper-plane"></i> Gửi báo giá ${project.currentStep > 2 ? '(Đã gửi)' : ''}
             </button>
             
-            <!-- Dropdown Hồ sơ / Chứng từ -->
-            <div class="relative inline-block text-left" id="docActionsDropdown">
-                <button onclick="window.toggleDocDropdown(event)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-md">
-                    <i class="fas fa-file-alt"></i> Hồ sơ / Chứng từ <i class="fas fa-chevron-up text-[10px]"></i>
-                </button>
-                <div id="docDropdownMenu" class="hidden absolute right-0 bottom-full mb-2 w-64 rounded-2xl shadow-xl bg-white border border-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 p-2 space-y-1">
-                    <button onclick="window.handleCreateContract('${projectId}')" 
-                            ${isCreateContractDisabled ? 'disabled' : ''} 
-                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isCreateContractDisabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
-                        <i class="fas fa-file-contract w-4 text-purple-600 text-center"></i> Lập hợp đồng
-                    </button>
-                    <button onclick="window.handleCreateHandover('${projectId}')" 
-                            ${isHandoverDisabled ? 'disabled' : ''} 
-                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isHandoverDisabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
-                        <i class="fas fa-file-signature w-4 text-emerald-600 text-center"></i> Lập biên bản bàn giao (Excel)
-                    </button>
-                    <button onclick="window.handleCreateAcceptance('${projectId}')" 
-                            ${isAcceptanceDisabled ? 'disabled' : ''} 
-                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isAcceptanceDisabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
-                        <i class="fas fa-clipboard-check w-4 text-teal-600 text-center"></i> Lập biên bản nghiệm thu (Excel)
-                    </button>
-                    <div class="border-t border-gray-100 my-1"></div>
-                    <button onclick="window.handleCreatePaymentRequest('${projectId}', 1)" 
-                            ${isPayment1Disabled ? 'disabled' : ''} 
-                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isPayment1Disabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
-                        <i class="fas fa-file-invoice-dollar w-4 text-blue-600 text-center"></i> ĐNTT Đợt 1 (40% - Word)
-                    </button>
-                    <button onclick="window.handleCreatePaymentRequest('${projectId}', 2)" 
-                            ${isPayment2Disabled ? 'disabled' : ''} 
-                            class="w-full text-left px-3 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition hover:bg-slate-50 text-gray-700 ${isPayment2Disabled ? 'opacity-40 cursor-not-allowed hover:bg-transparent' : ''}">
-                        <i class="fas fa-file-invoice-dollar w-4 text-indigo-600 text-center"></i> ĐNTT Đợt 2 (60% - Word)
-                    </button>
-                </div>
-            </div>
+            <button onclick="window.handleCreateContract('${projectId}')" 
+                    ${isCreateContractDisabled ? 'disabled' : ''} 
+                    class="${isCreateContractDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
+                <i class="fas fa-file-contract"></i> Lập hợp đồng
+            </button>
+            <button onclick="window.handleCreateHandover('${projectId}')" 
+                    ${isHandoverDisabled ? 'disabled' : ''} 
+                    class="${isHandoverDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
+                <i class="fas fa-file-signature"></i> Lập BB bàn giao
+            </button>
+            <button onclick="window.handleCreateAcceptance('${projectId}')" 
+                    ${isAcceptanceDisabled ? 'disabled' : ''} 
+                    class="${isAcceptanceDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
+                <i class="fas fa-clipboard-check"></i> Lập BB nghiệm thu
+            </button>
+            <button onclick="window.handleCreatePaymentRequest('${projectId}')" 
+                    ${isPaymentDisabled ? 'disabled' : ''} 
+                    class="${isPaymentDisabled ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200' : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200'} px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all">
+                <i class="fas fa-file-invoice-dollar"></i> Lập ĐNTT
+            </button>
         </div>`;
 
     return `
@@ -896,22 +871,7 @@ window.handleViewContract = function (projectId, filePath) {
     document.body.appendChild(modal);
 };
 
-window.toggleDocDropdown = function (event) {
-    if (event) event.stopPropagation();
-    const dropdown = document.getElementById('docDropdownMenu');
-    if (dropdown) {
-        dropdown.classList.toggle('hidden');
-    }
-};
 
-// Close dropdown on click outside
-document.addEventListener('click', function (e) {
-    const dropdown = document.getElementById('docDropdownMenu');
-    const btn = document.querySelector('button[onclick^="window.toggleDocDropdown"]');
-    if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.add('hidden');
-    }
-});
 
 window.handleCreateHandover = async function (projectId) {
     if (!await window.showConfirm('Bạn có chắc chắn muốn lập Biên bản bàn giao kiêm bảo hành (Excel) cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
@@ -959,22 +919,20 @@ window.handleCreateAcceptance = async function (projectId) {
     }
 };
 
-window.handleCreatePaymentRequest = async function (projectId, phase) {
-    if (!await window.showConfirm(`Bạn có chắc chắn muốn lập Đề nghị thanh toán Đợt ${phase} (Word) cho dự án này?`)) return;
+window.handleCreatePaymentRequest = async function (projectId) {
+    if (!await window.showConfirm(`Bạn có chắc chắn muốn lập Đề nghị thanh toán (Word) cho dự án này?`)) return;
 
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`/api/projects/${projectId}/payment-request`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ phase })
+                'Authorization': `Bearer ${token}`
+            }
         });
         const result = await res.json();
         if (result.success) {
-            window.showToast(`✅ Đã lập Đề nghị thanh toán Đợt ${phase} thành công!`, 'success');
+            window.showToast(`✅ Đã lập Đề nghị thanh toán thành công!`, 'success');
             const role = localStorage.getItem('authRole');
             const { openProjectDetail } = await import('./chitietduan.js');
             await openProjectDetail(projectId, role, 'vattuduan');

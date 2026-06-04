@@ -451,12 +451,11 @@ const ProjectController = {
   async createPaymentRequest(req, res, next) {
     try {
       const projectId = req.params.id;
-      const { phase } = req.body;
-      const result = await ProjectService.createPaymentRequest(projectId, req.user.id, parseInt(phase || 1));
+      const result = await ProjectService.createPaymentRequest(projectId, req.user.id);
       res.json({
         success: true,
         data: result,
-        message: `Đề nghị thanh toán đợt ${phase} đã được lập thành công!`
+        message: `Đề nghị thanh toán đã được lập thành công!`
       });
     } catch (error) {
       if (error.statusCode) {

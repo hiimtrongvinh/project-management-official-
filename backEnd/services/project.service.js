@@ -1473,7 +1473,7 @@ const ProjectService = {
     };
   },
 
-  async createPaymentRequest(projectId, creatorId, phase) {
+  async createPaymentRequest(projectId, creatorId) {
     const fs = require('fs');
     const path = require('path');
     const docx = require('docx');
@@ -1506,9 +1506,7 @@ const ProjectService = {
       totalValue += totalSell;
     });
 
-    // Calculate requested amount based on phase (1 = 40%, 2 = 60%)
-    const percentage = phase === 1 ? 0.4 : 0.6;
-    const paymentAmount = Math.round(totalValue * percentage);
+    const paymentAmount = Math.round(totalValue);
     const amountWordsVi = convertVNDToWords(paymentAmount);
     const amountWordsEn = convertVNDToWordsEn(paymentAmount);
 
@@ -1646,9 +1644,9 @@ const ProjectService = {
     if (!fs.existsSync(contractDir)) {
       fs.mkdirSync(contractDir, { recursive: true });
     }
-    const fileName = `Đề nghị thanh toán đợt ${phase} - DN-TT${phase}-${projectId}.docx`;
-    const docPath = `/uploads/contracts/DN-TT${phase}-${projectId}.docx`;
-    const fullPath = path.join(contractDir, `DN-TT${phase}-${projectId}.docx`);
+    const fileName = `Đề nghị thanh toán - DN-TT-${projectId}.docx`;
+    const docPath = `/uploads/contracts/DN-TT-${projectId}.docx`;
+    const fullPath = path.join(contractDir, `DN-TT-${projectId}.docx`);
 
     fs.writeFileSync(fullPath, buffer);
 
@@ -1674,7 +1672,7 @@ const ProjectService = {
     // Log Activity
     await query(
       'INSERT INTO activity_logs (user_id, action, entity_type, entity_id, details) VALUES (?, ?, ?, ?, ?)',
-      [creatorId, 'payment_request_created', 'project', projectId, JSON.stringify({ file: fileName, phase })]
+      [creatorId, 'payment_request_created', 'project', projectId, JSON.stringify({ file: fileName })]
     );
 
     // Notify client
@@ -1682,8 +1680,8 @@ const ProjectService = {
     if (clientAccountId) {
       await notify([clientAccountId], {
         type: 'project_step_advanced',
-        title: `Đề nghị thanh toán Đợt ${phase} đã được lập`,
-        message: `e-Teck đã lập Đề nghị thanh toán đợt ${phase} cho dự án "${project.title}". Vui lòng kiểm tra và thực hiện thanh toán.`,
+        title: `Đề nghị thanh toán đã được lập`,
+        message: `e-Teck đã lập Đề nghị thanh toán cho dự án "${project.title}". Vui lòng kiểm tra và thực hiện thanh toán.`,
         related_type: 'project',
         related_id: projectId
       });
