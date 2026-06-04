@@ -9,6 +9,7 @@ window.isProjectEditMode = false;
 
 export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso') {
     window.isProjectEditMode = false;
+    const role = roleParam || localStorage.getItem('authRole');
 
     try {
         const token = localStorage.getItem('token');
@@ -26,13 +27,17 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
         const tasksResult = await tasksRes.json();
         const tasks = tasksResult.success ? tasksResult.data : [];
 
-        try {
-            const clientsRes = await fetch('/api/users/clients?limit=100', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const clientsResult = await clientsRes.json();
-            window.cachedClients = clientsResult.success ? clientsResult.data : [];
-        } catch (e) { window.cachedClients = []; }
+        if (role === 'admin') {
+            try {
+                const clientsRes = await fetch('/api/users/clients?limit=100', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const clientsResult = await clientsRes.json();
+                window.cachedClients = clientsResult.success ? clientsResult.data : [];
+            } catch (e) { window.cachedClients = []; }
+        } else {
+            window.cachedClients = [];
+        }
 
         let projectMaterials = [];
         let clientQuotations = [];
@@ -134,7 +139,6 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
 
     const projectDetail = projectDetails[projectId];
     const projectName = projectDetail.profile.title;
-    const role = roleParam || localStorage.getItem('authRole');
     const isClient = role === 'client';
 
     const clientQuotations = projectDetail.clientQuotations || [];

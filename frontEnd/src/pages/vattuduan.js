@@ -849,7 +849,7 @@ window.handleViewContract = function (projectId, filePath) {
             </div>
         </div>
         <div class="flex-1 overflow-y-auto p-2 bg-gray-100 flex justify-center custom-scrollbar">
-            <iframe id="contractIframe" src="/${filePath}" style="width: 100%; height: 100%; border: none; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></iframe>
+            <iframe id="contractIframe" src="${filePath}" style="width: 100%; height: 100%; border: none; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></iframe>
         </div>
     </div>`;
 
