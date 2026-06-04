@@ -220,6 +220,7 @@ const ProjectService = {
     if (data.end_date !== undefined) updateData.deadline = data.end_date;
     if (data.deadline !== undefined) updateData.deadline = data.deadline;
     if (data.budget !== undefined) updateData.budget = data.budget;
+    if (data.labor_fee !== undefined) updateData.labor_fee = data.labor_fee;
     if (data.current_step !== undefined) updateData.current_step = data.current_step;
 
     await ProjectModel.update(id, updateData);
@@ -515,6 +516,9 @@ const ProjectService = {
 
     // Calculate dynamic values
     let totalValue = 0;
+    const laborFee = parseFloat(project.labor_fee || 0);
+    totalValue += laborFee;
+
     const itemsHtml = projectItems.map((item, index) => {
       const sellPrice = parseFloat(item.material_price || 0) * (1 + parseInt(item.markup || 10) / 100);
       const totalSell = sellPrice * parseInt(item.quantity || 1);
@@ -534,6 +538,23 @@ const ProjectService = {
         </tr>
       `;
     }).join('');
+
+    let laborRowHtml = '';
+    if (laborFee > 0) {
+      laborRowHtml = `
+        <tr>
+          <td style="border: 1px solid #000; padding: 8px; text-align: center;">${projectItems.length + 1}</td>
+          <td style="border: 1px solid #000; padding: 8px;">
+            <strong>Chi phí nhân công triển khai, lắp đặt và thi công</strong><br>
+            <small style="color: #666;">LABOR-COST</small>
+          </td>
+          <td style="border: 1px solid #000; padding: 8px; text-align: center;">gói</td>
+          <td style="border: 1px solid #000; padding: 8px; text-align: center; font-weight: bold;">1</td>
+          <td style="border: 1px solid #000; padding: 8px; text-align: right;">${laborFee.toLocaleString('vi-VN')}đ</td>
+          <td style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold;">${laborFee.toLocaleString('vi-VN')}đ</td>
+        </tr>
+      `;
+    }
 
     const totalWordsVi = convertVNDToWords(totalValue);
     const totalWordsEn = convertVNDToWordsEn(totalValue);
@@ -712,6 +733,7 @@ const ProjectService = {
             </thead>
             <tbody>
                 ${itemsHtml}
+                ${laborRowHtml}
                 <tr>
                     <td colspan="5" style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold;">Tổng cộng (Total Contract Value - VAT included):</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; font-size: 15px; color: #1d4ed8;">${totalValue.toLocaleString('vi-VN')}đ</td>

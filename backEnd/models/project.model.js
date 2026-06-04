@@ -200,8 +200,8 @@ const ProjectModel = {
    */
   async create(data) {
     const sql = `
-      INSERT INTO projects (id, title, description, category, client_id, start_date, deadline, current_step, budget, created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO projects (id, title, description, category, client_id, start_date, deadline, current_step, budget, created_by, labor_fee)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const result = await query(sql, [
       data.id,
@@ -213,7 +213,8 @@ const ProjectModel = {
       data.deadline || null,
       data.current_step || 1,
       data.budget || null,
-      data.created_by
+      data.created_by,
+      data.labor_fee || 0
     ]);
     return result;
   },
@@ -228,7 +229,7 @@ const ProjectModel = {
     const fields = [];
     const params = [];
 
-    const allowedFields = ['title', 'description', 'category', 'client_id', 'start_date', 'deadline', 'current_step', 'budget'];
+    const allowedFields = ['title', 'description', 'category', 'client_id', 'start_date', 'deadline', 'current_step', 'budget', 'labor_fee'];
 
     for (const field of allowedFields) {
       if (data[field] !== undefined) {

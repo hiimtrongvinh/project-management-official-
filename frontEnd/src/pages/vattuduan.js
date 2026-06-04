@@ -5,6 +5,15 @@ export function renderTabVattuDuan(projectId, role) {
     const projectMaterials = project && project.materials ? project.materials : [];
     const isClient = role === 'client';
 
+    let totalMaterialsSell = 0;
+    projectMaterials.forEach(item => {
+        const sellPrice = item.priceBuy * (1 + item.markup / 100);
+        totalMaterialsSell += sellPrice * item.quantity;
+    });
+    const laborFee = project?.profile?.laborFee || 0;
+    const grandTotal = totalMaterialsSell + laborFee;
+    const formattedLaborFee = laborFee ? new Intl.NumberFormat('vi-VN').format(laborFee) : '';
+
     const groupedData = projectMaterials.reduce((acc, item) => {
         if (!acc[item.supplier]) acc[item.supplier] = { status: item.status, items: [] };
         acc[item.supplier].items.push({ ...item, isMock: false });
@@ -24,7 +33,7 @@ export function renderTabVattuDuan(projectId, role) {
 
     const rowsHtml = isClient
         ? (projectMaterials.length > 0
-            ? projectMaterials.map(item => {
+            ? (projectMaterials.map(item => {
                 const sellPrice = item.priceBuy * (1 + item.markup / 100);
                 const totalSell = sellPrice * item.quantity;
                 return `
@@ -34,7 +43,16 @@ export function renderTabVattuDuan(projectId, role) {
                         <td class="px-4 py-3.5 text-gray-600">${sellPrice.toLocaleString()}đ</td>
                         <td class="px-4 py-3.5 font-bold text-blue-600">${totalSell.toLocaleString()}đ</td>
                     </tr>`;
-            }).join('')
+            }).join('') + `
+                <tr class="border-b border-gray-100 bg-gray-50/30 font-semibold text-sm text-gray-700">
+                    <td class="px-5 py-3 text-gray-800" colspan="3">Chi phí nhân công (e-Teck)</td>
+                    <td class="px-4 py-3 font-bold text-blue-600">${laborFee.toLocaleString()}đ</td>
+                </tr>
+                <tr class="bg-blue-50/30 font-extrabold border-t-2 border-blue-100">
+                    <td class="px-5 py-4 text-blue-800 text-sm" colspan="3">TỔNG CỘNG BÁO GIÁ</td>
+                    <td class="px-4 py-4 text-blue-700 text-base font-black">${grandTotal.toLocaleString()}đ</td>
+                </tr>
+            `)
             : `<tr><td colspan="4" class="px-6 py-16 text-center">
                 <div class="flex flex-col items-center">
                     <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
@@ -44,7 +62,7 @@ export function renderTabVattuDuan(projectId, role) {
                 </div>
             </td></tr>`)
         : (Object.keys(groupedData).length > 0
-            ? Object.entries(groupedData).map(([supplierName, group]) => {
+            ? (Object.entries(groupedData).map(([supplierName, group]) => {
                 return `
                 <tr class="bg-gradient-to-r from-blue-50/50 to-indigo-50/30 border-y border-gray-100">
                     <td colspan="7" class="p-0">
@@ -94,7 +112,25 @@ export function renderTabVattuDuan(projectId, role) {
                             </td>
                         </tr>`;
                 }).join('')}`;
-            }).join('')
+            }).join('') + `
+                <tr class="bg-gray-50/40 border-t border-gray-200 font-semibold text-sm">
+                    <td class="px-5 py-3.5 text-gray-800" colspan="5">Chi phí nhân công (e-Teck)</td>
+                    <td class="px-4 py-3.5 font-bold text-blue-600">
+                        <div class="flex items-center gap-1 justify-start">
+                            <input type="text" id="vattuProjectLaborFee" value="${formattedLaborFee}" 
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.'); window.recalculateGrandTotal()"
+                                   class="w-32 px-2 py-1 bg-gray-50 text-blue-600 focus:border-blue-400 border border-gray-200 rounded-lg text-right font-extrabold focus:outline-none text-sm transition-all">
+                            <span class="text-blue-500 font-bold text-xs">đ</span>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr class="bg-blue-50/30 font-extrabold border-t-2 border-blue-100">
+                    <td class="px-5 py-4 text-blue-800 text-sm" colspan="5">TỔNG CỘNG BÁO GIÁ KHÁCH HÀNG</td>
+                    <td class="px-4 py-4 text-blue-700 text-base font-black" id="vattuGrandTotalCell">${grandTotal.toLocaleString()}đ</td>
+                    <td></td>
+                </tr>
+            `)
             : `<tr><td colspan="7" class="px-6 py-16 text-center">
                 <div class="flex flex-col items-center">
                     <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
@@ -364,6 +400,23 @@ window.addMaterialToProject = async function (projectId, materialStr) {
     }
 };
 
+window.recalculateGrandTotal = function () {
+    const trs = document.querySelectorAll('tr[data-id]');
+    let totalMaterialsSell = 0;
+    trs.forEach(tr => {
+        const priceBuy = parseFloat(tr.getAttribute('data-price-buy') || 0);
+        const qty = parseInt(tr.querySelector('.vattu-qty-input')?.value || 0);
+        const markup = parseInt(tr.querySelector('.vattu-markup-input')?.value || 0);
+        totalMaterialsSell += priceBuy * (1 + markup / 100) * qty;
+    });
+    const laborFeeInput = document.getElementById('vattuProjectLaborFee');
+    const laborFee = laborFeeInput ? parseInt(laborFeeInput.value.replace(/[^0-9]/g, '')) || 0 : 0;
+    
+    const grandTotal = totalMaterialsSell + laborFee;
+    const grandTotalCell = document.getElementById('vattuGrandTotalCell');
+    if (grandTotalCell) grandTotalCell.textContent = grandTotal.toLocaleString() + 'đ';
+};
+
 window.recalculateRow = function (input) {
     const tr = input.closest('tr');
     if (!tr) return;
@@ -383,11 +436,13 @@ window.recalculateRow = function (input) {
 
     if (totalBuyTd) totalBuyTd.textContent = totalBuy.toLocaleString() + 'đ';
     if (totalSellTd) totalSellTd.textContent = totalSell.toLocaleString() + 'đ';
+    window.recalculateGrandTotal();
 };
 
 window.saveVattuChanges = async function (projectId) {
     const trs = document.querySelectorAll('tr[data-id]');
-    if (trs.length === 0) return;
+    const laborFeeInput = document.getElementById('vattuProjectLaborFee');
+    const laborFee = laborFeeInput ? parseInt(laborFeeInput.value.replace(/[^0-9]/g, '')) || 0 : 0;
 
     const token = localStorage.getItem('token');
     let hasError = false;
@@ -401,6 +456,21 @@ window.saveVattuChanges = async function (projectId) {
     }
 
     try {
+        // Lưu labor_fee của dự án trước
+        const projectRes = await fetch(`/api/projects/${projectId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ labor_fee: laborFee })
+        });
+        const projectResult = await projectRes.json();
+        if (!projectResult.success) {
+            hasError = true;
+            console.error(`Lỗi cập nhật tiền công dự án:`, projectResult.error?.message);
+        }
+
         const promises = Array.from(trs).map(async (tr) => {
             const id = tr.getAttribute('data-id');
             const qtyInput = tr.querySelector('.vattu-qty-input');
