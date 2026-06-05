@@ -162,18 +162,18 @@ export function renderTabVattuDuan(projectId, role) {
                 {
                     key: 'contract',
                     doc: documentsList.find(d => d.file_name && d.file_name.includes('Hợp đồng kinh tế')),
-                    title: 'Hợp đồng kinh tế song ngữ',
-                    subtitle: 'Bilingual Purchasing Contract',
+                    title: 'Hợp đồng',
+                    subtitle: '',
                     icon: 'fa-file-contract',
                     colorClass: 'bg-purple-50/50 border-purple-100 text-purple-700 hover:bg-purple-100/50',
                     badgeColor: 'bg-purple-100 text-purple-700',
-                    ext: 'HTML'
+                    ext: 'Word'
                 },
                 {
                     key: 'handover',
                     doc: documentsList.find(d => d.file_name && d.file_name.includes('Biên bản bàn giao')),
                     title: 'Biên bản bàn giao & Bảo hành',
-                    subtitle: 'Delivery Note & Warranty',
+                    subtitle: '',
                     icon: 'fa-file-signature',
                     colorClass: 'bg-emerald-50/50 border-emerald-100 text-emerald-700 hover:bg-emerald-100/50',
                     badgeColor: 'bg-emerald-100 text-emerald-700',
@@ -183,7 +183,7 @@ export function renderTabVattuDuan(projectId, role) {
                     key: 'acceptance',
                     doc: documentsList.find(d => d.file_name && d.file_name.includes('Biên bản nghiệm thu')),
                     title: 'Biên bản nghiệm thu',
-                    subtitle: 'Acceptance Note',
+                    subtitle: '',
                     icon: 'fa-clipboard-check',
                     colorClass: 'bg-teal-50/50 border-teal-100 text-teal-700 hover:bg-teal-100/50',
                     badgeColor: 'bg-teal-100 text-teal-700',
@@ -193,7 +193,7 @@ export function renderTabVattuDuan(projectId, role) {
                     key: 'payment',
                     doc: documentsList.find(d => d.file_name && d.file_name.includes('Đề nghị thanh toán')),
                     title: 'Đề nghị thanh toán',
-                    subtitle: 'Payment Request',
+                    subtitle: '',
                     icon: 'fa-file-invoice-dollar',
                     colorClass: 'bg-blue-50/50 border-blue-100 text-blue-700 hover:bg-blue-100/50',
                     badgeColor: 'bg-blue-100 text-blue-700',
@@ -215,7 +215,7 @@ export function renderTabVattuDuan(projectId, role) {
                                 </div>
                                 <div class="min-w-0">
                                     <p class="font-extrabold text-gray-800 text-sm truncate">${d.title}</p>
-                                    <p class="text-[10px] text-gray-400 font-medium truncate">${d.subtitle}</p>
+                                    ${d.subtitle ? `<p class="text-[10px] text-gray-400 font-medium truncate">${d.subtitle}</p>` : ''}
                                     <div class="flex items-center gap-1.5 mt-1">
                                         <span class="px-2 py-0.5 rounded-full ${d.badgeColor} text-[9px] font-bold">Đã thiết lập</span>
                                         <span class="px-1.5 py-0.5 rounded-full bg-white/80 text-gray-500 text-[8px] font-bold uppercase border border-gray-200/50">${d.ext}</span>
@@ -794,7 +794,7 @@ window.handleSendQuotation = async function (projectId) {
 };
 
 window.handleCreateContract = async function (projectId) {
-    if (!await window.showConfirm('Bạn có chắc chắn muốn lập Hợp đồng kinh tế song ngữ cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
+    if (!await window.showConfirm('Bạn có chắc chắn muốn lập Hợp đồng cho dự án này dựa trên danh mục vật tư hiện tại?')) return;
 
     const contractBtn = document.querySelector('button[onclick^="window.handleCreateContract"]');
     const originalHtml = contractBtn ? contractBtn.innerHTML : '';
@@ -811,7 +811,7 @@ window.handleCreateContract = async function (projectId) {
         });
         const result = await res.json();
         if (result.success) {
-            window.showToast('✅ Đã khởi tạo Hợp đồng kinh tế song ngữ thành công!', 'success');
+            window.showToast('✅ Đã khởi tạo Hợp đồng thành công!', 'success');
             const role = localStorage.getItem('authRole');
             const { openProjectDetail } = await import('./chitietduan.js');
             await openProjectDetail(projectId, role, 'vattuduan');
@@ -837,7 +837,7 @@ window.handleViewContract = async function (projectId, filePath) {
         <div class="px-8 py-4 bg-gradient-to-r from-purple-700 to-indigo-700 text-white flex justify-between items-center relative z-10 flex-shrink-0">
             <div class="flex items-center gap-3">
                 <i class="fas fa-file-contract text-xl"></i>
-                <h3 class="text-base font-extrabold">Hợp đồng mua bán song ngữ - HD-${projectId}</h3>
+                <h3 class="text-base font-extrabold">Hợp đồng - HD-${projectId}</h3>
             </div>
             <div class="flex items-center gap-3">
                 <button onclick="window.printContract()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition">

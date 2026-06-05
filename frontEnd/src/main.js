@@ -363,7 +363,7 @@ window.previewDocument = async function (filePath, fileName) {
         <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-500">
-                    <i class="${['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext) ? 'fas fa-image' : ext === 'pdf' ? 'fas fa-file-pdf' : 'fas fa-file-excel'} text-lg"></i>
+                    <i class="${['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(ext) ? 'fas fa-image' : ext === 'pdf' ? 'fas fa-file-pdf' : ['docx', 'doc'].includes(ext) ? 'fas fa-file-word' : 'fas fa-file-excel'} text-lg"></i>
                 </div>
                 <div class="min-w-0">
                     <h2 class="text-sm font-bold text-gray-800 truncate" title="${fileName}">${fileName}</h2>
