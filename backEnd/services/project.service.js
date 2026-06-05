@@ -1010,10 +1010,10 @@ const ProjectService = {
     // Create document record in database
     const fileName = `Hợp đồng kinh tế - HD-${projectId}.docx`;
 
-    // Check if document already exists
+    // Check if document already exists (checking both .docx and .html filenames via LIKE)
     const existing = await query(
-      'SELECT id FROM project_documents WHERE project_id = ? AND file_name = ?',
-      [projectId, fileName]
+      "SELECT id, file_name, file_path FROM project_documents WHERE project_id = ? AND (file_name LIKE ? OR file_name LIKE ?)",
+      [projectId, `%${projectId}.docx`, `%${projectId}.html`]
     );
 
     if (existing.length === 0) {
@@ -1023,10 +1023,29 @@ const ProjectService = {
         [projectId, fileName, contractPath, creatorId]
       );
     } else {
+      // Clean up old .html file on disk if it exists
+      existing.forEach(doc => {
+        if (doc.file_name.endsWith('.html')) {
+          const oldFullPath = path.join(__dirname, '..', doc.file_path);
+          if (fs.existsSync(oldFullPath)) {
+            try { fs.unlinkSync(oldFullPath); } catch (e) { console.error('Lỗi khi xóa file HTML cũ:', e.message); }
+          }
+        }
+      });
+
+      // Update the first document record to be the new docx format
       await query(
-        'UPDATE project_documents SET file_path = ?, created_by = ? WHERE id = ?',
-        [contractPath, creatorId, existing[0].id]
+        'UPDATE project_documents SET file_name = ?, file_path = ?, created_by = ? WHERE id = ?',
+        [fileName, contractPath, creatorId, existing[0].id]
       );
+
+      // If there are duplicate records, delete them
+      if (existing.length > 1) {
+        const duplicateIds = existing.slice(1).map(doc => doc.id);
+        for (const id of duplicateIds) {
+          await query('DELETE FROM project_documents WHERE id = ?', [id]);
+        }
+      }
     }
 
     // Log activity
