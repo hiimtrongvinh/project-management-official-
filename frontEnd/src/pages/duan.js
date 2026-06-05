@@ -71,33 +71,33 @@ export function renderDuan() {
         </div>
 
         <!-- Filter Bar -->
-            <div class="flex flex-wrap gap-3 items-center">
-                <div class="flex-1 min-w-[260px] relative group">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors"></i>
-                    <input type="text" id="searchDuan" oninput="handleProjectFilter()" 
-                           placeholder="Tìm kiếm dự án theo tên..." 
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 focus:bg-white focus:shadow-sm transition-all text-sm font-medium placeholder:text-gray-400">
-                </div>
-                <div class="relative">
-                    <select id="filterDeadline" onchange="handleProjectFilter()" 
-                            class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 text-sm font-medium cursor-pointer min-w-[160px] hover:border-gray-300 transition-all">
-                        <option value="">Tất cả hạn chót</option>
-                        <option value="quahan">🔴 Quá hạn</option>
-                        <option value="homnay">🟡 Hôm nay</option>
-                        <option value="tuannay">🔵 Tuần này</option>
-                        <option value="thangnay">🟢 Tháng này</option>
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                </div>
-                <div class="relative">
-                    <select id="filterStatus" onchange="handleProjectFilter()" 
-                            class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 text-sm font-medium cursor-pointer min-w-[190px] hover:border-gray-300 transition-all">
-                        <option value="">Tất cả trạng thái</option>
-                        ${allStatuses.map(s => `<option value="${s}">${s}</option>`).join('')}
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                </div>
+        <div class="flex flex-wrap gap-3 items-center mb-6">
+            <div class="flex-1 min-w-[260px] relative group">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors"></i>
+                <input type="text" id="searchDuan" oninput="handleProjectFilter()" 
+                       placeholder="Tìm kiếm dự án theo tên..." 
+                       class="w-full pl-11 pr-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 focus:bg-white focus:shadow-sm transition-all text-sm font-medium placeholder:text-gray-400">
             </div>
+            <div class="relative">
+                <select id="filterDeadline" onchange="handleProjectFilter()" 
+                        class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 text-sm font-medium cursor-pointer min-w-[160px] hover:border-gray-300 transition-all">
+                    <option value="">Tất cả hạn chót</option>
+                    <option value="quahan">🔴 Quá hạn</option>
+                    <option value="homnay">🟡 Hôm nay</option>
+                    <option value="tuannay">🔵 Tuần này</option>
+                    <option value="thangnay">🟢 Tháng này</option>
+                </select>
+                <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+            <div class="relative">
+                <select id="filterStatus" onchange="handleProjectFilter()" 
+                        class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 text-sm font-medium cursor-pointer min-w-[190px] hover:border-gray-300 transition-all">
+                    <option value="">Tất cả trạng thái</option>
+                    ${allStatuses.map(s => `<option value="${s}">${s}</option>`).join('')}
+                </select>
+                <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+        </div>
 
         <!-- Project Cards Grid -->
         <div id="projectCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>

@@ -27,42 +27,42 @@ export function renderVattu() {
         </div>
 
         <!-- Filter Bar -->
-            <div class="flex flex-wrap gap-3 items-center">
-                <div class="flex-1 min-w-[260px] relative group">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-500 transition-colors"></i>
-                    <input type="text" id="searchMaterial" oninput="window.fetchMaterials('staff')" 
-                           placeholder="Tìm kiếm tên hoặc mã vật tư..."
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 focus:bg-white focus:shadow-sm transition-all text-sm font-medium placeholder:text-gray-400">
-                </div>
-                <div class="relative">
-                    <select id="filterSupplier" onchange="window.fetchMaterials('staff')" 
-                            class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 text-sm font-medium cursor-pointer min-w-[170px] hover:border-gray-300 transition-all">
-                        <option value="">Tất cả nhà cung cấp</option>
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                </div>
-                <div class="relative">
-                    <select id="filterStatus" onchange="window.fetchMaterials('staff')" 
-                            class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 text-sm font-medium cursor-pointer min-w-[150px] hover:border-gray-300 transition-all">
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="Sẵn sàng">Sẵn sàng</option>
-                        <option value="Hết hàng">Hết hàng</option>
-                        <option value="Ngừng cung cấp">Ngừng cung cấp</option>
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                </div>
-                <div class="relative">
-                    <select id="filterCategory" onchange="window.fetchMaterials('staff')" 
-                            class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 text-sm font-medium cursor-pointer min-w-[160px] hover:border-gray-300 transition-all">
-                        <option value="">Tất cả phân loại</option>
-                        <option value="Thiết bị mạng">Thiết bị mạng</option>
-                        <option value="Cáp & Dây dẫn">Cáp & Dây dẫn</option>
-                        <option value="Phụ kiện">Phụ kiện</option>
-                        <option value="Thiết bị điện">Thiết bị điện</option>
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                </div>
+        <div class="flex flex-wrap gap-3 items-center mb-6">
+            <div class="flex-1 min-w-[260px] relative group">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-500 transition-colors"></i>
+                <input type="text" id="searchMaterial" oninput="window.fetchMaterials('staff')" 
+                       placeholder="Tìm kiếm tên hoặc mã vật tư..."
+                       class="w-full pl-11 pr-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 focus:bg-white focus:shadow-sm transition-all text-sm font-medium placeholder:text-gray-400">
             </div>
+            <div class="relative">
+                <select id="filterSupplier" onchange="window.fetchMaterials('staff')" 
+                        class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 text-sm font-medium cursor-pointer min-w-[170px] hover:border-gray-300 transition-all">
+                    <option value="">Tất cả nhà cung cấp</option>
+                </select>
+                <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+            <div class="relative">
+                <select id="filterStatus" onchange="window.fetchMaterials('staff')" 
+                        class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 text-sm font-medium cursor-pointer min-w-[150px] hover:border-gray-300 transition-all">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Sẵn sàng">Sẵn sàng</option>
+                    <option value="Hết hàng">Hết hàng</option>
+                    <option value="Ngừng cung cấp">Ngừng cung cấp</option>
+                </select>
+                <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+            <div class="relative">
+                <select id="filterCategory" onchange="window.fetchMaterials('staff')" 
+                        class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 text-sm font-medium cursor-pointer min-w-[160px] hover:border-gray-300 transition-all">
+                    <option value="">Tất cả phân loại</option>
+                    <option value="Thiết bị mạng">Thiết bị mạng</option>
+                    <option value="Cáp & Dây dẫn">Cáp & Dây dẫn</option>
+                    <option value="Phụ kiện">Phụ kiện</option>
+                    <option value="Thiết bị điện">Thiết bị điện</option>
+                </select>
+                <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+        </div>
 
         <!-- Material Cards Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5" id="materialCards"></div>
