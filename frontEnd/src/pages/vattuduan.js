@@ -188,18 +188,30 @@ export function renderTabVattuDuan(projectId, role) {
                     colorClass: 'bg-teal-50/50 border-teal-100 text-teal-700 hover:bg-teal-100/50',
                     badgeColor: 'bg-teal-100 text-teal-700',
                     ext: 'Excel'
-                },
-                {
-                    key: 'payment',
-                    doc: documentsList.find(d => d.file_name && d.file_name.includes('Đề nghị thanh toán')),
-                    title: 'Đề nghị thanh toán',
+                }
+            ];
+
+            const payments = documentsList.filter(d => d.file_name && d.file_name.includes('Đề nghị thanh toán'));
+            payments.forEach((p, idx) => {
+                let phaseTitle = 'Đề nghị thanh toán';
+                if (p.file_name.includes('đợt 1') || p.file_name.includes('Đợt 1')) {
+                    phaseTitle = 'Đề nghị thanh toán Đợt 1';
+                } else if (p.file_name.includes('đợt 2') || p.file_name.includes('Đợt 2')) {
+                    phaseTitle = 'Đề nghị thanh toán Đợt 2';
+                } else if (payments.length > 1) {
+                    phaseTitle = `Đề nghị thanh toán Đợt ${idx + 1}`;
+                }
+                docTypes.push({
+                    key: `payment_${idx}`,
+                    doc: p,
+                    title: phaseTitle,
                     subtitle: '',
                     icon: 'fa-file-invoice-dollar',
                     colorClass: 'bg-blue-50/50 border-blue-100 text-blue-700 hover:bg-blue-100/50',
                     badgeColor: 'bg-blue-100 text-blue-700',
                     ext: 'Word'
-                }
-            ];
+                });
+            });
 
             const activeDocs = docTypes.filter(d => d.doc);
             let docsGridHtml = '';
