@@ -168,6 +168,181 @@ const OrderService = {
       throw error;
     }
     await query('DELETE FROM project_items WHERE id = ?', [id]);
+  },
+
+  /**
+   * Export purchase order as docx buffer.
+   * @param {string} id - PO ID
+   * @returns {Promise<Buffer>} Docx file buffer
+   */
+  async exportOrderDocx(id) {
+    const docx = require('docx');
+    const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = docx;
+    const { convertVNDToWords } = require('../utils/numberToWords');
+
+    const order = await OrderModel.findById(id);
+    if (!order) {
+      const error = new Error('Order not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const tableRows = [];
+
+    // Header Row
+    tableRows.push(new TableRow({
+      children: [
+        new TableCell({ width: { size: 6, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "STT", bold: true, size: 20, font: "Times New Roman" })] })] }),
+        new TableCell({ width: { size: 16, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "Mã vật tư", bold: true, size: 20, font: "Times New Roman" })] })] }),
+        new TableCell({ width: { size: 36, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "Tên vật tư", bold: true, size: 20, font: "Times New Roman" })] })] }),
+        new TableCell({ width: { size: 10, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "Đơn vị tính", bold: true, size: 20, font: "Times New Roman" })] })] }),
+        new TableCell({ width: { size: 8, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "Số lượng", bold: true, size: 20, font: "Times New Roman" })] })] }),
+        new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "Đơn giá", bold: true, size: 20, font: "Times New Roman" })] })] }),
+        new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "Thành tiền", bold: true, size: 20, font: "Times New Roman" })] })] })
+      ]
+    }));
+
+    let calculatedTotal = 0;
+    (order.items || []).forEach((item, index) => {
+      const price = parseFloat(item.material_price || 0);
+      const qty = parseInt(item.quantity || 0);
+      const subtotal = price * qty;
+      calculatedTotal += subtotal;
+
+      tableRows.push(new TableRow({
+        children: [
+          new TableCell({ width: { size: 6, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(index + 1), size: 20, font: "Times New Roman" })] })] }),
+          new TableCell({ width: { size: 16, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: item.material_sku || 'SKU-NONE', size: 20, font: "Times New Roman" })] })] }),
+          new TableCell({ width: { size: 36, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: item.material_name || 'Vật tư', size: 20, font: "Times New Roman" })] })] }),
+          new TableCell({ width: { size: 10, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: item.material_unit || 'Cái', size: 20, font: "Times New Roman" })] })] }),
+          new TableCell({ width: { size: 8, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(qty), size: 20, font: "Times New Roman" })] })] }),
+          new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: price.toLocaleString('vi-VN'), size: 20, font: "Times New Roman" })] })] }),
+          new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: subtotal.toLocaleString('vi-VN'), size: 20, font: "Times New Roman" })] })] })
+        ]
+      }));
+    });
+
+    const totalWords = convertVNDToWords(calculatedTotal);
+
+    tableRows.push(new TableRow({
+      children: [
+        new TableCell({
+          columnSpan: 7,
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Tổng cộng: ", bold: true, size: 20, font: "Times New Roman" }),
+                new TextRun({ text: `${calculatedTotal.toLocaleString('vi-VN')} VNĐ`, bold: true, size: 20, font: "Times New Roman" }),
+                new TextRun({ text: ` (${totalWords})`, italic: true, size: 20, font: "Times New Roman" })
+              ]
+            })
+          ]
+        })
+      ]
+    }));
+
+    const doc = new Document({
+      sections: [
+        {
+          children: [
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [
+                new TextRun({ text: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM", bold: true, size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 360 },
+              children: [
+                new TextRun({ text: "Độc lập - Tự do - Hạnh phúc", bold: true, size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 480 },
+              children: [
+                new TextRun({ text: "ĐƠN ĐẶT HÀNG", bold: true, size: 28, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              spacing: { after: 240 },
+              children: [
+                new TextRun({ text: "Kính gửi: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: order.supplier_name || 'Quý công ty', size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              spacing: { after: 240 },
+              children: [
+                new TextRun({
+                  text: "Công ty TNHH Đào tạo và Tích hợp Công nghệ e-Teck đề nghị Quý công ty cung cấp vật tư, thiết bị phục vụ dự án ",
+                  size: 24,
+                  font: "Times New Roman"
+                }),
+                new TextRun({
+                  text: order.project_title || order.project_id || 'Dự án',
+                  bold: true,
+                  size: 24,
+                  font: "Times New Roman"
+                }),
+                new TextRun({
+                  text: " với các nội dung chi tiết sau:",
+                  size: 24,
+                  font: "Times New Roman"
+                })
+              ]
+            }),
+            new Paragraph({
+              spacing: { before: 240, after: 120 },
+              children: [
+                new TextRun({ text: "I. Danh mục vật tư, thiết bị đặt hàng", bold: true, size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              rows: tableRows
+            }),
+            new Paragraph({
+              spacing: { before: 240, after: 120 },
+              children: [
+                new TextRun({ text: "II. Điều khoản giao nhận và thanh toán", bold: true, size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              spacing: { after: 120 },
+              children: [
+                new TextRun({ text: "Địa điểm giao hàng: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: order.address || '', size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              spacing: { after: 120 },
+              children: [
+                new TextRun({ text: "Thời gian giao hàng: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: order.expected_date ? new Date(order.expected_date).toLocaleDateString('vi-VN') : '---', size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              spacing: { after: 120 },
+              children: [
+                new TextRun({ text: "Phương thức thanh toán: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: "thanh toán qua chuyển khoản khi nhận hàng hoặc chậm nhất sau ... ngày kể từ ngày giao hàng", size: 24, font: "Times New Roman" })
+              ]
+            }),
+            new Paragraph({
+              spacing: { after: 120 },
+              children: [
+                new TextRun({ text: "Ghi chú: ", bold: true, size: 24, font: "Times New Roman" }),
+                new TextRun({ text: order.note || 'Không có', size: 24, font: "Times New Roman" })
+              ]
+            })
+          ]
+        }
+      ]
+    });
+
+    return Packer.toBuffer(doc);
   }
 };
 

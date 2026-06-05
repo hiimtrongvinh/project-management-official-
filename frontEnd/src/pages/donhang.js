@@ -105,7 +105,8 @@ async function fetchOrders() {
                 name: item.material_name || item.name || 'Vật tư',
                 sku: item.material_sku || item.sku || 'SKU-NONE',
                 qty: item.quantity || 0,
-                price: parseFloat(item.material_price || item.price || 0)
+                price: parseFloat(item.material_price || item.price || 0),
+                unit: item.material_unit || item.unit || 'Cái'
             }));
             const calculatedTotal = items.reduce((sum, item) => sum + (item.qty * item.price), 0);
             return {
@@ -114,9 +115,12 @@ async function fetchOrders() {
                 projectName: o.project_title || 'Dự án chưa rõ',
                 totalAmount: calculatedTotal,
                 expectedDate: expectedDate,
+                expectedDateRaw: o.expected_date,
                 status: mapDBStatusToUI(o.status),
                 address: o.address || 'Kho tổng e-Teck, Hải Phòng',
                 receiver: o.receiver_name || 'Phòng Vật tư e-Teck',
+                supplierName: o.supplier_name || 'Nhà cung cấp',
+                note: o.note || '',
                 items: items
             };
         });
@@ -271,10 +275,10 @@ window.openOrderDetail = function (id) {
                         </div>
                     </div>
 
-                    <button onclick="window.print()" class="w-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-100 py-4 rounded-2xl font-bold text-lg transition flex items-center justify-center gap-3 shadow-sm">
-                        <i class="fas fa-print"></i> In đơn đặt hàng
+                    <button onclick="window.previewOrderDocx('${o.id}')" class="w-full bg-blue-600 text-white hover:bg-blue-700 py-4 rounded-2xl font-bold text-lg transition flex items-center justify-center gap-3 shadow-md">
+                        <i class="fas fa-file-word"></i> Xuất / Xem trước đơn hàng
                     </button>
-                    <p class="text-xs text-gray-400 text-center mt-5 font-medium italic">Vui lòng in PO kèm theo bộ chứng từ khi giao hàng.</p>
+                    <p class="text-xs text-gray-400 text-center mt-5 font-medium italic">Vui lòng xuất PO kèm theo bộ chứng từ khi giao hàng.</p>
                 </div>
             </div>
         </div>
@@ -282,6 +286,105 @@ window.openOrderDetail = function (id) {
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     document.body.appendChild(modal);
 }
+
+window.previewOrderDocx = async function (id) {
+    // 1. Tạo modal preview
+    const modal = document.createElement('div');
+    modal.className = "fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 animate-fadeIn";
+    modal.id = "orderDocxPreviewModal";
+
+    modal.innerHTML = `
+    <div onclick="event.stopImmediatePropagation()" class="bg-white rounded-3xl w-full max-w-5xl h-[90vh] overflow-hidden border border-slate-200/80 shadow-2xl flex flex-col animate-scaleUp">
+        <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-500">
+                    <i class="fas fa-file-word text-lg"></i>
+                </div>
+                <div class="min-w-0">
+                    <h2 class="text-sm font-bold text-gray-800 truncate">Đơn đặt hàng ${id}</h2>
+                    <p class="text-[10px] text-gray-400 font-medium">Xem trước và xuất bản ghi</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="downloadDocxBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-download"></i> Tải file Word (.docx)
+                </button>
+                <button id="printDocxBtn" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-print"></i> In đơn hàng
+                </button>
+                <button onclick="document.getElementById('orderDocxPreviewModal').remove()" class="w-9 h-9 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="bg-slate-100 p-8 overflow-y-auto flex-1 flex justify-center" id="docx-preview-body">
+            <div class="flex flex-col items-center justify-center py-12 space-y-3" id="docx-preview-loading">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                <p class="text-gray-500 text-xs font-medium">Đang tạo file Word và tải bản xem trước...</p>
+            </div>
+        </div>
+    </div>`;
+
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/orders/${id}/export-docx`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("Không thể kết nối đến server để tạo file Word");
+        const blob = await response.blob();
+
+        const bodyContainer = document.getElementById('docx-preview-body');
+        const loading = document.getElementById('docx-preview-loading');
+        if (loading) loading.remove();
+
+        const wordRenderDiv = document.createElement('div');
+        wordRenderDiv.className = "bg-white shadow-lg p-16 max-w-[850px] w-full min-h-[1100px] overflow-x-auto text-black";
+        bodyContainer.appendChild(wordRenderDiv);
+
+        // Render docx
+        await docx.renderAsync(blob, wordRenderDiv);
+
+        // Attach download event
+        document.getElementById('downloadDocxBtn').onclick = () => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Don_dat_hang_${id}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        };
+
+        // Attach print event
+        document.getElementById('printDocxBtn').onclick = () => {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>In Đơn Hàng</title>');
+            printWindow.document.write('<style>body { font-family: "Times New Roman", serif; padding: 40px; } table { width: 100%; border-collapse: collapse; margin: 20px 0; } th, td { border: 1px solid black; padding: 8px; text-align: left; } th { background-color: #f2f2f2; } .text-center { text-align: center; } .text-right { text-align: right; } .bold { font-weight: bold; }</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(wordRenderDiv.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        };
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('docx-preview-body').innerHTML = `
+            <div class="m-auto p-6 bg-red-50 text-red-700 rounded-2xl border border-red-100 text-center text-sm font-semibold max-w-md shadow-sm flex flex-col items-center gap-3">
+                <i class="fas fa-exclamation-circle text-2xl text-red-500"></i>
+                <span>Lỗi: ${err.message}</span>
+            </div>`;
+    }
+};
 
 window.updateOrderStatus = async function (id, newStatus) {
     if (!window.cachedOrders) return;

@@ -159,6 +159,29 @@ const OrderController = {
       }
       next(error);
     }
+  },
+
+  /**
+   * GET /api/orders/:id/export-docx
+   * Export purchase order to .docx format.
+   */
+  async exportOrderDocx(req, res, next) {
+    try {
+      const { id } = req.params;
+      const buffer = await OrderService.exportOrderDocx(id);
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      res.setHeader('Content-Disposition', `attachment; filename=Don_dat_hang_${id}.docx`);
+      res.send(buffer);
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
   }
 };
 

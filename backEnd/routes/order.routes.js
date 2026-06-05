@@ -7,6 +7,7 @@ const authenticate = require('../middleware/auth');
 router.use(authenticate);
 
 router.get('/my-orders', OrderController.getMyOrders);
+router.get('/:id/export-docx', OrderController.exportOrderDocx);
 router.get('/project/:projectId', OrderController.getOrdersByProject);
 router.post('/', OrderController.createOrder);
 router.put('/:id/status', OrderController.updateOrderStatus);

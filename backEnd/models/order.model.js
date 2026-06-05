@@ -11,8 +11,9 @@ const OrderModel = {
    */
   async findById(id) {
     const rows = await query(
-      `SELECT o.*, s.name as supplier_name, st.name as receiver_name
+      `SELECT o.*, s.name as supplier_name, st.name as receiver_name, p.title as project_title
        FROM orders o
+       LEFT JOIN projects p ON o.project_id = p.id
        LEFT JOIN suppliers s ON o.supplier_id = s.id
        LEFT JOIN staffs st ON o.receiver_id = st.id
        WHERE o.id = ?`,
@@ -95,7 +96,7 @@ const OrderModel = {
 
     for (let o of orders) {
       o.items = await query(
-        `SELECT pi.*, m.name as material_name, m.sku as material_sku, m.price as material_price
+        `SELECT pi.*, m.name as material_name, m.sku as material_sku, m.price as material_price, m.unit as material_unit
          FROM project_items pi
          LEFT JOIN materials m ON pi.material_id = m.id
          WHERE pi.order_id = ?`,
