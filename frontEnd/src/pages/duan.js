@@ -71,7 +71,6 @@ export function renderDuan() {
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6 relative z-20 animate-fadeInUp backdrop-blur-sm">
             <div class="flex flex-wrap gap-3 items-center">
                 <div class="flex-1 min-w-[260px] relative group">
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors"></i>
@@ -99,7 +98,6 @@ export function renderDuan() {
                     <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
                 </div>
             </div>
-        </div>
 
         <!-- Project Cards Grid -->
         <div id="projectCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>

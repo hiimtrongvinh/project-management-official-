@@ -1121,82 +1121,44 @@ const ProjectService = {
       { key: 'item', width: 48 },
       { key: 'unit', width: 10 },
       { key: 'qty', width: 10 },
+      { key: 'warranty', width: 12 },
       { key: 'remark', width: 15 }
     ];
 
-    // Header info
-    worksheet.getCell('C1').value = 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD';
-    worksheet.getCell('C1').font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell('C2').value = 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK';
-    worksheet.getCell('C2').font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell('C3').value = 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Duong, Hai Phong';
-    worksheet.getCell('C3').font = { name: 'Times New Roman', size: 9, italic: true };
-    worksheet.getCell('C4').value = 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496';
-    worksheet.getCell('C4').font = { name: 'Times New Roman', size: 9, italic: true };
-    worksheet.getCell('C5').value = 'Website: www.e-teck.vn                Email: admin@e-teck.vn';
-    worksheet.getCell('C5').font = { name: 'Times New Roman', size: 9, italic: true };
+    // Logo placeholder text styled beautifully in A1:B5
+    worksheet.mergeCells('A1:B5');
+    const logoCell = worksheet.getCell('A1');
+    logoCell.value = {
+      richText: [
+        { text: 'e-Teck\n', font: { name: 'Times New Roman', size: 18, bold: true, color: { argb: 'FF1F4E79' } } },
+        { text: 'Your Growth - Our Cloud', font: { name: 'Times New Roman', size: 8, italic: true, color: { argb: 'FFC00000' } } }
+      ]
+    };
+    logoCell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+
+    // Company info on the right (C1:F1 to C5:F5 merged and right-aligned)
+    const companyInfo = [
+      { cell: 'C1', text: 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD', font: { name: 'Times New Roman', size: 10, bold: true } },
+      { cell: 'C2', text: 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK', font: { name: 'Times New Roman', size: 10, bold: true } },
+      { cell: 'C3', text: 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Duong, Hai Phong', font: { name: 'Times New Roman', size: 9, italic: true } },
+      { cell: 'C4', text: 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496', font: { name: 'Times New Roman', size: 9, italic: true } },
+      { cell: 'C5', text: 'Website: www.e-teck.vn                Email: admin@e-teck.vn', font: { name: 'Times New Roman', size: 9, italic: true } }
+    ];
+
+    companyInfo.forEach(info => {
+      const rowNum = info.cell.substring(1);
+      worksheet.mergeCells(`C${rowNum}:F${rowNum}`);
+      const cell = worksheet.getCell(`C${rowNum}`);
+      cell.value = info.text;
+      cell.font = info.font;
+      cell.alignment = { vertical: 'middle', horizontal: 'right' };
+    });
 
     // Title
-    worksheet.mergeCells('A7:E7');
-    const titleCell = worksheet.getCell('A7');
-    titleCell.value = 'DELIVERY NOTE AND WARRANTY / BIÊN BẢN BÀN GIAO KIÊM BẢO HÀNH';
-    titleCell.font = { name: 'Times New Roman', size: 14, bold: true };
-    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-    worksheet.getRow(7).height = 25;
-
-    // Customer & Document Info
-    worksheet.getCell('A10').value = 'Customer / Khách hàng:';
-    worksheet.getCell('A10').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B10').value = clientName;
-    worksheet.getCell('B10').font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell('D10').value = 'No / Số:';
-    worksheet.getCell('D10').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
-    worksheet.getCell('E10').value = `BB-BG-${projectId}`;
-    worksheet.getCell('E10').font = { name: 'Times New Roman', size: 10, bold: true };
-
-    worksheet.getCell('A11').value = 'Address / Địa chỉ:';
-    worksheet.getCell('A11').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B11').value = clientAddress;
-    worksheet.getCell('B11').font = { name: 'Times New Roman', size: 10 };
-    worksheet.getCell('D11').value = 'Date / Ngày:';
-    worksheet.getCell('D11').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
-    worksheet.getCell('E11').value = `${day}/${month}/${year}`;
-    worksheet.getCell('E11').font = { name: 'Times New Roman', size: 10, bold: true };
-
-    worksheet.getCell('A12').value = 'Attn / Gửi tới:';
-    worksheet.getCell('A12').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B12').value = clientName;
-    worksheet.getCell('B12').font = { name: 'Times New Roman', size: 10 };
-
-    worksheet.getCell('A13').value = 'Tel No. / Số điện thoại:';
-    worksheet.getCell('A13').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B13').value = clientPhone;
-    worksheet.getCell('B13').font = { name: 'Times New Roman', size: 10 };
-
-    // Intro
-    worksheet.mergeCells('A15:E15');
-    const introCell = worksheet.getCell('A15');
-    introCell.value = `Hôm nay, ngày ${day} tháng ${month} năm ${year}, tại trụ sở Công ty........................................... ; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:`;
-    introCell.font = { name: 'Times New Roman', size: 10 };
-    introCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-    worksheet.getRow(15).height = 30;
-
-    // Table Headers
-    const headers = [
-      'No.\nSTT',
-      'Items\nDanh mục hàng hóa & dịch vụ',
-      'Unit\nĐơn Vị',
-      'Qty\nSL',
-      'Remark\nBảo hành'
-    ];
-    worksheet.getRow(17).height = 30;
-    headers.forEach((h, idx) => {
-      const col = String.fromCharCode(65 + idx); // A, B, C, D, E
-      const cell = worksheet.getCell(`${col}17`);
-      cell.value = h;
-      cell.font = { name: 'Times New Roman', size: 10, bold: true };
-      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
+    worksheet.mergeCells('A7:F7');
+    ['A', 'B', 'C', 'D', 'E', 'F'].forEach(col => {
+      const cell = worksheet.getCell(`${col}7`);
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF9BC2E6' } };
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
@@ -1204,28 +1166,137 @@ const ProjectService = {
         right: { style: 'thin' }
       };
     });
+    const titleCell = worksheet.getCell('A7');
+    titleCell.value = 'DELIVERY NOTE AND WARRANTY / BIÊN BẢN BÀN GIAO KIÊM BẢO HÀNH';
+    titleCell.font = { name: 'Times New Roman', size: 14, bold: true };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getRow(7).height = 35;
 
-    let currentRow = 18;
+    // Customer & Document Info
+    // Row 10
+    worksheet.getRow(10).height = 18;
+    worksheet.mergeCells('A10:D10');
+    worksheet.getCell('A10').value = {
+      richText: [
+        { text: 'Customer / Khách hàng: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientName, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A10').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    worksheet.mergeCells('E10:F10');
+    worksheet.getCell('E10').value = {
+      richText: [
+        { text: 'No / Số: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: `BB-BG-${projectId}`, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('E10').alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
+
+    // Row 11
+    worksheet.getRow(11).height = 18;
+    worksheet.mergeCells('A11:D11');
+    worksheet.getCell('A11').value = {
+      richText: [
+        { text: 'Address / Địa chỉ: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientAddress, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A11').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    worksheet.mergeCells('E11:F11');
+    worksheet.getCell('E11').value = {
+      richText: [
+        { text: 'Date / Ngày: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: `${day}/${month}/${year}`, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('E11').alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
+
+    // Row 12
+    worksheet.getRow(12).height = 18;
+    worksheet.mergeCells('A12:D12');
+    worksheet.getCell('A12').value = {
+      richText: [
+        { text: 'Attn / Gửi tới: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientName, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A12').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    // Row 13
+    worksheet.getRow(13).height = 18;
+    worksheet.mergeCells('A13:D13');
+    worksheet.getCell('A13').value = {
+      richText: [
+        { text: 'Tel No. / Số điện thoại: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientPhone, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A13').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    // Intro
+    worksheet.mergeCells('A15:F15');
+    const introCell = worksheet.getCell('A15');
+    introCell.value = `Hôm nay, ngày ${day} tháng ${month} năm ${year}, tại trụ sở Công ty........................................... ; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:`;
+    introCell.font = { name: 'Times New Roman', size: 10 };
+    introCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+    worksheet.getRow(15).height = 30;
+
+    const thinBorder = {
+      top: { style: 'thin', color: { argb: 'FF000000' } },
+      left: { style: 'thin', color: { argb: 'FF000000' } },
+      bottom: { style: 'thin', color: { argb: 'FF000000' } },
+      right: { style: 'thin', color: { argb: 'FF000000' } }
+    };
+
+    // Table Headers
+    // Row 17 (English)
+    worksheet.getCell('A17').value = 'No.';
+    worksheet.getCell('B17').value = 'Items';
+    worksheet.getCell('C17').value = 'Unit';
+    worksheet.getCell('D17').value = 'Qty';
+    worksheet.mergeCells('E17:F17');
+    worksheet.getCell('E17').value = 'Remark';
+
+    // Row 18 (Vietnamese)
+    worksheet.getCell('A18').value = 'STT';
+    worksheet.getCell('B18').value = 'Danh mục hàng hóa & dịch vụ';
+    worksheet.getCell('C18').value = 'Đơn Vị';
+    worksheet.getCell('D18').value = 'SL';
+    worksheet.mergeCells('E18:F18');
+    worksheet.getCell('E18').value = '';
+
+    const headerRows = [17, 18];
+    headerRows.forEach(rowNum => {
+      worksheet.getRow(rowNum).height = 20;
+      ['A', 'B', 'C', 'D', 'E', 'F'].forEach(col => {
+        const cell = worksheet.getCell(`${col}${rowNum}`);
+        cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFBDD7EE' } };
+        cell.border = thinBorder;
+      });
+    });
+
+    let currentRow = 19;
     projectItems.forEach((item, index) => {
+      worksheet.getRow(currentRow).height = 22;
       worksheet.getCell(`A${currentRow}`).value = index + 1;
       worksheet.getCell(`B${currentRow}`).value = item.material_name;
       worksheet.getCell(`C${currentRow}`).value = item.material_unit;
       worksheet.getCell(`D${currentRow}`).value = item.quantity;
       worksheet.getCell(`E${currentRow}`).value = '12 tháng';
+      worksheet.getCell(`F${currentRow}`).value = 'N/A';
 
-      ['A', 'B', 'C', 'D', 'E'].forEach(col => {
+      ['A', 'B', 'C', 'D', 'E', 'F'].forEach(col => {
         const cell = worksheet.getCell(`${col}${currentRow}`);
         cell.font = { name: 'Times New Roman', size: 10 };
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
-        if (col === 'A' || col === 'C' || col === 'D' || col === 'E') {
-          cell.alignment = { vertical: 'middle', horizontal: 'center' };
-        } else {
+        cell.border = thinBorder;
+        if (col === 'B') {
           cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+        } else {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
         }
       });
       currentRow++;
@@ -1233,25 +1304,22 @@ const ProjectService = {
 
     // Add labor row if labor_fee > 0
     if (parseFloat(project.labor_fee || 0) > 0) {
+      worksheet.getRow(currentRow).height = 95;
       worksheet.getCell(`A${currentRow}`).value = projectItems.length + 1;
-      worksheet.getCell(`B${currentRow}`).value = 'Thi công chạy dây điện & hệ thống quang / System cabling & optical installation';
-      worksheet.getCell(`C${currentRow}`).value = 'Set / Gói';
+      worksheet.getCell(`B${currentRow}`).value = 'Thi công chạy dây điện & hệ thống quang\n- Put pipe to protect cable\n- Run fiber cable\n- Run electrical cable\n- Install rack\n- Terminate & weld fiber cable\n- Testing';
+      worksheet.getCell(`C${currentRow}`).value = 'Set';
       worksheet.getCell(`D${currentRow}`).value = 1;
       worksheet.getCell(`E${currentRow}`).value = '12 tháng';
+      worksheet.getCell(`F${currentRow}`).value = 'N/A';
 
-      ['A', 'B', 'C', 'D', 'E'].forEach(col => {
+      ['A', 'B', 'C', 'D', 'E', 'F'].forEach(col => {
         const cell = worksheet.getCell(`${col}${currentRow}`);
-        cell.font = { name: 'Times New Roman', size: 10, bold: true };
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
-        if (col === 'A' || col === 'C' || col === 'D' || col === 'E') {
-          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.font = { name: 'Times New Roman', size: 10 };
+        cell.border = thinBorder;
+        if (col === 'B') {
+          cell.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
         } else {
-          cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
         }
       });
       currentRow++;
@@ -1260,39 +1328,36 @@ const ProjectService = {
     currentRow++; // Empty row spacing
 
     // Exclusions
-    worksheet.getCell(`B${currentRow}`).value = 'Các trường hợp không được bảo hành / Warranty exclusions:';
-    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true, underline: true };
+    worksheet.getRow(currentRow).height = 90;
+    worksheet.mergeCells(`A${currentRow}:F${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = `Các trường hợp đồng không được bảo hành:\n- Các sản phẩm bị biến dạng cơ khí\n- Lỗi do sử dụng thao tác sai kỹ thuật, rơi vỡ, cháy nổ, hỏa hoạn, sự cố điện\n- Tem bảo hành của công ty hoặc của nhà cung cấp bị rách, sửa đổi, dán đè\n- Không có phiếu bảo hành hoặc Phiếu bảo hành bị sửa chữa, tẩy xóa\n- Các phụ kiện bị hao mòn trong quá trình sử dụng`;
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 9, italic: true };
+    worksheet.getCell(`A${currentRow}`).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
     currentRow++;
-
-    const exclusions = [
-      '- Các sản phẩm bị biến dạng cơ khí / Mechanically deformed products',
-      '- Lỗi do sử dụng thao tác sai kỹ thuật, rơi vỡ, cháy nổ, hỏa hoạn, sự cố điện / Misuse, drops, burns, fire, electrical issues',
-      '- Tem bảo hành của công ty hoặc của nhà cung cấp bị rách, sửa đổi, dán đè / Broken, altered, overwritten warranty stamps',
-      '- Không có phiếu bảo hành hoặc Phiếu bảo hành bị sửa chữa, tẩy xóa / Missing, repaired, erased warranty card',
-      '- Các phụ kiện bị hao mòn trong quá trình sử dụng / Accessories worn out during use'
-    ];
-
-    exclusions.forEach(ex => {
-      worksheet.getCell(`B${currentRow}`).value = ex;
-      worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 9 };
-      currentRow++;
-    });
 
     currentRow++; // Spacer
 
-    worksheet.getCell(`B${currentRow}`).value = 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau. / This Delivery Note & Warranty shall be made into 02 originals. Each Party keeps 01 original.';
-    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.mergeCells(`A${currentRow}:F${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = 'This Delivery Note & Warranty shall be made into 02 orginals. Each Party keeps 01 original.';
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
+    currentRow++;
+
+    worksheet.mergeCells(`A${currentRow}:F${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau.';
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
     currentRow += 2;
 
     // Signatures
-    worksheet.getCell(`B${currentRow}`).value = "Deliverier's Signature / Chữ ký người giao hàng";
-    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'center' };
+    worksheet.getRow(currentRow).height = 30;
+    worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = "Deliverier's Signature\nChữ ký người giao hàng";
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell(`A${currentRow}`).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 
-    worksheet.getCell(`D${currentRow}`).value = "Receiver's Signature / Chữ ký người nhận hàng";
+    worksheet.mergeCells(`D${currentRow}:F${currentRow}`);
+    worksheet.getCell(`D${currentRow}`).value = "Receiver's Signature\nChữ ký người nhận hàng";
     worksheet.getCell(`D${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell(`D${currentRow}`).alignment = { horizontal: 'center' };
-    worksheet.mergeCells(`D${currentRow}:E${currentRow}`);
+    worksheet.getCell(`D${currentRow}`).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 
     // Save to file
     const contractDir = path.join(__dirname, '../uploads/contracts');
@@ -1361,11 +1426,13 @@ const ProjectService = {
       throw error;
     }
 
-    // Fetch project materials/items
+    // Fetch project materials/items with supplier names
     const projectItems = await query(
-      `SELECT pi.*, m.name as material_name, m.sku as material_sku, m.unit as material_unit, m.price as material_price
+      `SELECT pi.*, m.name as material_name, m.sku as material_sku, m.unit as material_unit, m.price as material_price,
+              s.name as supplier_name
        FROM project_items pi
        LEFT JOIN materials m ON pi.material_id = m.id
+       LEFT JOIN suppliers s ON m.supplier_id = s.id
        WHERE pi.project_id = ?`,
       [projectId]
     );
@@ -1394,89 +1461,50 @@ const ProjectService = {
 
     worksheet.columns = [
       { key: 'stt', width: 6 },
-      { key: 'item', width: 35 },
+      { key: 'item', width: 40 },
       { key: 'unit', width: 10 },
       { key: 'qty', width: 8 },
       { key: 'price', width: 14 },
+      { key: 'subtotal', width: 16 },
+      { key: 'vat', width: 12 },
       { key: 'total', width: 16 },
-      { key: 'remark', width: 12 }
+      { key: 'warranty', width: 12 }
     ];
 
-    // Header info
-    worksheet.getCell('C1').value = 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD';
-    worksheet.getCell('C1').font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell('C2').value = 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢN CÔNG NGHỆ E-TECK';
-    worksheet.getCell('C2').font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell('C3').value = 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Duong, Hai Phong';
-    worksheet.getCell('C3').font = { name: 'Times New Roman', size: 9, italic: true };
-    worksheet.getCell('C4').value = 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496';
-    worksheet.getCell('C4').font = { name: 'Times New Roman', size: 9, italic: true };
-    worksheet.getCell('C5').value = 'Website: www.e-teck.vn                Email: admin@e-teck.vn';
-    worksheet.getCell('C5').font = { name: 'Times New Roman', size: 9, italic: true };
+    // Logo placeholder text styled beautifully in A1:B5
+    worksheet.mergeCells('A1:B5');
+    const logoCell = worksheet.getCell('A1');
+    logoCell.value = {
+      richText: [
+        { text: 'e-Teck\n', font: { name: 'Times New Roman', size: 18, bold: true, color: { argb: 'FF1F4E79' } } },
+        { text: 'Your Growth - Our Cloud', font: { name: 'Times New Roman', size: 8, italic: true, color: { argb: 'FFC00000' } } }
+      ]
+    };
+    logoCell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+
+    // Company info on the right (C1:I1 to C5:I5 merged and right-aligned)
+    const companyInfo = [
+      { cell: 'C1', text: 'E-TECK TECHNOLOGY INTEGRATION & TRAINING CO., LTD', font: { name: 'Times New Roman', size: 10, bold: true } },
+      { cell: 'C2', text: 'CÔNG TY TNHH ĐÀO TẠO VÀ TÍCH HỢP CÔNG NGHỆ E-TECK', font: { name: 'Times New Roman', size: 10, bold: true } },
+      { cell: 'C3', text: 'No. 24 Doan Ket lane, Thanh Toan residential area, An Dong, An Dong, Hai Phong', font: { name: 'Times New Roman', size: 9, italic: true } },
+      { cell: 'C4', text: 'Tax Code/MST: 0201873815         Tel: 84-225-3601-496', font: { name: 'Times New Roman', size: 9, italic: true } },
+      { cell: 'C5', text: 'Website: www.e-teck.vn                Email: admin@e-teck.vn', font: { name: 'Times New Roman', size: 9, italic: true } }
+    ];
+
+    companyInfo.forEach(info => {
+      const rowNum = info.cell.substring(1);
+      worksheet.mergeCells(`C${rowNum}:I${rowNum}`);
+      const cell = worksheet.getCell(`C${rowNum}`);
+      cell.value = info.text;
+      cell.font = info.font;
+      cell.alignment = { vertical: 'middle', horizontal: 'right' };
+    });
 
     // Title
-    worksheet.mergeCells('A7:G7');
-    const titleCell = worksheet.getCell('A7');
-    titleCell.value = 'ACCEPTANCE NOTE / BIÊN BẢN NGHIỆM THU';
-    titleCell.font = { name: 'Times New Roman', size: 14, bold: true };
-    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-    worksheet.getRow(7).height = 25;
-
-    // Customer & Document Info
-    worksheet.getCell('A10').value = 'Customer / Khách hàng:';
-    worksheet.getCell('A10').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B10').value = clientName;
-    worksheet.getCell('B10').font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell('F10').value = 'No / Số:';
-    worksheet.getCell('F10').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
-    worksheet.getCell('G10').value = `BB-NT-${projectId}`;
-    worksheet.getCell('G10').font = { name: 'Times New Roman', size: 10, bold: true };
-
-    worksheet.getCell('A11').value = 'Address / Địa chỉ:';
-    worksheet.getCell('A11').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B11').value = clientAddress;
-    worksheet.getCell('B11').font = { name: 'Times New Roman', size: 10 };
-    worksheet.getCell('F11').value = 'Date / Ngày:';
-    worksheet.getCell('F11').font = { name: 'Times New Roman', size: 10, italic: true, horizontal: 'right' };
-    worksheet.getCell('G11').value = `${day}/${month}/${year}`;
-    worksheet.getCell('G11').font = { name: 'Times New Roman', size: 10, bold: true };
-
-    worksheet.getCell('A12').value = 'Attn / Gửi tới:';
-    worksheet.getCell('A12').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B12').value = clientName;
-    worksheet.getCell('B12').font = { name: 'Times New Roman', size: 10 };
-
-    worksheet.getCell('A13').value = 'Tel No. / Số điện thoại:';
-    worksheet.getCell('A13').font = { name: 'Times New Roman', size: 10, italic: true };
-    worksheet.getCell('B13').value = clientPhone;
-    worksheet.getCell('B13').font = { name: 'Times New Roman', size: 10 };
-
-    // Intro
-    worksheet.mergeCells('A15:G15');
-    const introCell = worksheet.getCell('A15');
-    introCell.value = `Hôm nay, ngày ${day} tháng ${month} năm ${year}, tại trụ sở CÔNG TY......................................................................................; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:`;
-    introCell.font = { name: 'Times New Roman', size: 10 };
-    introCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-    worksheet.getRow(15).height = 30;
-
-    // Table Headers
-    const headers = [
-      'No.\nSTT',
-      'Items\nDanh mục hàng hóa & dịch vụ',
-      'Unit\nĐơn Vị',
-      'Qty\nSL',
-      'Unit Price\nĐơn Giá',
-      'Sub Total\nThành Tiền',
-      'Warranty\nBảo Hành'
-    ];
-    worksheet.getRow(17).height = 30;
-    headers.forEach((h, idx) => {
-      const col = String.fromCharCode(65 + idx); // A, B, C, D, E, F, G
-      const cell = worksheet.getCell(`${col}17`);
-      cell.value = h;
-      cell.font = { name: 'Times New Roman', size: 10, bold: true };
-      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
+    worksheet.mergeCells('A7:I7');
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
+      const cell = worksheet.getCell(`${col}7`);
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF9BC2E6' } };
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
@@ -1484,67 +1512,280 @@ const ProjectService = {
         right: { style: 'thin' }
       };
     });
+    const titleCell = worksheet.getCell('A7');
+    titleCell.value = 'ACCEPTANCE NOTE / BIÊN BẢN NGHIỆM THU';
+    titleCell.font = { name: 'Times New Roman', size: 14, bold: true };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.getRow(7).height = 35;
 
-    let totalContractValue = 0;
-    let currentRow = 18;
-    projectItems.forEach((item, index) => {
-      const unitPrice = parseFloat(item.material_price || 0) * (1 + parseInt(item.markup || 10) / 100);
-      const amount = unitPrice * parseInt(item.quantity || 1);
-      totalContractValue += amount;
+    // Customer & Document Info
+    // Row 10
+    worksheet.getRow(10).height = 18;
+    worksheet.mergeCells('A10:F10');
+    worksheet.getCell('A10').value = {
+      richText: [
+        { text: 'Customer / Khách hàng: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientName, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A10').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
 
-      worksheet.getCell(`A${currentRow}`).value = index + 1;
-      worksheet.getCell(`B${currentRow}`).value = item.material_name;
-      worksheet.getCell(`C${currentRow}`).value = item.material_unit;
-      worksheet.getCell(`D${currentRow}`).value = item.quantity;
-      worksheet.getCell(`E${currentRow}`).value = unitPrice;
-      worksheet.getCell(`F${currentRow}`).value = amount;
-      worksheet.getCell(`G${currentRow}`).value = '12 tháng';
+    worksheet.mergeCells('G10:I10');
+    worksheet.getCell('G10').value = {
+      richText: [
+        { text: 'No / Số: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: `BB-NT-${projectId}`, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('G10').alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
 
-      ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(col => {
+    // Row 11
+    worksheet.getRow(11).height = 18;
+    worksheet.mergeCells('A11:F11');
+    worksheet.getCell('A11').value = {
+      richText: [
+        { text: 'Address / Địa chỉ: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientAddress, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A11').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    worksheet.mergeCells('G11:I11');
+    worksheet.getCell('G11').value = {
+      richText: [
+        { text: 'Date / Ngày: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: `${day}/${month}/${year}`, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('G11').alignment = { vertical: 'middle', horizontal: 'right', wrapText: true };
+
+    // Row 12
+    worksheet.getRow(12).height = 18;
+    worksheet.mergeCells('A12:F12');
+    worksheet.getCell('A12').value = {
+      richText: [
+        { text: 'Attn / Gửi tới: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientName, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A12').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    // Row 13
+    worksheet.getRow(13).height = 18;
+    worksheet.mergeCells('A13:F13');
+    worksheet.getCell('A13').value = {
+      richText: [
+        { text: 'Tel No. / Số điện thoại: ', font: { name: 'Times New Roman', size: 10, bold: true } },
+        { text: clientPhone, font: { name: 'Times New Roman', size: 10 } }
+      ]
+    };
+    worksheet.getCell('A13').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    // Intro
+    worksheet.mergeCells('A15:I15');
+    const introCell = worksheet.getCell('A15');
+    introCell.value = `Hôm nay, ngày ${day} tháng ${month} năm ${year}, tại trụ sở CÔNG TY......................................................................................; chúng tôi tiến hành bàn giao nghiệm thu hàng hóa và dịch vụ dưới đây:`;
+    introCell.font = { name: 'Times New Roman', size: 10 };
+    introCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+    worksheet.getRow(15).height = 30;
+
+    const thinBorder = {
+      top: { style: 'thin', color: { argb: 'FF000000' } },
+      left: { style: 'thin', color: { argb: 'FF000000' } },
+      bottom: { style: 'thin', color: { argb: 'FF000000' } },
+      right: { style: 'thin', color: { argb: 'FF000000' } }
+    };
+
+    // Table Headers
+    // Row 17 (English)
+    worksheet.getCell('A17').value = 'No.';
+    worksheet.getCell('B17').value = 'Items';
+    worksheet.getCell('C17').value = 'Unit';
+    worksheet.getCell('D17').value = 'Qty';
+    worksheet.getCell('E17').value = 'Unit Price';
+    worksheet.getCell('F17').value = 'Sub Total';
+    worksheet.getCell('G17').value = 'VAT (10%)';
+    worksheet.getCell('H17').value = 'Total Price';
+    worksheet.getCell('I17').value = 'Warranty';
+
+    // Row 18 (Vietnamese)
+    worksheet.getCell('A18').value = 'STT';
+    worksheet.getCell('B18').value = 'Danh mục hàng hóa & dịch vụ';
+    worksheet.getCell('C18').value = 'Đơn Vị';
+    worksheet.getCell('D18').value = 'SL';
+    worksheet.getCell('E18').value = 'Đơn Giá';
+    worksheet.getCell('F18').value = 'Tổng Cộng';
+    worksheet.getCell('G18').value = '';
+    worksheet.getCell('H18').value = 'Tổng Tiền';
+    worksheet.getCell('I18').value = 'Bảo Hành';
+
+    const headerRows = [17, 18];
+    headerRows.forEach(rowNum => {
+      worksheet.getRow(rowNum).height = 20;
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
+        const cell = worksheet.getCell(`${col}${rowNum}`);
+        cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFBDD7EE' } };
+        cell.border = thinBorder;
+      });
+    });
+
+    // Group items by Supplier Name
+    const groupedItems = {};
+    projectItems.forEach(item => {
+      const supplierName = item.supplier_name || 'Khác / Hạng mục chung';
+      if (!groupedItems[supplierName]) {
+        groupedItems[supplierName] = [];
+      }
+      groupedItems[supplierName].push(item);
+    });
+
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+    let currentRow = 19;
+    let sectionIdx = 0;
+
+    let grandSubTotal = 0;
+    let grandVatTotal = 0;
+    let grandTotalPrice = 0;
+
+    // Loop through groups
+    for (const [supplierName, items] of Object.entries(groupedItems)) {
+      const roman = romanNumerals[sectionIdx] || String(sectionIdx + 1);
+      
+      // Calculate section total first
+      let sectionTotal = 0;
+      items.forEach(item => {
+        const unitPrice = parseFloat(item.material_price || 0) * (1 + parseInt(item.markup || 10) / 100);
+        const subTotal = unitPrice * parseInt(item.quantity || 1);
+        const vat = Math.round(subTotal * 0.1);
+        const total = subTotal + vat;
+        sectionTotal += total;
+      });
+
+      // Section Header Row
+      worksheet.getRow(currentRow).height = 22;
+      worksheet.getCell(`A${currentRow}`).value = roman;
+      worksheet.getCell(`B${currentRow}`).value = supplierName; // Removed "Hạng mục: " prefix
+      worksheet.getCell(`H${currentRow}`).value = sectionTotal;
+
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
         const cell = worksheet.getCell(`${col}${currentRow}`);
-        cell.font = { name: 'Times New Roman', size: 10 };
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
-        if (col === 'E' || col === 'F') {
-          cell.numFmt = '#,##0"đ"';
+        cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        cell.border = thinBorder;
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2EFDA' } }; // Soft light green
+        if (col === 'H') {
+          cell.numFmt = '#,##0';
           cell.alignment = { vertical: 'middle', horizontal: 'right' };
         } else if (col === 'B') {
-          cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+          cell.alignment = { vertical: 'middle', horizontal: 'left' };
+        } else {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        }
+      });
+      
+      currentRow++;
+      const firstItemRow = currentRow;
+
+      // Section Items
+      items.forEach((item, itemIdx) => {
+        const unitPrice = parseFloat(item.material_price || 0) * (1 + parseInt(item.markup || 10) / 100);
+        const subTotal = unitPrice * parseInt(item.quantity || 1);
+        const vat = Math.round(subTotal * 0.1);
+        const total = subTotal + vat;
+
+        grandSubTotal += subTotal;
+        grandVatTotal += vat;
+        grandTotalPrice += total;
+
+        worksheet.getRow(currentRow).height = 22;
+        worksheet.getCell(`A${currentRow}`).value = `${sectionIdx + 1}-${itemIdx + 1}`;
+        worksheet.getCell(`B${currentRow}`).value = item.material_name;
+        worksheet.getCell(`C${currentRow}`).value = item.material_unit;
+        worksheet.getCell(`D${currentRow}`).value = item.quantity;
+        worksheet.getCell(`E${currentRow}`).value = unitPrice;
+        worksheet.getCell(`F${currentRow}`).value = subTotal;
+        worksheet.getCell(`G${currentRow}`).value = vat;
+        worksheet.getCell(`H${currentRow}`).value = total;
+
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
+          const cell = worksheet.getCell(`${col}${currentRow}`);
+          cell.font = { name: 'Times New Roman', size: 10 };
+          cell.border = thinBorder;
+          if (col === 'E' || col === 'F' || col === 'G' || col === 'H') {
+            cell.numFmt = '#,##0';
+            cell.alignment = { vertical: 'middle', horizontal: 'right' };
+          } else if (col === 'B') {
+            cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+          } else {
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          }
+        });
+        currentRow++;
+      });
+
+      const lastItemRow = currentRow - 1;
+
+      // Merge Warranty cells vertically next to items of this section
+      worksheet.mergeCells(`I${firstItemRow}:I${lastItemRow}`);
+      const warrantyCell = worksheet.getCell(`I${firstItemRow}`);
+      warrantyCell.value = '12 tháng';
+      warrantyCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+      sectionIdx++;
+    }
+
+    // Add labor fee section if labor_fee > 0
+    const laborFee = parseFloat(project.labor_fee || 0);
+    if (laborFee > 0) {
+      const roman = romanNumerals[sectionIdx] || String(sectionIdx + 1);
+      const vat = Math.round(laborFee * 0.1);
+      const total = laborFee + vat;
+
+      grandSubTotal += laborFee;
+      grandVatTotal += vat;
+      grandTotalPrice += total;
+
+      // Labor Section Header
+      worksheet.getRow(currentRow).height = 22;
+      worksheet.getCell(`A${currentRow}`).value = roman;
+      worksheet.getCell(`B${currentRow}`).value = 'Dịch vụ & Nhân công (e-Teck)';
+      worksheet.getCell(`H${currentRow}`).value = total;
+
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
+        const cell = worksheet.getCell(`${col}${currentRow}`);
+        cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        cell.border = thinBorder;
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2EFDA' } };
+        if (col === 'H') {
+          cell.numFmt = '#,##0';
+          cell.alignment = { vertical: 'middle', horizontal: 'right' };
+        } else if (col === 'B') {
+          cell.alignment = { vertical: 'middle', horizontal: 'left' };
         } else {
           cell.alignment = { vertical: 'middle', horizontal: 'center' };
         }
       });
       currentRow++;
-    });
 
-    // Add labor row if labor_fee > 0
-    const laborFee = parseFloat(project.labor_fee || 0);
-    if (laborFee > 0) {
-      totalContractValue += laborFee;
-
-      worksheet.getCell(`A${currentRow}`).value = projectItems.length + 1;
+      // Labor Item
+      worksheet.getRow(currentRow).height = 22;
+      worksheet.getCell(`A${currentRow}`).value = `${sectionIdx + 1}-1`;
       worksheet.getCell(`B${currentRow}`).value = 'Thi công chạy dây điện & hệ thống quang / System cabling & optical installation';
-      worksheet.getCell(`C${currentRow}`).value = 'Set / Gói';
+      worksheet.getCell(`C${currentRow}`).value = 'Gói';
       worksheet.getCell(`D${currentRow}`).value = 1;
       worksheet.getCell(`E${currentRow}`).value = laborFee;
       worksheet.getCell(`F${currentRow}`).value = laborFee;
-      worksheet.getCell(`G${currentRow}`).value = '12 tháng';
+      worksheet.getCell(`G${currentRow}`).value = vat;
+      worksheet.getCell(`H${currentRow}`).value = total;
+      worksheet.getCell(`I${currentRow}`).value = '12 tháng';
 
-      ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(col => {
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
         const cell = worksheet.getCell(`${col}${currentRow}`);
-        cell.font = { name: 'Times New Roman', size: 10, bold: true };
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
-        if (col === 'E' || col === 'F') {
-          cell.numFmt = '#,##0"đ"';
+        cell.font = { name: 'Times New Roman', size: 10 };
+        cell.border = thinBorder;
+        if (col === 'E' || col === 'F' || col === 'G' || col === 'H') {
+          cell.numFmt = '#,##0';
           cell.alignment = { vertical: 'middle', horizontal: 'right' };
         } else if (col === 'B') {
           cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
@@ -1553,76 +1794,65 @@ const ProjectService = {
         }
       });
       currentRow++;
+      sectionIdx++;
     }
 
     // Grand total row
+    worksheet.getRow(currentRow).height = 25;
     worksheet.mergeCells(`A${currentRow}:E${currentRow}`);
-    worksheet.getCell(`A${currentRow}`).value = 'Grand Total Price / Tổng tiền thanh toán (VND):';
-    worksheet.getCell(`A${currentRow}`).alignment = { horizontal: 'right', vertical: 'middle' };
+    worksheet.getCell(`A${currentRow}`).value = 'Grand Total Price / Tổng tiền thanh toán (VND)';
+    worksheet.getCell(`A${currentRow}`).alignment = { horizontal: 'center', vertical: 'middle' };
     worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell(`A${currentRow}`).border = {
-      top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
-    };
 
-    worksheet.getCell(`F${currentRow}`).value = totalContractValue;
-    worksheet.getCell(`F${currentRow}`).numFmt = '#,##0"đ"';
-    worksheet.getCell(`F${currentRow}`).alignment = { horizontal: 'right', vertical: 'middle' };
-    worksheet.getCell(`F${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true, color: { argb: 'FF1D4ED8' } };
-    worksheet.getCell(`F${currentRow}`).border = {
-      top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
-    };
+    worksheet.getCell(`F${currentRow}`).value = grandSubTotal;
+    worksheet.getCell(`G${currentRow}`).value = grandVatTotal;
+    worksheet.getCell(`H${currentRow}`).value = grandTotalPrice;
 
-    worksheet.getCell(`G${currentRow}`).border = {
-      top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
-    };
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
+      const cell = worksheet.getCell(`${col}${currentRow}`);
+      cell.border = thinBorder;
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFBDD7EE' } }; // Fill blue for all cells in Grand Total row
+      if (col === 'F' || col === 'G' || col === 'H') {
+        cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        cell.numFmt = '#,##0';
+        cell.alignment = { vertical: 'middle', horizontal: 'right' };
+      }
+    });
     currentRow++;
 
     currentRow++; // spacing
 
     // Evaluation notes
-    const notes = [
-      '* Về khối lượng / Quantity:',
-      '  - Đầy đủ chủng loại / Full varieties',
-      '  - Đúng chủng loại / Correct varieties',
-      '',
-      '* Về chất lượng thiết bị, vật tư / Equipment & Material Quality:',
-      '  - Đạt yêu cầu / Meets requirements',
-      '',
-      '* Về lắp đặt thiết bị, vật tư / Installation:',
-      '  - Đạt yêu cầu / Meets requirements',
-      '',
-      '* Cài đặt, đưa thiết bị vào hoạt động / Commissioning:',
-      '  - Thiết bị hoạt động bình thường / Equipment operates normally',
-      '',
-      '* Kết luận / Conclusion:',
-      '  - Chấp nhận nghiệm thu sản phẩm để sử dụng / Accept products for use.'
-    ];
-
-    notes.forEach(note => {
-      worksheet.getCell(`B${currentRow}`).value = note;
-      worksheet.getCell(`B${currentRow}`).font = {
-        name: 'Times New Roman',
-        size: 10,
-        bold: note.startsWith('*')
-      };
-      currentRow++;
-    });
+    worksheet.getRow(currentRow).height = 180;
+    worksheet.mergeCells(`A${currentRow}:I${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = `* Về khối lượng:\n- Đầy đủ chủng loại\n- Đúng chủng loại\n\n* Về chất lượng thiết bị, vật tư:\n- Đạt yêu cầu\n\n* Về lắp đặt thiết bị, vật tư:\n- Đạt yêu cầu\n\n* Cài đặt, đưa thiết bị vào hoạt động:\n- Thiết bị hoạt động bình thường\n\n* Kết luận:\n- Chấp nhận nghiệm thu sản phẩm để sử dụng.`;
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 9 };
+    worksheet.getCell(`A${currentRow}`).alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
+    currentRow++;
 
     currentRow++; // spacer
 
-    worksheet.getCell(`B${currentRow}`).value = 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau. / This Acceptance Note shall be made into 02 originals. Each Party keeps 01 original.';
-    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
+    worksheet.mergeCells(`A${currentRow}:I${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = 'This Acceptance Note shall be made into 02 orginals. Each Party keeps 01 original.';
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
+    currentRow++;
+
+    worksheet.mergeCells(`A${currentRow}:I${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = 'Biên bản này được lập thành 02 bản, mỗi bên giữ 01 bản có giá trị như nhau.';
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, italic: true };
     currentRow += 2;
 
     // Signatures
-    worksheet.getCell(`B${currentRow}`).value = "Deliverier's Signature / Chữ ký người giao hàng";
-    worksheet.getCell(`B${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'center' };
+    worksheet.getRow(currentRow).height = 30;
+    worksheet.mergeCells(`A${currentRow}:D${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = "Deliverier's Signature\nChữ ký người giao hàng";
+    worksheet.getCell(`A${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
+    worksheet.getCell(`A${currentRow}`).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 
-    worksheet.getCell(`F${currentRow}`).value = "Receiver's Signature / Chữ ký người nhận hàng";
+    worksheet.mergeCells(`F${currentRow}:I${currentRow}`);
+    worksheet.getCell(`F${currentRow}`).value = "Receiver's Signature\nChữ ký người nhận hàng";
     worksheet.getCell(`F${currentRow}`).font = { name: 'Times New Roman', size: 10, bold: true };
-    worksheet.getCell(`F${currentRow}`).alignment = { horizontal: 'center' };
-    worksheet.mergeCells(`F${currentRow}:G${currentRow}`);
+    worksheet.getCell(`F${currentRow}`).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 
     // Save to file
     const contractDir = path.join(__dirname, '../uploads/contracts');

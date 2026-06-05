@@ -27,7 +27,6 @@ export function renderVattu() {
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6 relative z-20 animate-fadeInUp">
             <div class="flex flex-wrap gap-3 items-center">
                 <div class="flex-1 min-w-[260px] relative group">
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-500 transition-colors"></i>
@@ -38,7 +37,7 @@ export function renderVattu() {
                 <div class="relative">
                     <select id="filterSupplier" onchange="window.fetchMaterials('staff')" 
                             class="appearance-none px-4 py-3 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 text-sm font-medium cursor-pointer min-w-[170px] hover:border-gray-300 transition-all">
-                        <option value="">Tất cả NCC</option>
+                        <option value="">Tất cả nhà cung cấp</option>
                     </select>
                     <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
                 </div>
@@ -64,7 +63,6 @@ export function renderVattu() {
                     <i class="fas fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
                 </div>
             </div>
-        </div>
 
         <!-- Material Cards Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5" id="materialCards"></div>
