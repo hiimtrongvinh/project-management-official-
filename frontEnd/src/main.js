@@ -418,14 +418,135 @@ window.previewDocument = async function (filePath, fileName) {
                 const workbook = XLSX.read(data, { type: 'array' });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const htmlTable = XLSX.utils.sheet_to_html(worksheet);
+                
+                // Parse and inject beautiful layout styles dynamically
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlTable, 'text/html');
+                const rows = doc.querySelectorAll('tr');
+                const isAcceptance = fileName.toLowerCase().includes('nghiệm thu') || fileName.toLowerCase().includes('-nt-');
+                
+                let inTable = false;
+                let tableEnded = false;
+                
+                rows.forEach((row, rowIndex) => {
+                    if (rowIndex === 16) inTable = true;
+                    
+                    const rowText = row.textContent || '';
+                    if (inTable) {
+                        if (isAcceptance) {
+                            if (rowText.includes('Grand Total') || rowText.includes('Tổng tiền thanh toán')) {
+                                tableEnded = true;
+                            }
+                        } else {
+                            if (rowText.includes('Các trường hợp') || rowText.includes('không được bảo hành')) {
+                                tableEnded = true;
+                                inTable = false;
+                            }
+                        }
+                    }
+                    
+                    const cells = row.querySelectorAll('td, th');
+                    cells.forEach((cell, colIndex) => {
+                        cell.style.fontFamily = "'Times New Roman', serif";
+                        
+                        if (inTable && !tableEnded) {
+                            cell.style.border = "1px solid #e5e7eb";
+                            cell.style.padding = "6px 10px";
+                            
+                            if (isAcceptance) {
+                                if ([0, 2, 3, 8].includes(colIndex)) {
+                                    cell.style.textAlign = "center";
+                                } else if ([4, 5, 6, 7].includes(colIndex)) {
+                                    cell.style.textAlign = "right";
+                                } else {
+                                    cell.style.textAlign = "left";
+                                }
+                            } else {
+                                if ([0, 2, 3, 4, 5].includes(colIndex)) {
+                                    cell.style.textAlign = "center";
+                                } else {
+                                    cell.style.textAlign = "left";
+                                }
+                            }
+                            
+                            if (rowIndex === 16 || rowIndex === 17) {
+                                cell.style.backgroundColor = "#BDD7EE";
+                                cell.style.fontWeight = "bold";
+                                cell.style.textAlign = "center";
+                            }
+                            
+                            if (isAcceptance && rowIndex >= 18) {
+                                const firstCellText = row.querySelector('td')?.textContent?.trim() || '';
+                                if (/^[IVXLCDM]+$/.test(firstCellText)) {
+                                    cell.style.backgroundColor = "#E2EFDA";
+                                    cell.style.fontWeight = "bold";
+                                }
+                            }
+                        } else if (tableEnded) {
+                            if (isAcceptance && (rowText.includes('Grand Total') || rowText.includes('Tổng tiền thanh toán'))) {
+                                cell.style.border = "1px solid #e5e7eb";
+                                cell.style.padding = "6px 10px";
+                                cell.style.backgroundColor = "#BDD7EE";
+                                cell.style.fontWeight = "bold";
+                                if ([5, 6, 7].includes(colIndex)) {
+                                    cell.style.textAlign = "right";
+                                } else {
+                                    cell.style.textAlign = "center";
+                                }
+                            } else {
+                                cell.style.border = "none";
+                                cell.style.padding = "4px 0px";
+                            }
+                            if (colIndex === cells.length - 1) {
+                                tableEnded = false;
+                                inTable = false;
+                            }
+                        } else {
+                            cell.style.border = "none";
+                            cell.style.padding = "4px 0px";
+                            
+                            if (rowIndex === 6) {
+                                cell.style.backgroundColor = "#9BC2E6";
+                                cell.style.fontWeight = "bold";
+                                cell.style.textAlign = "center";
+                                cell.style.fontSize = "14px";
+                                cell.style.padding = "10px";
+                                cell.style.border = "1px solid #9BC2E6";
+                            }
+                            
+                            if (rowIndex >= 0 && rowIndex <= 4) {
+                                if (colIndex >= 2) {
+                                    cell.style.textAlign = "right";
+                                    if (rowIndex <= 1) {
+                                        cell.style.fontWeight = "bold";
+                                    } else {
+                                        cell.style.fontStyle = "italic";
+                                        cell.style.fontSize = "9px";
+                                    }
+                                }
+                                if (colIndex < 2) {
+                                    cell.style.textAlign = "center";
+                                    cell.style.verticalAlign = "middle";
+                                }
+                            }
+                            
+                            if (rowIndex >= 9 && rowIndex <= 12) {
+                                const rightColIndex = isAcceptance ? 6 : 4;
+                                if (colIndex >= rightColIndex) {
+                                    cell.style.textAlign = "right";
+                                }
+                            }
+                        }
+                    });
+                });
+                
                 bodyContainer.innerHTML = `
-                    <div class="overflow-x-auto bg-white border border-gray-200 rounded-xl p-4 shadow-sm text-xs font-sans text-gray-700">
+                    <div class="overflow-x-auto bg-white border border-gray-200 rounded-xl p-6 shadow-sm text-xs text-gray-700">
                         <style>
-                            table { border-collapse: collapse; width: 100%; }
-                            th, td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; }
-                            tr:nth-child(even) { background-color: #f9fafb; }
+                            table { border-collapse: collapse; width: 100%; margin: 0 auto; }
+                            td, th { white-space: pre-line; }
                         </style>
-                        ${htmlTable}
+                        ${doc.body.innerHTML}
                     </div>`;
             };
             reader.readAsArrayBuffer(blob);
