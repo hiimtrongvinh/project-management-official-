@@ -1113,6 +1113,9 @@ const ProjectService = {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Bien ban ban giao');
 
+    // Hide grid lines for clean PDF-like appearance
+    worksheet.views = [{ showGridLines: false }];
+
     worksheet.pageSetup.orientation = 'portrait';
     worksheet.pageSetup.paperSize = 9; // A4
 
@@ -1128,12 +1131,8 @@ const ProjectService = {
     // Logo placeholder text styled beautifully in A1:B5
     worksheet.mergeCells('A1:B5');
     const logoCell = worksheet.getCell('A1');
-    logoCell.value = {
-      richText: [
-        { text: 'e-Teck\n', font: { name: 'Times New Roman', size: 18, bold: true, color: { argb: 'FF1F4E79' } } },
-        { text: 'Your Growth - Our Cloud', font: { name: 'Times New Roman', size: 8, italic: true, color: { argb: 'FFC00000' } } }
-      ]
-    };
+    logoCell.value = 'e-Teck\nYour Growth - Our Cloud';
+    logoCell.font = { name: 'Times New Roman', size: 14, bold: true, color: { argb: 'FF1F4E79' } };
     logoCell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 
     // Company info on the right (C1:F1 to C5:F5 merged and right-aligned)
@@ -1456,6 +1455,9 @@ const ProjectService = {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Bien ban nghiem thu');
 
+    // Hide grid lines for clean PDF-like appearance
+    worksheet.views = [{ showGridLines: false }];
+
     worksheet.pageSetup.orientation = 'portrait';
     worksheet.pageSetup.paperSize = 9; // A4
 
@@ -1474,12 +1476,8 @@ const ProjectService = {
     // Logo placeholder text styled beautifully in A1:B5
     worksheet.mergeCells('A1:B5');
     const logoCell = worksheet.getCell('A1');
-    logoCell.value = {
-      richText: [
-        { text: 'e-Teck\n', font: { name: 'Times New Roman', size: 18, bold: true, color: { argb: 'FF1F4E79' } } },
-        { text: 'Your Growth - Our Cloud', font: { name: 'Times New Roman', size: 8, italic: true, color: { argb: 'FFC00000' } } }
-      ]
-    };
+    logoCell.value = 'e-Teck\nYour Growth - Our Cloud';
+    logoCell.font = { name: 'Times New Roman', size: 14, bold: true, color: { argb: 'FF1F4E79' } };
     logoCell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 
     // Company info on the right (C1:I1 to C5:I5 merged and right-aligned)
