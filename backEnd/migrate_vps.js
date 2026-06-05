@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { query } = require('./config/database');
 const ProjectService = require('./services/project.service');
 
