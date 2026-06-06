@@ -300,6 +300,21 @@ const TaskService = {
     });
 
     await TaskModel.update(id, allowed);
+
+    // Gửi thông báo cho staff được giao công việc nếu có sự thay đổi hoặc gán mới người phụ trách
+    if (data.assignee_id && data.assignee_id !== task.assignee_id) {
+      const assigneeAccountId = await getAccountIdByStaffId(data.assignee_id);
+      if (assigneeAccountId) {
+        notify([assigneeAccountId], {
+          type: 'task_assigned',
+          title: 'Bạn được giao công việc mới',
+          message: `Công việc "${data.title || task.title}" trong dự án ${task.project_id}.`,
+          related_type: 'task',
+          related_id: String(id)
+        });
+      }
+    }
+
     return TaskModel.findById(id);
   },
 

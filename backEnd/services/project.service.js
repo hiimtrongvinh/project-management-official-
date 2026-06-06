@@ -1,7 +1,7 @@
 const ProjectModel = require('../models/project.model');
 const { generateProjectId } = require('../utils/helpers');
 const { query } = require('../config/database');
-const { getAccountIdByClientId, getProjectMemberAccountIds, getProjectClientAccountId, getAdminAccountIds, notify } = require('../utils/notificationHelpers');
+const { getAccountIdByClientId, getProjectMemberAccountIds, getProjectClientAccountId, getAdminAccountIds, getAccountIdByStaffId, notify } = require('../utils/notificationHelpers');
 
 /**
  * Step status labels mapping
@@ -279,6 +279,18 @@ const ProjectService = {
     }
 
     await ProjectModel.addMember(projectId, staffId, role);
+
+    // Gửi thông báo cho staff khi được thêm vào dự án
+    const staffAccountId = await getAccountIdByStaffId(staffId);
+    if (staffAccountId) {
+      notify([staffAccountId], {
+        type: 'project_created',
+        title: 'Bạn đã được thêm vào dự án mới',
+        message: `Bạn được chỉ định làm thành viên dự án "${project.title}" với vai trò: ${role || 'Thành viên'}.`,
+        related_type: 'project',
+        related_id: projectId
+      });
+    }
 
     return ProjectModel.getMembers(projectId);
   },
