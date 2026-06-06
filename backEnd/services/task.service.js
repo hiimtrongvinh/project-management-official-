@@ -24,6 +24,10 @@ const TaskService = {
     return TaskModel.findByAssigneeId(staff.id);
   },
 
+  async getTaskById(id) {
+    return TaskModel.findById(id);
+  },
+
   async submitTask(id, submitData) {
     console.log('TaskService.submitTask called. id =', id, 'submitData =', JSON.stringify(submitData));
     const task = await TaskModel.findById(id);

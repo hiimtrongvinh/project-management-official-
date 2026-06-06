@@ -172,9 +172,57 @@ export function renderOrderCards(orders = []) {
     }).join('');
 }
 
-window.openOrderDetail = function (id) {
-    if (!window.cachedOrders) return;
-    const o = window.cachedOrders.find(item => item.id === id);
+window.openOrderDetail = async function (id) {
+    let o = null;
+    if (window.cachedOrders) {
+        o = window.cachedOrders.find(item => item.id === id);
+    }
+    
+    if (!o) {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`/api/orders/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success && result.data) {
+                const dbOrder = result.data;
+                const dateObj = new Date(dbOrder.expected_date || dbOrder.created_at);
+                const expectedDate = isNaN(dateObj.getTime()) ? '---' : dateObj.toLocaleDateString('vi-VN');
+                const items = (dbOrder.items || []).map(item => ({
+                    name: item.material_name || item.name || 'Vật tư',
+                    sku: item.material_sku || item.sku || 'SKU-NONE',
+                    qty: item.quantity || 0,
+                    price: parseFloat(item.material_price || item.price || 0),
+                    unit: item.material_unit || item.unit || 'Cái'
+                }));
+                const calculatedTotal = items.reduce((sum, item) => sum + (item.qty * item.price), 0);
+                o = {
+                    id: dbOrder.id,
+                    dbId: dbOrder.id,
+                    projectName: dbOrder.project_title || 'Dự án chưa rõ',
+                    totalAmount: calculatedTotal,
+                    expectedDate: expectedDate,
+                    expectedDateRaw: dbOrder.expected_date,
+                    status: dbOrder.status || 'Mới',
+                    address: dbOrder.address || 'Kho tổng e-Teck, Hải Phòng',
+                    receiver: dbOrder.receiver_name || 'Phòng Vật tư e-Teck',
+                    supplierName: dbOrder.supplier_name || 'Nhà cung cấp',
+                    note: dbOrder.note || '',
+                    items: items
+                };
+                window.cachedOrders = window.cachedOrders || [];
+                if (!window.cachedOrders.some(item => item.id === id)) {
+                    window.cachedOrders.push(o);
+                }
+            }
+        } catch (e) {
+            console.error('Lỗi khi tải chi tiết đơn hàng ngoài cache:', e);
+            window.showToast('❌ Không thể tải thông tin đơn hàng!', 'error');
+            return;
+        }
+    }
+    
     if (!o) return;
 
     let actionHeaderHtml = '';

@@ -44,6 +44,35 @@ const TaskController = {
   },
 
   /**
+   * GET /api/tasks/:id
+   * Get a single task by ID.
+   */
+  async getTaskById(req, res, next) {
+    try {
+      const taskId = parseInt(req.params.id, 10);
+      const task = await TaskService.getTaskById(taskId);
+      if (!task) {
+        return res.status(404).json({
+          success: false,
+          error: { message: 'Task not found' }
+        });
+      }
+      res.json({
+        success: true,
+        data: task
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
    * POST /api/tasks/:id/submit
    * Submit work report/deliverables for a task.
    */

@@ -44,6 +44,35 @@ const OrderController = {
   },
 
   /**
+   * GET /api/orders/:id
+   * Get a single order by ID.
+   */
+  async getOrderById(req, res, next) {
+    try {
+      const { id } = req.params;
+      const order = await OrderService.getOrderById(id);
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          error: { message: 'Order not found' }
+        });
+      }
+      res.json({
+        success: true,
+        data: order
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
    * POST /api/orders
    * Create a new purchase order.
    */

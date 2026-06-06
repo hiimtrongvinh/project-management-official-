@@ -115,6 +115,10 @@ const OrderService = {
     return OrderModel.findByAccountId(accountId, role);
   },
 
+  async getOrderById(id) {
+    return OrderModel.findById(id);
+  },
+
   /**
    * Update quantity and markup of a project item.
    * @param {number} id

@@ -9,6 +9,7 @@ router.use(authenticate);
 
 router.get('/my-tasks', TaskController.getMyTasks);
 router.get('/project/:projectId', TaskController.getTasksByProject);
+router.get('/:id', TaskController.getTaskById);
 router.post('/', TaskController.createTask);
 router.post('/:id/submit', upload.array('file', 10), TaskController.submitTask);
 router.post('/:id/review', TaskController.reviewTask);

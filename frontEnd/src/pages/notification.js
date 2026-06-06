@@ -310,7 +310,30 @@ window.changeNotiFilter = function (filter) {
   renderPageNotifications();
 };
 
+function getRelatedTypeFromNotiType(notiType) {
+  if (!notiType) return '';
+  const typeLower = notiType.toLowerCase();
+  if (typeLower.startsWith('task_') || ['revision_requested', 'deadline_reminder', 'deadline_warning', 'task_overdue'].includes(typeLower)) {
+    return 'task';
+  }
+  if (typeLower.startsWith('project_') || typeLower.startsWith('client_') || typeLower === 'project_deadline') {
+    return 'project';
+  }
+  if (typeLower.startsWith('quotation_') || typeLower.startsWith('order_') || typeLower === 'order_received') {
+    return 'order';
+  }
+  return '';
+}
+
 window.handlePageNotiClick = async function (notiId, relatedType, relatedId) {
+  // Tìm thông báo trong cache để suy diễn relatedType nếu đối số truyền vào bị trống
+  let finalRelatedType = relatedType;
+  const noti = cachedNotifications.find(n => n.id === notiId);
+  if (!finalRelatedType && noti) {
+    finalRelatedType = getRelatedTypeFromNotiType(noti.type);
+  }
+  const finalRelatedId = relatedId || (noti ? noti.related_id : '');
+
   try {
     const token = localStorage.getItem('token');
     await fetch(`/api/notifications/${notiId}/read`, {
@@ -323,10 +346,99 @@ window.handlePageNotiClick = async function (notiId, relatedType, relatedId) {
     fetchUnreadCount();
   } catch (err) { /* ignore */ }
 
-  // Điều hướng
-  if (relatedType === 'project' && relatedId) {
-    const role = localStorage.getItem('authRole');
-    window.openProjectDetail(relatedId, role);
+  if (!finalRelatedId) return;
+
+  const role = localStorage.getItem('authRole');
+
+  // 1. ĐIỀU HƯỚNG DỰ ÁN
+  if (finalRelatedType === 'project') {
+    window.openProjectDetail(finalRelatedId, role, 'hoso');
+  }
+  // 2. ĐIỀU HƯỚNG CÔNG VIỆC
+  else if (finalRelatedType === 'task') {
+    try {
+      const token = localStorage.getItem('token');
+      // Fetch thông tin công việc để lấy project_id
+      const res = await fetch(`/api/tasks/${finalRelatedId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success && result.data) {
+        const task = result.data;
+        const projectId = task.project_id;
+        
+        // Mở modal chi tiết dự án tại tab Phân công
+        await window.openProjectDetail(projectId, role, 'phancong');
+        
+        // Đợi DOM render rồi scroll và highlight card công việc
+        setTimeout(() => {
+          const taskEl = document.querySelector(`[data-task-id="${finalRelatedId}"]`);
+          if (taskEl) {
+            taskEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            taskEl.style.transition = 'all 0.5s ease';
+            taskEl.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.8)';
+            taskEl.style.border = '2px solid rgba(59, 130, 246, 0.8)';
+            
+            setTimeout(() => {
+              taskEl.style.boxShadow = '';
+              taskEl.style.border = '';
+            }, 4000);
+
+            // Nếu là Admin/Staff và công việc có trạng thái "Đã nộp", mở modal duyệt báo cáo của admin
+            if (['admin', 'staff'].includes(role) && task.status === 'Đã nộp') {
+              if (typeof window.xemLaiBaoCaoAdmin === 'function') {
+                window.xemLaiBaoCaoAdmin(projectId, finalRelatedId);
+              }
+            }
+          }
+        }, 400);
+      }
+    } catch (err) {
+      console.error('[Notification] Điều hướng công việc thất bại:', err);
+    }
+  }
+  // 3. ĐIỀU HƯỚNG ĐƠN HÀNG
+  else if (finalRelatedType === 'order') {
+    if (role === 'supplier') {
+      // Chuyển qua trang đơn hàng của nhà cung cấp
+      window.navigateTo('donhang');
+      
+      // Chờ đơn hàng tải xong và mở modal chi tiết đơn hàng
+      let attempts = 0;
+      const interval = setInterval(() => {
+        if (window.cachedOrders && window.cachedOrders.length > 0) {
+          clearInterval(interval);
+          if (typeof window.openOrderDetail === 'function') {
+            window.openOrderDetail(finalRelatedId);
+          }
+        }
+        attempts++;
+        if (attempts > 30) {
+          clearInterval(interval);
+          // Kích hoạt dự phòng (openOrderDetail tự động fetch từ API nếu không có trong cache)
+          if (typeof window.openOrderDetail === 'function') {
+            window.openOrderDetail(finalRelatedId);
+          }
+        }
+      }, 100);
+    } else {
+      // Admin/Staff/Client: Lấy project_id từ đơn hàng và mở dự án tại tab Vật tư
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/orders/${finalRelatedId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (result.success && result.data) {
+          const order = result.data;
+          const projectId = order.project_id;
+          await window.openProjectDetail(projectId, role, 'vattuduan');
+        }
+      } catch (err) {
+        console.error('[Notification] Điều hướng đơn hàng thất bại:', err);
+      }
+    }
   }
 };
 
