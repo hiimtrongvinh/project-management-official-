@@ -316,6 +316,9 @@ function getRelatedTypeFromNotiType(notiType) {
   if (typeLower.startsWith('task_') || ['revision_requested', 'deadline_reminder', 'deadline_warning', 'task_overdue'].includes(typeLower)) {
     return 'task';
   }
+  if (typeLower === 'quotation_received') {
+    return 'project';
+  }
   if (typeLower.startsWith('project_') || typeLower.startsWith('client_') || typeLower === 'project_deadline') {
     return 'project';
   }
@@ -352,7 +355,39 @@ window.handlePageNotiClick = async function (notiId, relatedType, relatedId) {
 
   // 1. ĐIỀU HƯỚNG DỰ ÁN
   if (finalRelatedType === 'project') {
-    window.openProjectDetail(finalRelatedId, role, 'hoso');
+    let targetTab = 'hoso';
+    if (role === 'client') {
+      const notiType = (noti ? noti.type : '') || '';
+      const notiTitle = (noti ? noti.title : '') || '';
+      const notiMessage = (noti ? noti.message : '') || '';
+
+      const typeLower = notiType.toLowerCase();
+      const titleLower = notiTitle.toLowerCase();
+      const messageLower = notiMessage.toLowerCase();
+
+      // Kiểm tra các thông báo tài liệu, văn bản (Báo giá, Hợp đồng, Nghiệm thu, Bàn giao, Thanh toán)
+      const isDocument = 
+        typeLower.includes('contract') || 
+        typeLower.includes('quotation') ||
+        titleLower.includes('hợp đồng') || 
+        titleLower.includes('báo giá') || 
+        titleLower.includes('nghiệm thu') || 
+        titleLower.includes('bàn giao') || 
+        titleLower.includes('thanh toán') ||
+        messageLower.includes('hợp đồng') || 
+        messageLower.includes('báo giá') || 
+        messageLower.includes('nghiệm thu') || 
+        messageLower.includes('bàn giao') || 
+        messageLower.includes('thanh toán');
+
+      if (isDocument) {
+        targetTab = 'vattuduan'; // Tab 'Báo giá' của khách hàng
+      } else {
+        // Thông báo tiến độ (dự án hoàn thành, chuyển sang bước X, v.v.)
+        targetTab = 'phancong'; // Tab 'Tiến độ' (nhãn Phân công trong code) của khách hàng
+      }
+    }
+    window.openProjectDetail(finalRelatedId, role, targetTab);
   }
   // 2. ĐIỀU HƯỚNG CÔNG VIỆC
   else if (finalRelatedType === 'task') {
