@@ -373,12 +373,7 @@ window.handlePageNotiClick = async function (notiId, relatedType, relatedId) {
         titleLower.includes('báo giá') || 
         titleLower.includes('nghiệm thu') || 
         titleLower.includes('bàn giao') || 
-        titleLower.includes('thanh toán') ||
-        messageLower.includes('hợp đồng') || 
-        messageLower.includes('báo giá') || 
-        messageLower.includes('nghiệm thu') || 
-        messageLower.includes('bàn giao') || 
-        messageLower.includes('thanh toán');
+        titleLower.includes('thanh toán');
 
       if (isDocument) {
         targetTab = 'vattuduan'; // Tab 'Báo giá' của khách hàng
