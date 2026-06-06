@@ -356,46 +356,47 @@ window.handlePageNotiClick = async function (notiId, relatedType, relatedId) {
   }
   // 2. ĐIỀU HƯỚNG CÔNG VIỆC
   else if (finalRelatedType === 'task') {
-    try {
-      const token = localStorage.getItem('token');
-      // Fetch thông tin công việc để lấy project_id
-      const res = await fetch(`/api/tasks/${finalRelatedId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const result = await res.json();
-      if (result.success && result.data) {
-        const task = result.data;
-        const projectId = task.project_id;
-        
-        // Mở modal chi tiết dự án tại tab Phân công
-        await window.openProjectDetail(projectId, role, 'phancong');
-        
-        // Đợi DOM render rồi scroll và highlight card công việc
-        setTimeout(() => {
-          const taskEl = document.querySelector(`[data-task-id="${finalRelatedId}"]`);
-          if (taskEl) {
-            taskEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            taskEl.style.transition = 'all 0.5s ease';
-            taskEl.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.8)';
-            taskEl.style.border = '2px solid rgba(59, 130, 246, 0.8)';
-            
-            setTimeout(() => {
-              taskEl.style.boxShadow = '';
-              taskEl.style.border = '';
-            }, 4000);
+    const notiType = noti ? noti.type : '';
+    const isDeadlineNoti = ['deadline_reminder', 'deadline_warning', 'task_overdue', 'task_deadline_warning'].includes(notiType);
 
-            // Nếu là Admin/Staff và công việc có trạng thái "Đã nộp", mở modal duyệt báo cáo của admin
-            if (['admin', 'staff'].includes(role) && task.status === 'Đã nộp') {
-              if (typeof window.xemLaiBaoCaoAdmin === 'function') {
-                window.xemLaiBaoCaoAdmin(projectId, finalRelatedId);
-              }
+    if (isDeadlineNoti) {
+      // Chỉ cần di chuyển đến trang danh sách công việc
+      window.navigateTo('congviec');
+    } else {
+      try {
+        const token = localStorage.getItem('token');
+        // Fetch thông tin công việc để lấy project_id
+        const res = await fetch(`/api/tasks/${finalRelatedId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (result.success && result.data) {
+          const task = result.data;
+          const projectId = task.project_id;
+          
+          // Mở modal chi tiết dự án tại tab Phân công
+          await window.openProjectDetail(projectId, role, 'phancong');
+          
+          // Đợi DOM render rồi scroll và highlight card công việc
+          setTimeout(() => {
+            const taskEl = document.querySelector(`[data-task-id="${finalRelatedId}"]`);
+            if (taskEl) {
+              taskEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              
+              taskEl.style.transition = 'all 0.5s ease';
+              taskEl.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.8)';
+              taskEl.style.border = '2px solid rgba(59, 130, 246, 0.8)';
+              
+              setTimeout(() => {
+                taskEl.style.boxShadow = '';
+                taskEl.style.border = '';
+              }, 4000);
             }
-          }
-        }, 400);
+          }, 400);
+        }
+      } catch (err) {
+        console.error('[Notification] Điều hướng công việc thất bại:', err);
       }
-    } catch (err) {
-      console.error('[Notification] Điều hướng công việc thất bại:', err);
     }
   }
   // 3. ĐIỀU HƯỚNG ĐƠN HÀNG
