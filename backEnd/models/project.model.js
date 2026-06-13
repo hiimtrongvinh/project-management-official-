@@ -218,7 +218,7 @@ const ProjectModel = {
       data.client_id || null,
       data.start_date || null,
       data.deadline || null,
-      data.current_step || 1,
+      data.current_step !== undefined ? data.current_step : 1,
       data.budget || null,
       data.created_by,
       data.labor_fee || 0

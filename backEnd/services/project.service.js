@@ -372,9 +372,12 @@ const ProjectService = {
 
     // Update step
     const newStatus = STEP_LABELS[newStep];
-    await ProjectModel.update(projectId, {
-      current_step: newStep
-    });
+    const updateData = { current_step: newStep };
+    // Nếu dự án đang ở bước 0 (chờ duyệt) và được duyệt lên bước 1, ghi nhận ngày bắt đầu là hôm nay
+    if (project.current_step === 0 && newStep === 1) {
+      updateData.start_date = new Date().toISOString().split('T')[0];
+    }
+    await ProjectModel.update(projectId, updateData);
 
     // Thông báo chuyển bước cho staff thành viên + khách hàng
     const memberAccountIds = await getProjectMemberAccountIds(projectId);
