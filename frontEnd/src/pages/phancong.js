@@ -33,7 +33,7 @@ export function renderPhancong(projectId) {
         { name: "Thanh toán", icon: "fa-money-bill-wave", color: "emerald" }
     ];
 
-    const currentStep = project.currentStep || 1;
+    const currentStep = project.currentStep !== undefined ? project.currentStep : 1;
 
     const timelineHtml = standardSteps.map((step, index) => {
         const stepNum = index + 1;

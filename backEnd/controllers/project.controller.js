@@ -119,7 +119,8 @@ const ProjectController = {
           clientId,
           startDate: null,
           endDate: deadline || null,
-          currentStep: 0
+          currentStep: 0,
+          budget: budget || null
         },
         creatorId
       );

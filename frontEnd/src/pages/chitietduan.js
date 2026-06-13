@@ -111,7 +111,7 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
         const approvedTasksCount = tasks.filter(t => t.status === 'Đã duyệt').length;
 
         projectDetails[projectId] = {
-            id: projectId, currentStep: projData.current_step || 1,
+            id: projectId, currentStep: projData.current_step !== undefined ? projData.current_step : 1,
             profile: {
                 title: projData.title, description: projData.description || 'Chưa có mô tả chi tiết.',
                 category: projData.category || 'Chưa phân loại',
