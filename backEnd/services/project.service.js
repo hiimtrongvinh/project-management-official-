@@ -468,6 +468,53 @@ const ProjectService = {
     return ProjectModel.findById(projectId);
   },
 
+  /**
+   * Từ chối yêu cầu dự án của khách hàng (bước 0).
+   * Chuyển current_step thành -1 và gửi thông báo cho khách hàng.
+   * @param {string} projectId - ID dự án
+   * @param {number} userId - ID tài khoản admin thực hiện từ chối
+   * @returns {Promise<Object>} Dự án sau khi cập nhật
+   */
+  async rejectProject(projectId, userId) {
+    const project = await ProjectModel.findById(projectId);
+    if (!project) {
+      const error = new Error('Project not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (project.current_step !== 0) {
+      const error = new Error('Only projects pending approval can be rejected');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    // Cập nhật bước thành -1 (Từ chối)
+    await ProjectModel.update(projectId, {
+      current_step: -1
+    });
+
+    // Ghi log hoạt động
+    await query(
+      'INSERT INTO activity_logs (user_id, action, entity_type, entity_id, details) VALUES (?, ?, ?, ?, ?)',
+      [userId, 'project_rejected', 'project', projectId, JSON.stringify({ title: project.title })]
+    );
+
+    // Gửi thông báo cho khách hàng
+    const clientAccountId = await getProjectClientAccountId(projectId);
+    if (clientAccountId) {
+      notify([clientAccountId], {
+        type: 'project_rejected',
+        title: 'Yêu cầu dự án bị từ chối',
+        message: `Yêu cầu dự án "${project.title}" của bạn đã bị từ chối.`,
+        related_type: 'project',
+        related_id: projectId
+      });
+    }
+
+    return ProjectModel.findById(projectId);
+  },
+
   async sendQuotation(projectId, creatorId) {
     const project = await ProjectModel.findById(projectId);
     if (!project) {

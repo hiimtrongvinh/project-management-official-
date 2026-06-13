@@ -37,6 +37,9 @@ router.put('/:id/status', authorize('admin'), ProjectController.updateStatus);
 // PUT /api/projects/:id/close - Admin only
 router.put('/:id/close', authorize('admin'), ProjectController.closeProject);
 
+// PUT /api/projects/:id/reject - Admin only
+router.put('/:id/reject', authorize('admin'), ProjectController.rejectProject);
+
 // PUT /api/projects/:id/quotation-status - Client can approve/reject
 router.put('/:id/quotation-status', ProjectController.updateQuotationStatus);
 

@@ -318,6 +318,30 @@ const ProjectController = {
   },
 
   /**
+   * PUT /api/projects/:id/reject
+   * Từ chối yêu cầu dự án. Admin only.
+   */
+  async rejectProject(req, res, next) {
+    try {
+      const projectId = req.params.id;
+      const project = await ProjectService.rejectProject(projectId, req.user.id);
+      res.json({
+        success: true,
+        data: project,
+        message: 'Yêu cầu dự án đã bị từ chối thành công!'
+      });
+    } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: { message: error.message }
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
    * PUT /api/projects/:id/quotation-status
    * Client approves or rejects the project quotation.
    */

@@ -5,7 +5,8 @@ const allStatuses = [
     "Triển khai lắp đặt",
     "Bàn giao và nghiệm thu",
     "Thanh toán",
-    "Hoàn thành"
+    "Hoàn thành",
+    "Đã từ chối"
 ];
 
 const statusColors = {
@@ -15,7 +16,8 @@ const statusColors = {
     "Triển khai lắp đặt": { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", dot: "bg-blue-500" },
     "Bàn giao và nghiệm thu": { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200", dot: "bg-purple-500" },
     "Thanh toán": { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", dot: "bg-orange-500" },
-    "Hoàn thành": { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", dot: "bg-emerald-500" }
+    "Hoàn thành": { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", dot: "bg-emerald-500" },
+    "Đã từ chối": { bg: "bg-red-50", text: "text-red-700", border: "border-red-200", dot: "bg-red-500" }
 };
 
 let loadedProjects = [];

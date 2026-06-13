@@ -159,7 +159,10 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
         <div id="modal-action-buttons" class="flex items-center gap-2">
             ${isPendingApproval ? `
             <button onclick="window.approveProject('${projectId}')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 font-bold text-sm transition-all animate-pulse">
-                <i class="fas fa-check text-xs"></i> Phê duyệt dự án
+                <i class="fas fa-check text-xs"></i> Phê duyệt
+            </button>
+            <button onclick="window.rejectProject('${projectId}')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-bold text-sm transition-all">
+                <i class="fas fa-times text-xs"></i> Từ chối
             </button>
             ` : ''}
             <button onclick="window.toggleEditProject(true, '${projectId}')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-sm transition-all">
@@ -183,12 +186,28 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
         { id: 'vattuduan', label: isClient ? 'Báo giá' : 'Vật tư', icon: 'fa-boxes' }
     ];
 
-    const tabsHtml = tabItems.map(tab => `
-        <button onclick="switchTab(this, '${tab.id}', '${projectId}')" id="tab-${tab.id}" 
-                class="tab-button flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${tab.id === activeTab ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}">
-            <i class="fas ${tab.icon} text-xs"></i> ${tab.label}
-        </button>
-    `).join('');
+    let tabsHtml = '';
+    if (projectDetail.currentStep === 0) {
+        if (isAdmin) {
+            tabsHtml = `
+            <span class="text-sm font-extrabold text-amber-600 bg-amber-50 px-4 py-2.5 rounded-xl border border-amber-100 flex items-center gap-2 cursor-default animate-pulse">
+                <i class="fas fa-exclamation-circle"></i> Vui lòng phê duyệt hoặc từ chối yêu cầu dự án này
+            </span>`;
+        } else {
+            // Client
+            tabsHtml = `
+            <span class="text-sm font-extrabold text-amber-600 bg-amber-50 px-4 py-2.5 rounded-xl border border-amber-100 flex items-center gap-2 cursor-default">
+                <i class="fas fa-clock"></i> Yêu cầu đang được chờ phê duyệt
+            </span>`;
+        }
+    } else {
+        tabsHtml = tabItems.map(tab => `
+            <button onclick="switchTab(this, '${tab.id}', '${projectId}')" id="tab-${tab.id}" 
+                    class="tab-button flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${tab.id === activeTab ? 'bg-blue-50 text-blue-600' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}">
+                <i class="fas ${tab.icon} text-xs"></i> ${tab.label}
+            </button>
+        `).join('');
+    }
 
     modal.innerHTML = `
     <div class="bg-white w-full max-w-6xl h-[92vh] rounded-3xl shadow-2xl flex overflow-hidden relative animate-scaleUp border border-gray-100">
@@ -407,6 +426,26 @@ window.approveProject = async function (projectId) {
             if (typeof window.fetchProjectsFromServer === 'function') window.fetchProjectsFromServer();
         } else {
             alert('❌ Phê duyệt thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
+        }
+    } catch (err) { alert('❌ Lỗi kết nối: ' + err.message); }
+};
+
+window.rejectProject = async function (projectId) {
+    if (!await window.showConfirm('Bạn có chắc chắn muốn từ chối yêu cầu dự án này?')) return;
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/projects/${projectId}/reject`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('✅ Đã từ chối yêu cầu dự án thành công!');
+            const modal = document.getElementById('projectDetailModal');
+            if (modal) modal.remove();
+            if (typeof window.fetchProjectsFromServer === 'function') window.fetchProjectsFromServer();
+        } else {
+            alert('❌ Từ chối thất bại: ' + (result.error?.message || 'Lỗi không xác định'));
         }
     } catch (err) { alert('❌ Lỗi kết nối: ' + err.message); }
 };

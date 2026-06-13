@@ -15,6 +15,9 @@ const ProjectModel = {
     let whereClauses = [];
     let params = [];
 
+    // Luôn ẩn dự án bị từ chối khỏi danh sách của Admin
+    whereClauses.push('p.current_step != -1');
+
     if (filters.status) {
       whereClauses.push('p.status = ?');
       params.push(filters.status);
@@ -46,6 +49,7 @@ const ProjectModel = {
           WHEN 4 THEN 'Bàn giao và nghiệm thu'
           WHEN 5 THEN 'Thanh toán'
           WHEN 6 THEN 'Hoàn thành'
+          WHEN -1 THEN 'Đã từ chối'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
@@ -85,6 +89,7 @@ const ProjectModel = {
           WHEN 4 THEN 'Bàn giao và nghiệm thu'
           WHEN 5 THEN 'Thanh toán'
           WHEN 6 THEN 'Hoàn thành'
+          WHEN -1 THEN 'Đã từ chối'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
@@ -122,6 +127,7 @@ const ProjectModel = {
           WHEN 4 THEN 'Bàn giao và nghiệm thu'
           WHEN 5 THEN 'Thanh toán'
           WHEN 6 THEN 'Hoàn thành'
+          WHEN -1 THEN 'Đã từ chối'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
@@ -156,7 +162,7 @@ const ProjectModel = {
     const countSql = `
       SELECT COUNT(*) as total FROM projects p
       INNER JOIN project_members pm ON p.id = pm.project_id
-      WHERE pm.staff_id = ?
+      WHERE pm.staff_id = ? AND p.current_step NOT IN (-1, 0)
     `;
     const countResult = await query(countSql, [staffId]);
     const total = countResult[0].total;
@@ -171,6 +177,7 @@ const ProjectModel = {
           WHEN 4 THEN 'Bàn giao và nghiệm thu'
           WHEN 5 THEN 'Thanh toán'
           WHEN 6 THEN 'Hoàn thành'
+          WHEN -1 THEN 'Đã từ chối'
           ELSE 'Chờ phê duyệt'
         END as status,
         COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
@@ -184,7 +191,7 @@ const ProjectModel = {
       FROM projects p
       INNER JOIN project_members pm ON p.id = pm.project_id
       LEFT JOIN clients c ON p.client_id = c.id
-      WHERE pm.staff_id = ?
+      WHERE pm.staff_id = ? AND p.current_step NOT IN (-1, 0)
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
     `;

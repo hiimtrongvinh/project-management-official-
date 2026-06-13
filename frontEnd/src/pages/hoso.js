@@ -15,6 +15,7 @@ export function renderHoso(projectId, isEditMode = false) {
     }
 
     const { profile } = project;
+    const isPendingApproval = project.currentStep === 0;
     const clientName = profile.client || "Không có";
     const category = profile.category || "Chưa phân loại";
     const budget = profile.budget || "Chưa có";
@@ -140,6 +141,7 @@ export function renderHoso(projectId, isEditMode = false) {
         </div>
 
         <div class="flex-1 flex flex-col space-y-4 min-h-0 pt-2">
+            ${isPendingApproval ? '' : `
             <div class="flex flex-col flex-shrink-0">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">Nhân sự thực hiện</h3>
                 <div class="flex items-start gap-6 overflow-x-auto pb-1 custom-scrollbar">
@@ -147,8 +149,9 @@ export function renderHoso(projectId, isEditMode = false) {
                     ${isEditMode ? addMemberBtn : (isClient ? '' : addMemberBtn)} 
                 </div>
             </div>
+            `}
 
-            <div class="flex flex-col flex-shrink-0 pt-3 border-t border-gray-100/40">
+            <div class="flex flex-col flex-shrink-0 pt-3 ${isPendingApproval ? '' : 'border-t border-gray-100/40'}">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">Tài liệu đính kèm</h3>
                 <div class="flex gap-3 overflow-x-auto pb-1 custom-scrollbar">
                     ${project.documentsList && project.documentsList.length > 0 ? project.documentsList.map(doc => createSmallDoc(doc)).join('') : '<span class="text-xs text-gray-400 italic">Chưa có tài liệu</span>'}
