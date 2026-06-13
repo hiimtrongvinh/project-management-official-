@@ -200,6 +200,11 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
                 <i class="fas fa-clock"></i> Yêu cầu đang được chờ phê duyệt
             </span>`;
         }
+    } else if (projectDetail.currentStep === -1) {
+        tabsHtml = `
+        <span class="text-sm font-extrabold text-red-600 bg-red-50 px-4 py-2.5 rounded-xl border border-red-100 flex items-center gap-2 cursor-default">
+            <i class="fas fa-times-circle"></i> Yêu cầu dự án này đã bị từ chối
+        </span>`;
     } else {
         tabsHtml = tabItems.map(tab => `
             <button onclick="switchTab(this, '${tab.id}', '${projectId}')" id="tab-${tab.id}" 
