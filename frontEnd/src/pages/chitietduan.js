@@ -21,6 +21,11 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
         if (!projectResult.success) { alert('Không thể tải chi tiết dự án!'); return; }
         const projData = projectResult.data;
 
+        // Nếu dự án đang chờ duyệt hoặc bị từ chối, chỉ cho phép hiển thị tab Hồ sơ
+        if (projData.current_step === 0 || projData.current_step === -1) {
+            activeTab = 'hoso';
+        }
+
         const tasksRes = await fetch(`/api/tasks/project/${projectId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
