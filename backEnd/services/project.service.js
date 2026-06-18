@@ -207,6 +207,21 @@ const ProjectService = {
       throw error;
     }
 
+    if (projectDeadline) {
+      const { query } = require('../config/database');
+      const conflictingTasks = await query(
+        'SELECT id, title, deadline FROM tasks WHERE project_id = ? AND deadline > ?',
+        [id, projectDeadline]
+      );
+      if (conflictingTasks.length > 0) {
+        const firstConflict = conflictingTasks[0];
+        const taskDeadlineStr = new Date(firstConflict.deadline).toLocaleDateString('vi-VN');
+        const error = new Error(`Hạn chót dự án không được sớm hơn hạn chót của công việc "${firstConflict.title}" (${taskDeadlineStr}).`);
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
     // Map camelCase to snake_case
     const updateData = {};
     if (data.title !== undefined) updateData.title = data.title;

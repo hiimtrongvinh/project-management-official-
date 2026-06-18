@@ -293,6 +293,7 @@ window.showAddTaskModal = async function (projectId, stepNum) {
     const today = new Date().toISOString().split('T')[0];
     const pStartDate = parseDateToInput(project?.profile?.startDate);
     const minDeadline = (pStartDate && pStartDate > today) ? pStartDate : today;
+    const maxDeadline = parseDateToInput(project?.profile?.endDate);
 
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 modal-overlay z-[200] flex items-center justify-center p-4';
@@ -325,7 +326,7 @@ window.showAddTaskModal = async function (projectId, stepNum) {
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Hạn hoàn thành</label>
-                <input type="date" name="deadline" min="${minDeadline}" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-400 bg-gray-50/50 text-sm">
+                <input type="date" name="deadline" min="${minDeadline}" max="${maxDeadline}" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-400 bg-gray-50/50 text-sm">
             </div>
             <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
                 <button type="button" onclick="this.closest('.fixed').remove()" class="btn-ghost text-sm px-4 py-2">Hủy</button>
@@ -366,6 +367,7 @@ window.showEditTaskModal = async function (projectId, taskId) {
         const today = new Date().toISOString().split('T')[0];
         const pStartDate = parseDateToInput(project?.profile?.startDate);
         const minDeadline = (pStartDate && pStartDate > today) ? pStartDate : today;
+        const maxDeadline = parseDateToInput(project?.profile?.endDate);
 
         const formattedDeadline = task.deadline ? new Date(task.deadline).toISOString().substring(0, 10) : '';
 
@@ -397,7 +399,7 @@ window.showEditTaskModal = async function (projectId, taskId) {
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Hạn hoàn thành</label>
-                    <input type="date" name="deadline" value="${formattedDeadline}" min="${minDeadline}" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-400 bg-gray-50/50 text-sm">
+                    <input type="date" name="deadline" value="${formattedDeadline}" min="${minDeadline}" max="${maxDeadline}" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-400 bg-gray-50/50 text-sm">
                 </div>
                 <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
                     <button type="button" onclick="this.closest('.fixed').remove()" class="btn-ghost text-sm px-4 py-2">Hủy</button>
@@ -783,6 +785,7 @@ window.addNewTaskInline = async function (projectId, stepNum) {
     const today = new Date().toISOString().split('T')[0];
     const pStartDate = parseDateToInput(project?.profile?.startDate);
     const minDeadline = (pStartDate && pStartDate > today) ? pStartDate : today;
+    const maxDeadline = parseDateToInput(project?.profile?.endDate);
 
     const card = document.createElement('div');
     card.className = "inline-add-task-card bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-md space-y-3 animate-scaleUp mt-2";
@@ -808,7 +811,7 @@ window.addNewTaskInline = async function (projectId, stepNum) {
             </div>
             <div>
                 <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Hạn hoàn thành</label>
-                <input type="date" min="${minDeadline}" 
+                <input type="date" min="${minDeadline}" max="${maxDeadline}" 
                        class="inline-task-deadline w-full px-2.5 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 bg-gray-50/50 text-gray-600">
             </div>
         </div>
