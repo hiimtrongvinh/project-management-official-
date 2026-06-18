@@ -74,7 +74,7 @@ export function renderPhancong(projectId) {
                     <h3 class="font-bold text-gray-800 text-sm">Bước ${stepNum}: ${step.name}</h3>
                     <p class="text-xs text-gray-400 font-medium">${validTasks.length} công việc ${stepStatus === 'completed' ? '• Hoàn thành' : stepStatus === 'active' ? '• Đang thực hiện' : ''}</p>
                 </div>
-                ${(role !== 'client') ? `<button onclick="window.addNewTaskInline('${projectId}', ${stepNum})" 
+                ${(role === 'admin') ? `<button onclick="window.addNewTaskInline('${projectId}', ${stepNum})" 
                         class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-all text-xs">
                     <i class="fas fa-plus"></i>
                 </button>` : ''}
@@ -83,7 +83,7 @@ export function renderPhancong(projectId) {
             <!-- Tasks Container (Drag & Drop) -->
             <div class="ml-[19px] pl-6 border-l-2 ${stepNum < currentStep ? 'border-emerald-100' : stepNum === currentStep ? 'border-blue-100' : 'border-gray-100'} pb-4">
                 <div class="space-y-2 task-sortable-list" data-step="${stepNum}" data-project="${projectId}">
-                    ${hasTasks ? validTasks.map(task => createTaskCard(task, projectId)).join('')
+                    ${hasTasks ? validTasks.map(task => createTaskCard(task, projectId, stepNum)).join('')
                 : `<div class="py-3 px-4 text-center text-gray-300 text-xs font-medium border border-dashed border-gray-200 rounded-xl">
                         <i class="fas fa-inbox mr-1"></i> Chưa có công việc cho bước này
                     </div>`}
@@ -160,15 +160,32 @@ function getStatusConfig(status) {
     }
 }
 
-function createTaskCard(task, projectId) {
+function createTaskCard(task, projectId, stepNum) {
     const { id, title, assignee: user, deadline: date, file, status, files, submit_note, feedback } = task;
     const role = localStorage.getItem('authRole');
-    const isNhanSu = role === 'staff';
-    const isClient = role === 'client';
     const config = getStatusConfig(status);
 
+    // Kiểm tra xem các bước trước đó đã hoàn thành (đã được duyệt hết) chưa
+    const project = window.projectDetails?.[projectId];
+    let isPrevStepUncompleted = false;
+    if (project && project.assignments && stepNum) {
+        for (let s = 1; s < stepNum; s++) {
+            const assignment = project.assignments.find(a => a.step && a.step.includes(`Bước ${s}:`));
+            if (assignment && assignment.tasks) {
+                const hasUncompleted = assignment.tasks.some(t => {
+                    if (!t.title || String(t.title).trim() === "") return false;
+                    return t.status !== 'Đã duyệt';
+                });
+                if (hasUncompleted) {
+                    isPrevStepUncompleted = true;
+                    break;
+                }
+            }
+        }
+    }
+
     let actionButtons = '';
-    if (!isClient) {
+    if (role === 'admin') {
         actionButtons += `
             <button onclick="event.stopPropagation(); window.showEditTaskModal('${projectId}', '${id}')" title="Sửa" 
                     class="w-7 h-7 rounded-lg bg-white border border-gray-200 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all">
@@ -179,31 +196,33 @@ function createTaskCard(task, projectId) {
                 <i class="fas fa-trash text-[10px]"></i>
             </button>`;
     }
-    if (status === 'Đã nộp' && !isClient && !isNhanSu) {
-        actionButtons += `
-            <button onclick="event.stopPropagation(); window.handleApproveTaskDirect('${projectId}', '${id}')" title="Duyệt trực tiếp" 
-                    class="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all">
-                <i class="fas fa-check text-[10px]"></i>
-            </button>
-            <button onclick="event.stopPropagation(); window.showReworkTaskModal('${projectId}', '${id}')" title="Yêu cầu làm lại / Bình luận" 
-                    class="w-7 h-7 rounded-lg bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all">
-                <i class="fas fa-redo text-[10px]"></i>
-            </button>`;
-    }
-    if (isNhanSu && (status === 'Chưa nộp' || status === 'Cần sửa')) {
-        actionButtons += `
-            <button onclick="event.stopPropagation(); window.showSubmitTaskModal('${projectId}', '${id}')" title="Nộp báo cáo" 
-                    class="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center hover:bg-purple-500 hover:text-white hover:border-purple-500 transition-all">
-                <i class="fas fa-upload text-[10px]"></i>
-            </button>`;
+    if (status === 'Đã nộp' && (role === 'admin' || role === 'client')) {
+        if (isPrevStepUncompleted) {
+            actionButtons += `
+                <button disabled title="Chưa thể duyệt (Các bước trước chưa hoàn thành)" 
+                        class="w-7 h-7 rounded-lg bg-gray-50 border border-gray-200 text-gray-300 flex items-center justify-center cursor-not-allowed">
+                    <i class="fas fa-check text-[10px]"></i>
+                </button>
+                <button disabled title="Chưa thể yêu cầu sửa (Các bước trước chưa hoàn thành)" 
+                        class="w-7 h-7 rounded-lg bg-gray-50 border border-gray-200 text-gray-300 flex items-center justify-center cursor-not-allowed">
+                    <i class="fas fa-redo text-[10px]"></i>
+                </button>`;
+        } else {
+            actionButtons += `
+                <button onclick="event.stopPropagation(); window.handleApproveTaskDirect('${projectId}', '${id}')" title="Duyệt trực tiếp" 
+                        class="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all">
+                    <i class="fas fa-check text-[10px]"></i>
+                </button>
+                <button onclick="event.stopPropagation(); window.showReworkTaskModal('${projectId}', '${id}')" title="Yêu cầu làm lại / Bình luận" 
+                        class="w-7 h-7 rounded-lg bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all">
+                    <i class="fas fa-redo text-[10px]"></i>
+                </button>`;
+        }
     }
 
     return `
-    <div class="group ${config.bg} p-3 rounded-xl border border-transparent hover:border-blue-200 transition-all cursor-grab active:cursor-grabbing hover:shadow-md relative" data-task-id="${id}">
+    <div class="group ${config.bg} p-3 rounded-xl border border-transparent hover:border-blue-200 transition-all hover:shadow-md relative" data-task-id="${id}">
         <div class="flex items-center gap-3">
-            <div class="drag-handle flex-shrink-0 text-gray-300">
-                <i class="fas fa-grip-vertical text-xs"></i>
-            </div>
             <div class="flex-1 min-w-0">
                 <p class="font-bold text-sm text-gray-800 truncate">${title}</p>
 
@@ -232,36 +251,7 @@ function createTaskCard(task, projectId) {
     </div>`;
 }
 
-// Initialize drag-and-drop after render
-setTimeout(() => {
-    if (typeof Sortable !== 'undefined') {
-        const role = localStorage.getItem('authRole');
-        const isClient = role === 'client';
-        const firstEl = document.querySelector('.task-sortable-list');
-        const projectId = firstEl ? firstEl.dataset.project : '';
-        const projObj = window.projectDetails?.[projectId];
-        const clientQuotations = projObj ? (projObj.clientQuotations || []) : [];
-        const hasApprovedContract = clientQuotations.some(q => q.status === 'approved' || q.status === 'Đã duyệt');
-        const isDragDisabled = isClient;
 
-        document.querySelectorAll('.task-sortable-list').forEach(el => {
-            Sortable.create(el, {
-                group: 'tasks',
-                animation: 200,
-                ghostClass: 'sortable-ghost',
-                chosenClass: 'sortable-chosen',
-                dragClass: 'sortable-drag',
-                handle: '.drag-handle',
-                easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-                disabled: isDragDisabled,
-                onEnd: function (evt) {
-                    // Could implement task reordering API call here
-                    console.log('Task moved:', evt.item.dataset.taskId, 'to step:', evt.to.dataset.step);
-                }
-            });
-        });
-    }
-}, 100);
 
 // Helpers
 async function fetchStaffList() {

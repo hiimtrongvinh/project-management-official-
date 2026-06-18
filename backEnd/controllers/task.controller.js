@@ -107,7 +107,8 @@ const TaskController = {
         file_paths: filePaths,
         file_path: filePaths.length > 0 ? filePaths[0] : req.body.file_path || '', // Keep file_path for backward compatibility
         note: req.body.note || '',
-        accountId: req.user.id
+        accountId: req.user.id,
+        role: req.user.role
       };
 
       await TaskService.submitTask(taskId, submitData);

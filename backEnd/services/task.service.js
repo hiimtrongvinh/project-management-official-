@@ -38,6 +38,16 @@ const TaskService = {
       throw error;
     }
 
+    // Check if the user is authorized to submit this task (must be assignee if not admin)
+    if (submitData.role !== 'admin') {
+      const staff = await StaffModel.findByAccountId(submitData.accountId);
+      if (!staff || task.assignee_id !== staff.id) {
+        const error = new Error('Bạn không được phân công thực hiện công việc này.');
+        error.statusCode = 403;
+        throw error;
+      }
+    }
+
     const oldStatus = task.status;
     const newStatus = 'Đã nộp';
 
@@ -123,6 +133,20 @@ const TaskService = {
       const error = new Error('Task not found');
       error.statusCode = 404;
       throw error;
+    }
+
+    // Khi công việc của bước trước chưa hoàn thành (chưa duyệt) thì không được duyệt công việc bước sau
+    if (reviewData.status === 'Đã duyệt') {
+      const { query } = require('../config/database');
+      const uncompletedPrevStepTasks = await query(
+        "SELECT id, title, step, status FROM tasks WHERE project_id = ? AND step < ? AND status != 'Đã duyệt'",
+        [task.project_id, task.step]
+      );
+      if (uncompletedPrevStepTasks.length > 0) {
+        const error = new Error(`Không thể duyệt công việc này vì bước trước đó (Bước ${uncompletedPrevStepTasks[0].step}) có công việc "${uncompletedPrevStepTasks[0].title}" chưa được duyệt hoàn thành.`);
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     const oldStatus = task.status;
@@ -215,13 +239,26 @@ const TaskService = {
 
     const { query } = require('../config/database');
     const projectRows = await query(
-      "SELECT id FROM projects WHERE id = ?",
+      "SELECT id, deadline FROM projects WHERE id = ?",
       [data.project_id]
     );
     if (projectRows.length === 0) {
       const error = new Error('Dự án không tồn tại.');
       error.statusCode = 400;
       throw error;
+    }
+
+    const project = projectRows[0];
+    if (data.deadline && project && project.deadline) {
+      const taskDeadline = new Date(data.deadline);
+      const projectDeadline = new Date(project.deadline);
+      taskDeadline.setHours(0, 0, 0, 0);
+      projectDeadline.setHours(0, 0, 0, 0);
+      if (taskDeadline > projectDeadline) {
+        const error = new Error('Hạn chót công việc không được muộn hơn hạn chót của dự án.');
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     const taskId = await TaskModel.create({
@@ -285,13 +322,26 @@ const TaskService = {
     const projectId = data.project_id || task.project_id;
     const { query } = require('../config/database');
     const projectRows = await query(
-      "SELECT id FROM projects WHERE id = ?",
+      "SELECT id, deadline FROM projects WHERE id = ?",
       [projectId]
     );
     if (projectRows.length === 0) {
       const error = new Error('Dự án không tồn tại.');
       error.statusCode = 400;
       throw error;
+    }
+
+    const project = projectRows[0];
+    if (data.deadline && project && project.deadline) {
+      const taskDeadline = new Date(data.deadline);
+      const projectDeadline = new Date(project.deadline);
+      taskDeadline.setHours(0, 0, 0, 0);
+      projectDeadline.setHours(0, 0, 0, 0);
+      if (taskDeadline > projectDeadline) {
+        const error = new Error('Hạn chót công việc không được muộn hơn hạn chót của dự án.');
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     const allowed = {};
