@@ -79,6 +79,7 @@ export function renderLogin() {
                     <div class="relative group">
                         <div class="flex justify-between items-center mb-1.5">
                             <label class="block text-xs font-bold text-gray-500 uppercase">Mật khẩu</label>
+                            <a onclick="window.showQuenMatKhauModal()" class="text-xs text-blue-600 hover:text-blue-700 font-semibold cursor-pointer">Quên mật khẩu?</a>
                         </div>
                         <div class="relative flex items-center">
                             <i class="fas fa-lock absolute left-4 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
@@ -108,6 +109,55 @@ export function renderLogin() {
                         Đăng ký ngay (Khách hàng)
                     </a>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="quenMatKhauModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md mx-4 p-8 rounded-3xl shadow-2xl border border-gray-100 animate-scaleUp relative">
+            <button onclick="window.hideQuenMatKhauModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 border-none bg-transparent cursor-pointer text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Quên mật khẩu?</h3>
+            <p class="text-xs text-gray-500 mb-6">Xác nhận email và số điện thoại đã đăng ký để đặt mật khẩu mới.</p>
+            
+            <div class="space-y-4">
+                <div class="relative group">
+                    <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase font-semibold">Email tài khoản</label>
+                    <div class="relative flex items-center">
+                        <i class="fas fa-envelope absolute left-4 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input id="resetEmail" type="email" placeholder="example@eteck.vn"
+                            class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-sm font-semibold">
+                    </div>
+                </div>
+                
+                <div class="relative group">
+                    <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase font-semibold">Số điện thoại xác thực</label>
+                    <div class="relative flex items-center">
+                        <i class="fas fa-phone absolute left-4 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input id="resetPhone" type="text" placeholder="09xxxxxxx"
+                            class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-sm font-semibold">
+                    </div>
+                </div>
+                
+                <div class="relative group">
+                    <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase font-semibold">Mật khẩu mới</label>
+                    <div class="relative flex items-center">
+                        <i class="fas fa-lock absolute left-4 text-slate-400 group-focus-within:text-blue-600 transition-colors"></i>
+                        <input id="resetNewPassword" type="password" placeholder="Tối thiểu 6 ký tự"
+                            class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-sm font-semibold">
+                    </div>
+                </div>
+                
+                <button id="btnSubmitReset" onclick="window.handleForgotPasswordSubmit()"
+                    class="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl text-sm shadow-lg hover:shadow-blue-500/25 transition-all cursor-pointer border-none">
+                    <span class="flex items-center justify-center gap-2">
+                        <i class="fas fa-key"></i>
+                        Cập nhật mật khẩu mới
+                    </span>
+                </button>
             </div>
         </div>
     </div>
@@ -203,3 +253,68 @@ export function attachLoginEvents() {
         }
     });
 }
+
+// Global window helpers for Forgot Password modal
+window.showQuenMatKhauModal = function() {
+    const modal = document.getElementById('quenMatKhauModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+};
+
+window.hideQuenMatKhauModal = function() {
+    const modal = document.getElementById('quenMatKhauModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+};
+
+window.handleForgotPasswordSubmit = async function() {
+    const email = (document.getElementById('resetEmail')?.value || '').trim();
+    const phone = (document.getElementById('resetPhone')?.value || '').trim();
+    const newPassword = (document.getElementById('resetNewPassword')?.value || '').trim();
+
+    if (!email || !phone || !newPassword) {
+        alert('Vui lòng nhập đầy đủ các trường thông tin.');
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        alert('Mật khẩu mới phải có tối thiểu 6 ký tự.');
+        return;
+    }
+
+    const btn = document.getElementById('btnSubmitReset');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, phone, newPassword })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            alert('🎉 Đặt lại mật khẩu thành công! Thông báo đã được gửi về cho Quản trị viên (Admin).');
+            window.hideQuenMatKhauModal();
+            // Clear inputs
+            document.getElementById('resetEmail').value = '';
+            document.getElementById('resetPhone').value = '';
+            document.getElementById('resetNewPassword').value = '';
+        } else {
+            alert('❌ Thất bại: ' + (result.error?.message || 'Có lỗi xảy ra.'));
+        }
+    } catch (error) {
+        console.error("Lỗi khôi phục mật khẩu:", error);
+        alert('❌ Lỗi kết nối đến máy chủ.');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+};

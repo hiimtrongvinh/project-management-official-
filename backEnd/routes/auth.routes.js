@@ -34,6 +34,9 @@ router.post('/register', AuthController.register);
 // POST /api/auth/login - Authenticate user
 router.post('/login', loginValidation, handleValidationErrors, AuthController.login);
 
+// POST /api/auth/forgot-password - Reset password (public)
+router.post('/forgot-password', AuthController.forgotPassword);
+
 // GET /api/auth/profile - Get current user profile (protected)
 router.get('/profile', authenticate, AuthController.getProfile);
 
