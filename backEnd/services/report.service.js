@@ -16,7 +16,6 @@ const ReportService = {
     // Staff: lấy staff_id từ account_id, lọc theo project_members
     let projectFilter = '';
     let taskFilter = '';
-    let quotationFilter = '';
     const params = [];
 
     if (role === 'staff') {
@@ -31,7 +30,6 @@ const ReportService = {
       const staffId = staffRows[0].id;
       projectFilter = ' WHERE p.id IN (SELECT project_id FROM project_members WHERE staff_id = ?)';
       taskFilter = ' WHERE t.project_id IN (SELECT project_id FROM project_members WHERE staff_id = ?)';
-      quotationFilter = ' WHERE q.project_id IN (SELECT project_id FROM project_members WHERE staff_id = ?)';
       params.push(staffId);
     }
 
@@ -46,9 +44,20 @@ const ReportService = {
 
     // 2. Projects by stage
     const projectsByStage = await query(`
-      SELECT p.status as stage, COUNT(*) as count 
+      SELECT 
+        CASE p.current_step
+          WHEN 1 THEN 'Khảo sát và lập kế hoạch'
+          WHEN 2 THEN 'Lập báo giá và xác nhận hợp đồng'
+          WHEN 3 THEN 'Triển khai lắp đặt'
+          WHEN 4 THEN 'Bàn giao và nghiệm thu'
+          WHEN 5 THEN 'Thanh toán'
+          WHEN 6 THEN 'Hoàn thành'
+          WHEN -1 THEN 'Đã từ chối'
+          ELSE 'Chờ phê duyệt'
+        END as stage,
+        COUNT(*) as count 
       FROM projects p${projectFilter}
-      GROUP BY p.status
+      GROUP BY p.current_step
     `, params);
 
     // 3. Tasks stats
@@ -60,12 +69,12 @@ const ReportService = {
       GROUP BY t.status
     `, params);
 
-    // 4. Quotations statistics (approved vs pending budget)
+    // 4. Budget statistics (approved vs pending budget from projects table)
     const budgetStats = await query(`
       SELECT 
-        SUM(CASE WHEN q.status = 'approved' THEN q.total_amount ELSE 0 END) as approvedBudget,
-        SUM(CASE WHEN q.status = 'sent' THEN q.total_amount ELSE 0 END) as pendingBudget
-      FROM quotations q${quotationFilter}
+        SUM(CASE WHEN p.quotation_status = 'approved' THEN COALESCE(p.budget, 0) ELSE 0 END) as approvedBudget,
+        SUM(CASE WHEN p.quotation_status = 'pending' THEN COALESCE(p.budget, 0) ELSE 0 END) as pendingBudget
+      FROM projects p${projectFilter}
     `, params);
 
     return {
@@ -93,7 +102,18 @@ const ReportService = {
   async exportProgressExcel(res) {
     // 1. Lấy dữ liệu tất cả dự án
     const projects = await query(`
-      SELECT p.id, p.title, p.category, p.status, p.progress, p.start_date, p.end_date,
+      SELECT p.id, p.title, p.category, p.start_date, p.deadline as end_date,
+             CASE p.current_step
+               WHEN 1 THEN 'Khảo sát và lập kế hoạch'
+               WHEN 2 THEN 'Lập báo giá và xác nhận hợp đồng'
+               WHEN 3 THEN 'Triển khai lắp đặt'
+               WHEN 4 THEN 'Bàn giao và nghiệm thu'
+               WHEN 5 THEN 'Thanh toán'
+               WHEN 6 THEN 'Hoàn thành'
+               WHEN -1 THEN 'Đã từ chối'
+               ELSE 'Chờ phê duyệt'
+             END as status,
+             COALESCE(ROUND((SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id AND t.status = 'Đã duyệt') / NULLIF((SELECT COUNT(*) FROM tasks t2 WHERE t2.project_id = p.id), 0) * 100), 0) as progress,
              c.name as client_name,
              (SELECT COUNT(*) FROM project_members pm WHERE pm.project_id = p.id) as member_count,
              (SELECT COUNT(*) FROM tasks t WHERE t.project_id = p.id) as total_tasks,
