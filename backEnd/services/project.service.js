@@ -132,47 +132,16 @@ const ProjectService = {
   },
 
   /**
-   * Get a project by ID with role-based access check.
+   * Get a project by ID.
    * @param {string} id - Project ID
-   * @param {number} userId - Account ID
-   * @param {string} role - User role
    * @returns {Promise<Object>} Project data
    */
-  async getProjectById(id, userId, role) {
+  async getProjectById(id) {
     const project = await ProjectModel.findById(id);
     if (!project) {
       const error = new Error('Project not found');
       error.statusCode = 404;
       throw error;
-    }
-
-    // Role-based access check
-    if (role === 'staff') {
-      const staffRows = await query('SELECT id FROM staffs WHERE account_id = ?', [userId]);
-      if (staffRows.length === 0) {
-        const error = new Error('Access denied');
-        error.statusCode = 403;
-        throw error;
-      }
-      const staffId = staffRows[0].id;
-      const memberRows = await query(
-        'SELECT id FROM project_members WHERE project_id = ? AND staff_id = ?',
-        [id, staffId]
-      );
-      if (memberRows.length === 0) {
-        const error = new Error('Access denied. You are not a member of this project.');
-        error.statusCode = 403;
-        throw error;
-      }
-    }
-
-    if (role === 'client') {
-      const clientRows = await query('SELECT id FROM clients WHERE account_id = ?', [userId]);
-      if (clientRows.length === 0 || project.client_id !== clientRows[0].id) {
-        const error = new Error('Access denied. This project does not belong to you.');
-        error.statusCode = 403;
-        throw error;
-      }
     }
 
     // Get members

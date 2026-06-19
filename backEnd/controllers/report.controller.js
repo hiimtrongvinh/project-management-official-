@@ -28,12 +28,6 @@ const ReportController = {
    */
   async exportProgressReport(req, res, next) {
     try {
-      // Chỉ cho phép admin truy cập endpoint này
-      if (req.user.role !== 'admin') {
-        const error = new Error('Unauthorized access');
-        error.statusCode = 403;
-        throw error;
-      }
       await ReportService.exportProgressExcel(res);
     } catch (error) {
       next(error);

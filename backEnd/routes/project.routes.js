@@ -3,6 +3,7 @@ const router = express.Router();
 const ProjectController = require('../controllers/project.controller');
 const authenticate = require('../middleware/auth');
 const authorize = require('../middleware/roleGuard');
+const { checkProjectAccess } = require('../middleware/accessGuard');
 
 // All routes require authentication
 router.use(authenticate);
@@ -11,7 +12,7 @@ router.use(authenticate);
 router.get('/', ProjectController.getProjects);
 
 // GET /api/projects/:id - with role-based access check
-router.get('/:id', ProjectController.getProjectById);
+router.get('/:id', checkProjectAccess, ProjectController.getProjectById);
 
 // POST /api/projects/request - Client submits project request
 router.post('/request', ProjectController.requestProject);
@@ -41,21 +42,21 @@ router.put('/:id/close', authorize('admin'), ProjectController.closeProject);
 router.put('/:id/reject', authorize('admin'), ProjectController.rejectProject);
 
 // PUT /api/projects/:id/quotation-status - Client can approve/reject
-router.put('/:id/quotation-status', ProjectController.updateQuotationStatus);
+router.put('/:id/quotation-status', checkProjectAccess, ProjectController.updateQuotationStatus);
 
 // PUT /api/projects/:id/send-quotation - Admin/Staff sends quotation to client
-router.put('/:id/send-quotation', ProjectController.sendQuotation);
+router.put('/:id/send-quotation', authorize('admin', 'staff'), checkProjectAccess, ProjectController.sendQuotation);
 
 // POST /api/projects/:id/contract - Admin/Staff generates contract
-router.post('/:id/contract', ProjectController.createContract);
+router.post('/:id/contract', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createContract);
 
 // POST /api/projects/:id/handover - Admin/Staff generates handover note
-router.post('/:id/handover', ProjectController.createHandoverNote);
+router.post('/:id/handover', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createHandoverNote);
 
 // POST /api/projects/:id/acceptance - Admin/Staff generates acceptance note
-router.post('/:id/acceptance', ProjectController.createAcceptanceNote);
+router.post('/:id/acceptance', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createAcceptanceNote);
 
 // POST /api/projects/:id/payment-request - Admin/Staff generates payment request
-router.post('/:id/payment-request', ProjectController.createPaymentRequest);
+router.post('/:id/payment-request', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createPaymentRequest);
 
 module.exports = router;

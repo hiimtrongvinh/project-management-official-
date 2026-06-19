@@ -197,37 +197,6 @@ const UserController = {
         });
       }
 
-      // Authorization check: admin or the user themselves
-      if (req.user.role !== 'admin') {
-        let accountId = null;
-        if (type === 'staff') {
-          const StaffModel = require('../models/staff.model');
-          const staff = await StaffModel.findById(id);
-          if (staff) accountId = staff.account_id;
-        } else if (type === 'client') {
-          const ClientModel = require('../models/client.model');
-          const client = await ClientModel.findById(id);
-          if (client) accountId = client.account_id;
-        } else if (type === 'supplier') {
-          const SupplierModel = require('../models/supplier.model');
-          const supplier = await SupplierModel.findById(id);
-          if (supplier) accountId = supplier.account_id;
-        }
-
-        if (accountId !== req.user.id) {
-          return res.status(403).json({
-            success: false,
-            error: { message: 'Forbidden: You do not have permission to update this user' }
-          });
-        }
-
-        // Prevent non-admin from updating sensitive fields
-        delete data.department;
-        delete data.position;
-        delete data.status;
-        delete data.role;
-      }
-
       const result = await UserService.updateUser(type, id, data);
 
       res.json({
@@ -264,16 +233,7 @@ const UserController = {
     try {
       const { id } = req.params;
 
-      if (req.user.role !== 'admin') {
-        const StaffModel = require('../models/staff.model');
-        const staff = await StaffModel.findById(id);
-        if (!staff || staff.account_id !== req.user.id) {
-          return res.status(403).json({
-            success: false,
-            error: { message: 'Forbidden: You do not have permission to upload avatar for this user' }
-          });
-        }
-      }
+
 
       if (!req.file) {
         return res.status(400).json({

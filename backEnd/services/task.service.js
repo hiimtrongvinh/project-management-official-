@@ -38,15 +38,7 @@ const TaskService = {
       throw error;
     }
 
-    // Check if the user is authorized to submit this task (must be assignee if not admin)
-    if (submitData.role !== 'admin') {
-      const staff = await StaffModel.findByAccountId(submitData.accountId);
-      if (!staff || task.assignee_id !== staff.id) {
-        const error = new Error('Bạn không được phân công thực hiện công việc này.');
-        error.statusCode = 403;
-        throw error;
-      }
-    }
+
 
     const oldStatus = task.status;
     const newStatus = 'Đã nộp';

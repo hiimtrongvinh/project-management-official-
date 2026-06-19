@@ -95,15 +95,12 @@ const MaterialController = {
    */
   async updateMaterial(req, res, next) {
     try {
-      const { id: accountId, role } = req.user;
-      const supplierId = await getSupplierIdFromAccount(accountId, role);
-
       if (req.file) {
         const subfolder = req.file.mimetype.startsWith('image/') ? 'images' : 'documents';
         req.body.image_url = `/uploads/${subfolder}/${req.file.filename}`;
       }
 
-      const material = await MaterialService.updateMaterial(req.params.id, req.body, supplierId);
+      const material = await MaterialService.updateMaterial(req.params.id, req.body);
 
       res.json({
         success: true,
@@ -125,10 +122,7 @@ const MaterialController = {
    */
   async deleteMaterial(req, res, next) {
     try {
-      const { id: accountId, role } = req.user;
-      const supplierId = await getSupplierIdFromAccount(accountId, role);
-
-      await MaterialService.deleteMaterial(req.params.id, supplierId);
+      await MaterialService.deleteMaterial(req.params.id);
 
       res.json({
         success: true,

@@ -44,10 +44,9 @@ const ProjectController = {
    */
   async getProjectById(req, res, next) {
     try {
-      const { id, role } = req.user;
       const projectId = req.params.id;
 
-      const project = await ProjectService.getProjectById(projectId, id, role);
+      const project = await ProjectService.getProjectById(projectId);
 
       res.json({
         success: true,
@@ -351,7 +350,7 @@ const ProjectController = {
       const projectId = req.params.id;
       const { status } = req.body; // 'approved' or 'rejected'
 
-      const project = await ProjectService.getProjectById(projectId, req.user.id, req.user.role);
+      const project = await ProjectService.getProjectById(projectId);
       
       if (status === 'approved') {
         // Advance step to 3 (Triển khai lắp đặt)

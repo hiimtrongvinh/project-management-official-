@@ -69,18 +69,17 @@ const MaterialService = {
    * @param {string|null} supplierId - supplier_id from token (if supplier role)
    * @returns {Promise<Object>}
    */
-  async updateMaterial(id, data, supplierId) {
+  /**
+   * Update a material.
+   * @param {string} id
+   * @param {Object} data
+   * @returns {Promise<Object>}
+   */
+  async updateMaterial(id, data) {
     const material = await MaterialModel.findById(id);
     if (!material) {
       const error = new Error('Material not found');
       error.statusCode = 404;
-      throw error;
-    }
-
-    // Supplier chỉ sửa vật tư của mình
-    if (supplierId && material.supplier_id !== supplierId) {
-      const error = new Error('Permission denied');
-      error.statusCode = 403;
       throw error;
     }
 
@@ -91,20 +90,13 @@ const MaterialService = {
   /**
    * Delete a material.
    * @param {string} id
-   * @param {string|null} supplierId - supplier_id from token (if supplier role)
    * @returns {Promise<void>}
    */
-  async deleteMaterial(id, supplierId) {
+  async deleteMaterial(id) {
     const material = await MaterialModel.findById(id);
     if (!material) {
       const error = new Error('Material not found');
       error.statusCode = 404;
-      throw error;
-    }
-
-    if (supplierId && material.supplier_id !== supplierId) {
-      const error = new Error('Permission denied');
-      error.statusCode = 403;
       throw error;
     }
 
