@@ -3,7 +3,7 @@ const router = express.Router();
 const ProjectController = require('../controllers/project.controller');
 const authenticate = require('../middleware/auth');
 const authorize = require('../middleware/roleGuard');
-const { checkProjectAccess, checkProjectEstimationAccess } = require('../middleware/accessGuard');
+const { checkProjectAccess, checkProjectEstimationAccess, checkProjectStepActionAccess } = require('../middleware/accessGuard');
 
 // All routes require authentication
 router.use(authenticate);
@@ -44,19 +44,19 @@ router.put('/:id/reject', authorize('admin'), ProjectController.rejectProject);
 // PUT /api/projects/:id/quotation-status - Client can approve/reject
 router.put('/:id/quotation-status', checkProjectAccess, ProjectController.updateQuotationStatus);
 
-// PUT /api/projects/:id/send-quotation - Admin/Staff sends quotation to client
-router.put('/:id/send-quotation', authorize('admin', 'staff'), checkProjectAccess, ProjectController.sendQuotation);
+// PUT /api/projects/:id/send-quotation - Only admin, or staff assigned to step 2 tasks
+router.put('/:id/send-quotation', checkProjectStepActionAccess(2), ProjectController.sendQuotation);
 
-// POST /api/projects/:id/contract - Admin/Staff generates contract
-router.post('/:id/contract', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createContract);
+// POST /api/projects/:id/contract - Only admin, or staff assigned to step 2 tasks
+router.post('/:id/contract', checkProjectStepActionAccess(2), ProjectController.createContract);
 
-// POST /api/projects/:id/handover - Admin/Staff generates handover note
-router.post('/:id/handover', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createHandoverNote);
+// POST /api/projects/:id/handover - Only admin, or staff assigned to step 4 tasks
+router.post('/:id/handover', checkProjectStepActionAccess(4), ProjectController.createHandoverNote);
 
-// POST /api/projects/:id/acceptance - Admin/Staff generates acceptance note
-router.post('/:id/acceptance', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createAcceptanceNote);
+// POST /api/projects/:id/acceptance - Only admin, or staff assigned to step 4 tasks
+router.post('/:id/acceptance', checkProjectStepActionAccess(4), ProjectController.createAcceptanceNote);
 
-// POST /api/projects/:id/payment-request - Admin/Staff generates payment request
-router.post('/:id/payment-request', authorize('admin', 'staff'), checkProjectAccess, ProjectController.createPaymentRequest);
+// POST /api/projects/:id/payment-request - Only admin, or staff assigned to step 5 tasks
+router.post('/:id/payment-request', checkProjectStepActionAccess(5), ProjectController.createPaymentRequest);
 
 module.exports = router;

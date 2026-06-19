@@ -510,11 +510,79 @@ async function checkProjectEstimationAccess(req, res, next) {
   }
 }
 
+/**
+ * Middleware to restrict specific actions based on the project step assignment.
+ * Only admin, or staff members assigned to tasks at the specified step, are allowed.
+ */
+function checkProjectStepActionAccess(requiredStep) {
+  return async (req, res, next) => {
+    try {
+      const { id: userId, role } = req.user;
+      const projectId = req.params.id || req.params.projectId || (req.body && req.body.project_id);
+
+      if (!projectId) {
+        return res.status(400).json({
+          success: false,
+          error: { message: 'Missing project ID parameter.' }
+        });
+      }
+
+      if (role === 'admin') {
+        return next();
+      }
+
+      if (role === 'staff') {
+        const staff = await StaffModel.findByAccountId(userId);
+        if (!staff) {
+          return res.status(403).json({
+            success: false,
+            error: { message: 'Access denied. Staff record not found.' }
+          });
+        }
+
+        // Check project membership
+        const memberRows = await query(
+          'SELECT id FROM project_members WHERE project_id = ? AND staff_id = ?',
+          [projectId, staff.id]
+        );
+        if (memberRows.length === 0) {
+          return res.status(403).json({
+            success: false,
+            error: { message: 'Bạn không phải là thành viên của dự án này.' }
+          });
+        }
+
+        // Check if assigned to a task at the required step
+        const taskRows = await query(
+          'SELECT id FROM tasks WHERE project_id = ? AND assignee_id = ? AND step = ?',
+          [projectId, staff.id, requiredStep]
+        );
+        if (taskRows.length === 0) {
+          return res.status(403).json({
+            success: false,
+            error: { message: `Bạn không được giao nhiệm vụ tiếp quản ở Bước ${requiredStep} của dự án này.` }
+          });
+        }
+
+        return next();
+      }
+
+      return res.status(403).json({
+        success: false,
+        error: { message: 'Forbidden. Insufficient permissions.' }
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
 module.exports = {
   checkUserAccess,
   checkProjectAccess,
   checkTaskAccess,
   checkOrderAccess,
   checkMaterialAccess,
-  checkProjectEstimationAccess
+  checkProjectEstimationAccess,
+  checkProjectStepActionAccess
 };
