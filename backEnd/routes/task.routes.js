@@ -11,10 +11,11 @@ router.use(authenticate);
 
 router.get('/my-tasks', TaskController.getMyTasks);
 router.get('/project/:projectId', checkProjectAccess, TaskController.getTasksByProject);
+router.get('/download-secure', TaskController.downloadSecureFile);
 router.get('/:id', checkTaskAccess('view'), TaskController.getTaskById);
 router.post('/', authorize('admin'), TaskController.createTask);
 router.post('/:id/submit', upload.array('file', 10), checkTaskAccess('submit'), TaskController.submitTask);
-router.post('/:id/review', authorize('admin'), TaskController.reviewTask);
+router.post('/:id/review', authorize('admin', 'client'), checkTaskAccess('review'), TaskController.reviewTask);
 router.put('/:id', authorize('admin'), TaskController.updateTask);
 router.delete('/:id', authorize('admin'), TaskController.deleteTask);
 

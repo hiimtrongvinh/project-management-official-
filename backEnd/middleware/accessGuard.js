@@ -361,10 +361,160 @@ async function checkMaterialAccess(req, res, next) {
   }
 }
 
+/**
+ * Middleware to check project estimation (materials and labor fee) updates.
+ * Admin: allowed at any step.
+ * Client: allowed at step 1 & 2 for their own project.
+ * Staff: allowed at step 1 & 2 if they are project member AND assigned to step 1/2 tasks.
+ */
+async function checkProjectEstimationAccess(req, res, next) {
+  try {
+    const { id: userId, role } = req.user;
+    let projectId = req.params.projectId || (req.body && req.body.project_id);
+
+    if (!projectId && req.params.id) {
+      if (req.originalUrl.includes('/project-item')) {
+        const rows = await query('SELECT project_id FROM project_items WHERE id = ?', [req.params.id]);
+        if (rows.length > 0) {
+          projectId = rows[0].project_id;
+        }
+      } else {
+        projectId = req.params.id;
+      }
+    }
+
+    if (!projectId) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Missing project ID parameter.' }
+      });
+    }
+
+    const project = await ProjectModel.findById(projectId);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Project not found' }
+      });
+    }
+
+    if (role === 'admin') {
+      req.project = project;
+      return next();
+    }
+
+    // Client & Staff can only edit at Step 1 or Step 2
+    if (project.current_step !== 1 && project.current_step !== 2) {
+      return res.status(403).json({
+        success: false,
+        error: { message: 'Chỉnh sửa vật tư và chi phí nhân công chỉ được thực hiện ở Bước 1 và Bước 2.' }
+      });
+    }
+
+    if (role === 'client') {
+      const client = await ClientModel.findByAccountId(userId);
+      if (!client || project.client_id !== client.id) {
+        return res.status(403).json({
+          success: false,
+          error: { message: 'Bạn không có quyền chỉnh sửa thông tin của dự án này.' }
+        });
+      }
+
+      // Non-admin can only update labor_fee on project resource
+      if (req.method === 'PUT' && req.originalUrl.includes('/api/projects')) {
+        const allowedKeys = ['labor_fee', 'laborFee'];
+        for (const key of Object.keys(req.body)) {
+          if (!allowedKeys.includes(key)) {
+            delete req.body[key];
+          }
+        }
+        if (req.body.laborFee !== undefined) {
+          req.body.labor_fee = req.body.laborFee;
+          delete req.body.laborFee;
+        }
+        if (req.body.labor_fee === undefined) {
+          return res.status(400).json({
+            success: false,
+            error: { message: 'Chỉ được phép cập nhật chi phí nhân công (labor fee).' }
+          });
+        }
+      }
+
+      req.project = project;
+      return next();
+    }
+
+    if (role === 'staff') {
+      const staff = await StaffModel.findByAccountId(userId);
+      if (!staff) {
+        return res.status(403).json({
+          success: false,
+          error: { message: 'Access denied. Staff record not found.' }
+        });
+      }
+
+      // Check if project member
+      const memberRows = await query(
+        'SELECT id FROM project_members WHERE project_id = ? AND staff_id = ?',
+        [projectId, staff.id]
+      );
+      if (memberRows.length === 0) {
+        return res.status(403).json({
+          success: false,
+          error: { message: 'Bạn không phải là thành viên của dự án này.' }
+        });
+      }
+
+      // Check if assigned to tasks in step 1 or 2
+      const taskRows = await query(
+        'SELECT id FROM tasks WHERE project_id = ? AND assignee_id = ? AND step IN (1, 2)',
+        [projectId, staff.id]
+      );
+      if (taskRows.length === 0) {
+        return res.status(403).json({
+          success: false,
+          error: { message: 'Bạn không được giao nhiệm vụ tiếp quản ở Bước 1 và Bước 2 của dự án này.' }
+        });
+      }
+
+      // Non-admin can only update labor_fee on project resource
+      if (req.method === 'PUT' && req.originalUrl.includes('/api/projects')) {
+        const allowedKeys = ['labor_fee', 'laborFee'];
+        for (const key of Object.keys(req.body)) {
+          if (!allowedKeys.includes(key)) {
+            delete req.body[key];
+          }
+        }
+        if (req.body.laborFee !== undefined) {
+          req.body.labor_fee = req.body.laborFee;
+          delete req.body.laborFee;
+        }
+        if (req.body.labor_fee === undefined) {
+          return res.status(400).json({
+            success: false,
+            error: { message: 'Chỉ được phép cập nhật chi phí nhân công (labor fee).' }
+          });
+        }
+      }
+
+      req.project = project;
+      return next();
+    }
+
+    return res.status(403).json({
+      success: false,
+      error: { message: 'Forbidden. Insufficient permissions.' }
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   checkUserAccess,
   checkProjectAccess,
   checkTaskAccess,
   checkOrderAccess,
-  checkMaterialAccess
+  checkMaterialAccess,
+  checkProjectEstimationAccess
 };

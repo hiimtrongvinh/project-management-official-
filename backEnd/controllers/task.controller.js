@@ -100,6 +100,16 @@ const TaskController = {
         });
       }
 
+      // Encrypt files immediately after Multer saved them to disk
+      const { encryptFileInPlace } = require('../utils/cryptoHelpers');
+      if (req.files && req.files.length > 0) {
+        req.files.forEach(file => {
+          encryptFileInPlace(file.path);
+        });
+      } else if (req.file) {
+        encryptFileInPlace(req.file.path);
+      }
+
       const filePaths = files.map(f => f.file_path);
 
       const submitData = {
@@ -209,6 +219,111 @@ const TaskController = {
       if (error.statusCode) {
         return res.status(error.statusCode).json({ success: false, error: { message: error.message } });
       }
+      next(error);
+    }
+  },
+
+  /**
+   * GET /api/tasks/download-secure
+   * Securely decrypt and serve project files (contract, task attachments, etc.)
+   */
+  async downloadSecureFile(req, res, next) {
+    try {
+      const relativePath = req.query.path;
+      if (!relativePath) {
+        return res.status(400).json({ success: false, error: { message: 'Path is required.' } });
+      }
+
+      const path = require('path');
+      const fs = require('fs');
+
+      // Prevent directory traversal attacks
+      const normalizedPath = path.normalize(relativePath).replace(/^(\.\.(\/|\\))+/, '');
+
+      // Query database to find which project this file belongs to
+      const { query } = require('../config/database');
+      const docRows = await query(
+        'SELECT project_id FROM project_documents WHERE file_path = ?',
+        [relativePath]
+      );
+
+      if (docRows.length === 0) {
+        return res.status(404).json({ success: false, error: { message: 'Tài liệu không tồn tại hoặc không hợp lệ.' } });
+      }
+
+      const projectId = docRows[0].project_id;
+      const { id: userId, role } = req.user;
+
+      let hasAccess = false;
+      if (role === 'admin') {
+        hasAccess = true;
+      } else if (role === 'staff') {
+        const StaffModel = require('../models/staff.model');
+        const staff = await StaffModel.findByAccountId(userId);
+        if (staff) {
+          const memberRows = await query(
+            'SELECT id FROM project_members WHERE project_id = ? AND staff_id = ?',
+            [projectId, staff.id]
+          );
+          if (memberRows.length > 0) {
+            hasAccess = true;
+          }
+        }
+      } else if (role === 'client') {
+        const ClientModel = require('../models/client.model');
+        const client = await ClientModel.findByAccountId(userId);
+        if (client) {
+          const projectRows = await query(
+            'SELECT client_id FROM projects WHERE id = ?',
+            [projectId]
+          );
+          if (projectRows.length > 0 && projectRows[0].client_id === client.id) {
+            hasAccess = true;
+          }
+        }
+      }
+
+      if (!hasAccess) {
+        return res.status(403).json({ success: false, error: { message: 'Bạn không có quyền truy cập tài liệu này.' } });
+      }
+
+      // Resolve full path on disk
+      const cleanPath = relativePath.startsWith('/') ? relativePath.slice(1) : relativePath;
+      const fullDiskPath = path.join(process.cwd(), cleanPath);
+
+      if (!fs.existsSync(fullDiskPath)) {
+        return res.status(404).json({ success: false, error: { message: 'Tệp tin không tồn tại trên hệ thống.' } });
+      }
+
+      // Decrypt on the fly
+      const { decryptFileToBuffer } = require('../utils/cryptoHelpers');
+      const decryptedData = decryptFileToBuffer(fullDiskPath);
+
+      // Simple MIME type resolver
+      const ext = fullDiskPath.split('.').pop().toLowerCase();
+      const mimes = {
+        'pdf': 'application/pdf',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'png': 'image/png',
+        'jpeg': 'image/jpeg',
+        'jpg': 'image/jpeg',
+        'webp': 'image/webp',
+        'gif': 'image/gif',
+        'svg': 'image/svg+xml',
+        'zip': 'application/zip',
+        'rar': 'application/x-rar-compressed',
+        'dwg': 'application/octet-stream'
+      };
+      const contentType = mimes[ext] || 'application/octet-stream';
+      const fileName = path.basename(fullDiskPath);
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(fileName)}"`);
+      res.send(decryptedData);
+
+    } catch (error) {
+      console.error('Error downloading secure file:', error);
       next(error);
     }
   }

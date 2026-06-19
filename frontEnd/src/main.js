@@ -25,6 +25,27 @@ import { isLoggedIn, getAuthRole, handleLogout } from './pages/auth.js';
 import { renderNotificationBell, startNotificationPolling, stopNotificationPolling, renderNotificationPage, initNotificationPage } from './pages/notification.js';
 
 // --- PREMIUM TOAST & CONFIRM UTILITIES ---
+window.downloadSecureFileDirect = async function (filePath, fileName) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/tasks/download-secure?path=${encodeURIComponent(filePath)}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("Tải file thất bại hoặc không có quyền truy cập.");
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        window.showToast("❌ Lỗi tải file: " + err.message, "error");
+    }
+};
+
 window.showToast = function (message, type = 'success') {
     const msgStr = String(message);
 
@@ -347,13 +368,8 @@ window.previewDocument = async function (filePath, fileName) {
     let isSupported = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'pdf', 'docx', 'xlsx'].includes(ext);
 
     if (!isSupported) {
-        // Fallback: Nếu là file đuôi lạ (.zip, .dwg...) tự động kích hoạt tải xuống
-        const a = document.createElement('a');
-        a.href = filePath;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        // Fallback: Nếu là file đuôi lạ (.zip, .dwg...) tự động kích hoạt tải xuống an toàn
+        window.downloadSecureFileDirect(filePath, fileName);
         return;
     }
 
@@ -371,9 +387,9 @@ window.previewDocument = async function (filePath, fileName) {
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <a href="${filePath}" download="${fileName}" class="w-9 h-9 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors" title="Tải xuống tệp tin">
+                <button onclick="window.downloadSecureFileDirect('${filePath}', '${fileName.replace(/'/g, "\\'")}')" class="w-9 h-9 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors" title="Tải xuống tệp tin">
                     <i class="fas fa-download text-sm"></i>
-                </a>
+                </button>
                 <button onclick="document.getElementById('documentPreviewModal').remove()" class="w-9 h-9 rounded-xl hover:bg-slate-200/50 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
                     <i class="fas fa-times text-sm"></i>
                 </button>
@@ -393,8 +409,13 @@ window.previewDocument = async function (filePath, fileName) {
 
     // Kích hoạt luồng Fetch dữ liệu kèm Token phiên đăng nhập và tự render
     try {
-        const response = await fetch(filePath);
-        if (!response.ok) throw new Error("Không thể bốc dữ liệu file từ VPS");
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/tasks/download-secure?path=${encodeURIComponent(filePath)}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) throw new Error("Không thể tải tệp tin bảo mật từ máy chủ.");
         const blob = await response.blob();
 
         const bodyContainer = document.getElementById('inner-preview-body');

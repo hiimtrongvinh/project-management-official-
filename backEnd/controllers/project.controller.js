@@ -110,6 +110,18 @@ const ProjectController = {
 
       const { title, description, serviceType, deadline, budget } = req.body;
 
+      if (deadline) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const deadlineDate = new Date(deadline);
+        if (deadlineDate < today) {
+          return res.status(400).json({
+            success: false,
+            error: { message: 'Hạn chót yêu cầu dự án không được nằm trong quá khứ.' }
+          });
+        }
+      }
+
       const project = await ProjectService.createProject(
         {
           title,

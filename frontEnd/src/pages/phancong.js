@@ -276,6 +276,10 @@ async function refreshProjectDetail(projectId) {
     await openProjectDetail(projectId, role);
     const tabBtn = document.getElementById('tab-phancong');
     if (tabBtn) tabBtn.click();
+    
+    // Refresh background list views to ensure synchronization
+    if (typeof window.fetchProjectsFromServer === 'function') window.fetchProjectsFromServer();
+    if (typeof window.fetchClientProjectsFromServer === 'function') window.fetchClientProjectsFromServer();
 }
 
 function parseDateToInput(dateStr) {

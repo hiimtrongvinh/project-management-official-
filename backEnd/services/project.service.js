@@ -1052,6 +1052,8 @@ const ProjectService = {
     const fullPath = path.join(contractDir, `HD-${projectId}.docx`);
 
     fs.writeFileSync(fullPath, buffer);
+    const { encryptFileInPlace } = require('../utils/cryptoHelpers');
+    encryptFileInPlace(fullPath);
 
     // Create document record in database
     const fileName = `Hợp đồng kinh tế - HD-${projectId}.docx`;
@@ -1414,6 +1416,8 @@ const ProjectService = {
     const fullPath = path.join(contractDir, `BB-BG-${projectId}.xlsx`);
 
     await workbook.xlsx.writeFile(fullPath);
+    const { encryptFileInPlace } = require('../utils/cryptoHelpers');
+    encryptFileInPlace(fullPath);
 
     // Database upsert
     const existing = await query(
@@ -1908,6 +1912,8 @@ const ProjectService = {
     const fullPath = path.join(contractDir, `BB-NT-${projectId}.xlsx`);
 
     await workbook.xlsx.writeFile(fullPath);
+    const { encryptFileInPlace } = require('../utils/cryptoHelpers');
+    encryptFileInPlace(fullPath);
 
     // Database upsert
     const existing = await query(
@@ -2129,6 +2135,8 @@ const ProjectService = {
     const fullPath = path.join(contractDir, `DN-TT-${projectId}.docx`);
 
     fs.writeFileSync(fullPath, buffer);
+    const { encryptFileInPlace } = require('../utils/cryptoHelpers');
+    encryptFileInPlace(fullPath);
 
     // Database upsert
     const existing = await query(

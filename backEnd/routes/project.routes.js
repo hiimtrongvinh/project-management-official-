@@ -3,7 +3,7 @@ const router = express.Router();
 const ProjectController = require('../controllers/project.controller');
 const authenticate = require('../middleware/auth');
 const authorize = require('../middleware/roleGuard');
-const { checkProjectAccess } = require('../middleware/accessGuard');
+const { checkProjectAccess, checkProjectEstimationAccess } = require('../middleware/accessGuard');
 
 // All routes require authentication
 router.use(authenticate);
@@ -20,8 +20,8 @@ router.post('/request', ProjectController.requestProject);
 // POST /api/projects - Admin only
 router.post('/', authorize('admin'), ProjectController.createProject);
 
-// PUT /api/projects/:id - Admin only
-router.put('/:id', authorize('admin'), ProjectController.updateProject);
+// PUT /api/projects/:id - Admin/Staff/Client with estimation guard
+router.put('/:id', checkProjectEstimationAccess, ProjectController.updateProject);
 
 // DELETE /api/projects/:id - Admin only
 router.delete('/:id', authorize('admin'), ProjectController.deleteProject);

@@ -68,7 +68,7 @@ export function renderTaoyeucau() {
 
                         <div class="space-y-2">
                             <label class="text-base font-bold text-gray-400 ml-1">Hạn chót mong muốn</label>
-                            <input type="date" name="deadline" 
+                            <input type="date" name="deadline" min="${new Date().toISOString().split('T')[0]}"
                                    class="w-full px-6 py-4 border border-gray-100 rounded-3xl focus:outline-none focus:border-blue-500 bg-gray-50/50 transition-all font-bold text-gray-800">
                         </div>
 
