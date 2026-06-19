@@ -104,6 +104,7 @@ CREATE TABLE projects (
   deadline DATE NOT NULL,
   client_id VARCHAR(10),
   current_step INT DEFAULT 0,
+  quotation_status VARCHAR(20) DEFAULT 'pending',
   budget BIGINT,
   labor_fee BIGINT DEFAULT 0,
   created_by INT,

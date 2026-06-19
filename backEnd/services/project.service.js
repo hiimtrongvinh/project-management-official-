@@ -206,6 +206,7 @@ const ProjectService = {
     if (data.budget !== undefined) updateData.budget = data.budget;
     if (data.labor_fee !== undefined) updateData.labor_fee = data.labor_fee;
     if (data.current_step !== undefined) updateData.current_step = data.current_step;
+    if (data.quotation_status !== undefined) updateData.quotation_status = data.quotation_status;
 
     await ProjectModel.update(id, updateData);
 
@@ -511,6 +512,7 @@ const ProjectService = {
     }
     
     // No automatic step advancement - stays in Step 2 until client approves
+    await ProjectModel.update(projectId, { quotation_status: 'pending' });
     
     // Log activity
     await query(

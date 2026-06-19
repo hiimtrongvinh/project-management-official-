@@ -48,6 +48,18 @@ async function testConnection() {
     console.log('Database connected successfully (thread id: %d)', connection.threadId);
     connection.release();
 
+    // Auto-migrate: Add quotation_status to projects table if it doesn't exist
+    try {
+      const columns = await query("SHOW COLUMNS FROM projects LIKE 'quotation_status'");
+      if (columns.length === 0) {
+        console.log('Migrating: Adding quotation_status column to projects table...');
+        await query("ALTER TABLE projects ADD COLUMN quotation_status VARCHAR(20) DEFAULT 'pending'");
+        console.log('Migration completed successfully.');
+      }
+    } catch (migrateErr) {
+      console.error('Migration failed:', migrateErr.message);
+    }
+
   } catch (error) {
     console.error('Database connection failed:', error.message);
     console.error('Retrying in 5 seconds...');

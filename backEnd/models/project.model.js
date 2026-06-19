@@ -236,7 +236,7 @@ const ProjectModel = {
     const fields = [];
     const params = [];
 
-    const allowedFields = ['title', 'description', 'category', 'client_id', 'start_date', 'deadline', 'current_step', 'budget', 'labor_fee'];
+    const allowedFields = ['title', 'description', 'category', 'client_id', 'start_date', 'deadline', 'current_step', 'budget', 'labor_fee', 'quotation_status'];
 
     for (const field of allowedFields) {
       if (data[field] !== undefined) {

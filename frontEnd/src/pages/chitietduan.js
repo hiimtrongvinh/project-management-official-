@@ -88,7 +88,7 @@ export async function openProjectDetail(projectId, roleParam, activeTab = 'hoso'
         if (projData.current_step === 2) {
             clientQuotations.push({
                 id: `BG-${projectId}`,
-                status: 'pending',
+                status: projData.quotation_status || 'pending',
                 project_title: projData.title
             });
         } else if (projData.current_step >= 3) {

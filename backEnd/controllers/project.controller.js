@@ -366,7 +366,7 @@ const ProjectController = {
       
       if (status === 'approved') {
         // Advance step to 3 (Triển khai lắp đặt)
-        await ProjectService.updateProject(projectId, { current_step: 3 });
+        await ProjectService.updateProject(projectId, { current_step: 3, quotation_status: 'approved' });
         
         // Notify admins
         const adminIds = await getAdminAccountIds();
@@ -378,6 +378,9 @@ const ProjectController = {
           related_id: projectId
         });
       } else if (status === 'rejected') {
+        // Update quotation status in DB to rejected
+        await ProjectService.updateProject(projectId, { quotation_status: 'rejected' });
+
         // Notify admins of rejection
         const adminIds = await getAdminAccountIds();
         await notify(adminIds, {
