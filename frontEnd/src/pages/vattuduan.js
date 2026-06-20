@@ -341,7 +341,9 @@ export function renderTabVattuDuan(projectId, role) {
                             <th class="px-5 py-3.5 w-[32%]">Vật tư</th>
                             <th class="px-4 py-3.5 w-[13%]">Đơn giá</th>
                             <th class="px-4 py-3.5 w-[10%] text-center">SL</th>
+                            <th class="px-4 py-3.5 w-[10%] text-center">Đơn vị</th>
                             <th class="px-4 py-3.5 w-[14%]">Thành tiền</th>
+
                             <th class="px-4 py-3.5 w-[10%] text-center">Lợi nhuận</th>
                             <th class="px-4 py-3.5 w-[14%]">Báo giá KH</th>
                             <th class="px-2 py-3.5 w-[7%]"></th>
